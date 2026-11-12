@@ -17,11 +17,11 @@ return new class extends Migration
             $table->foreignId('id_plan')->nullable()->constrained('meal_plan', 'id_plan')->onDelete('set null');
             $table->string('nama_makanan');
             $table->text('deskripsi_makanan')->nullable();
-            $table->string('foto_menu')->nullable();
-            $table->string('kategori_waktu');
             $table->integer('kandungan_kalori')->nullable();
             $table->integer('stok_harian')->default(0);
             $table->decimal('harga_normal', 12, 2);
+            $table->string('kategori_waktu');
+            $table->string('foto_menu')->nullable();
             $table->timestamps();
         });
     }
