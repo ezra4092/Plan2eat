@@ -13,14 +13,13 @@ class UmkmSeeder extends Seeder
     public function run(): void
     {
         Umkm::create([
-            'id_user' => 1, 
+            'id_user' => 3, 
             'nama_vendor' => 'Warteg Sifren',
             'deskripsi_toko' => 'Menyediakan masakan rumahan enak, bergizi, dan ramah kantong mahasiswa.',
             'alamat_lengkap' => 'Jl. Babakan Raya, Bogor',
-            'titik_koordinat_lokasi' => '-6.5593, 106.7262', 
             'jam_buka' => '07:00:00',
             'jam_tutup' => '20:00:00',
-            'status_operasional' => 'Buka',
+            'status_operasional' => 'Buka'
         ]);
     }
 }

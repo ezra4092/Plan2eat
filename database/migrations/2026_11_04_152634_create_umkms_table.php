@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -10,13 +11,15 @@ return new class extends Migration {
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->string('nama_vendor');
             $table->text('deskripsi_toko')->nullable();
-            $table->string('status_operasional')->nullable();
+            $table->text('alamat_lengkap')->nullable();
             $table->time('jam_buka')->nullable();
             $table->time('jam_tutup')->nullable();
-            $table->text('alamat_lengkap')->nullable();
-            $table->string('titik_koordinat_lokasi')->nullable();
+            $table->string('status_operasional')->nullable();
+            $table->decimal('saldo', 15, 2)->default(0);
+            $table->string('metode_pembayaran')->nullable();
         });
     }
+
     public function down(): void {
         Schema::dropIfExists('umkm');
     }

@@ -11,12 +11,15 @@ class Menu extends Model
 {
     use HasFactory;
 
+    // Matikan timestamps otomatis karena tidak ada di ERD
+    public $timestamps = false;
+
     protected $table = 'menu';
     protected $primaryKey = 'id_menu';
 
     protected $fillable = [
         'id_umkm',
-        'id_plan',
+        // id_plan dihapus dari sini karena sudah dipindah ke tabel detail_meal_plan
         'nama_makanan',
         'deskripsi_makanan',
         'foto_menu',
@@ -38,11 +41,6 @@ class Menu extends Model
     public function umkm(): BelongsTo
     {
         return $this->belongsTo(Umkm::class, 'id_umkm', 'id_umkm');
-    }
-
-    public function mealPlan(): BelongsTo
-    {
-        return $this->belongsTo(MealPlan::class, 'id_plan', 'id_plan');
     }
 
     public function flashSales(): HasMany

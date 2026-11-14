@@ -8,18 +8,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['nama_lengkap', 'email', 'password', 'role'])]
-#[Hidden(['password', 'remember_token'])]
+#[Fillable(['nama_lengkap', 'email', 'password', 'role', 'created_at'])]
+#[Hidden(['password'])]
 class User extends Authenticatable
 {
     use HasFactory, Notifiable;
 
+    // Matikan timestamps bawaan Laravel karena tidak ada kolom updated_at
+    public $timestamps = false; 
+    
     protected $primaryKey = 'id_user';
 
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
+            // email_verified_at dihapus karena tidak ada di ERD
             'password' => 'hashed',
         ];
     }

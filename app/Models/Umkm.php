@@ -9,6 +9,9 @@ class Umkm extends Model
 {
     use HasFactory;
 
+    // Matikan timestamps otomatis karena tidak ada di ERD
+    public $timestamps = false;
+
     protected $table = 'umkm';
     protected $primaryKey = 'id_umkm';
 
@@ -17,10 +20,11 @@ class Umkm extends Model
         'nama_vendor',
         'deskripsi_toko',
         'alamat_lengkap',
-        'titik_koordinat_lokasi',
         'jam_buka',
         'jam_tutup',
         'status_operasional',
+        'saldo',
+        'metode_pembayaran'
     ];
 
     public function user()
