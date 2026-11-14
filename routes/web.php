@@ -43,6 +43,8 @@ Route::group(['middleware' => ['auth']], function() {
 
     Route::post('/umkm/logout', [UmkmController::class, 'logout'])
         ->name('umkm.logout');
+
+        
 });
 
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
