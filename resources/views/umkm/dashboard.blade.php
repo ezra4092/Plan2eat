@@ -40,7 +40,7 @@
       <div class="metric-header">
         <span class="metric-title">Pelanggan Aktif</span>
         <div class="metric-icon-circle icon-mint">
-          <i class="fa-solid fa-house"></i>
+          <i class="fa-solid fa-people-line"></i>
         </div>
       </div>
       <div class="metric-body">
@@ -57,7 +57,7 @@
       <div class="metric-header">
         <span class="metric-title">Perlu diproses</span>
         <div class="metric-icon-circle icon-amber">
-          <img src="{{ asset('img/icon-7.svg') }}" alt="Perlu diproses">
+          <i class="fa-solid fa-spinner"></i>
         </div>
       </div>
       <div class="metric-body">

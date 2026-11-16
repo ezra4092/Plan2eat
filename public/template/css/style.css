@@ -3191,3 +3191,495 @@ body {
     align-items: flex-start;
   }
 }
+
+/* --------------------------------------------------------------------------
+   User Personalization Page (Mobile-First & Responsive Desktop)
+   -------------------------------------------------------------------------- */
+
+/* Sembunyikan bottom-nav default pada mobile khusus halaman personalisasi
+   agar tombol CTA "Lanjut ->" di bawah layar tampil bersih sesuai desain */
+@media (max-width: 767.98px) {
+  .page-personalization .app-nav {
+    display: none;
+  }
+
+  .page-personalization .app-content-wrapper {
+    padding-bottom: 118px;
+  }
+}
+
+/* Header Topbar Personalization */
+.personalization-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background-color: var(--bg-cream);
+  border-bottom: 1px solid rgba(5, 55, 31, 0.08);
+}
+
+.personalization-header-inner {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.btn-back-nav {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--black);
+  text-decoration: none;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-back-nav:hover {
+  background-color: rgba(5, 55, 31, 0.07);
+}
+
+.btn-back-nav:active {
+  transform: scale(0.95);
+}
+
+.personalization-brand-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background-color: var(--forest-green);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 3px 8px rgba(5, 55, 31, 0.18);
+}
+
+.personalization-page-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.3px;
+  color: var(--black);
+  margin: 0;
+}
+
+/* Container Utama Konten */
+.personalization-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 1. Hero Banner Card ("Pilih Preferensi Makan") */
+.personalization-hero-card {
+  position: relative;
+  overflow: hidden;
+  background-color: #F2EFE3;
+  border-radius: 22px;
+  padding: 20px 20px 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.badge-personalization-menu {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background-color: #C7EBD6;
+  color: var(--forest-green);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11.5px;
+}
+
+.personalization-hero-title {
+  position: relative;
+  z-index: 2;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.25;
+  letter-spacing: -0.4px;
+  color: var(--forest-green);
+  margin: 2px 0 0;
+}
+
+.personalization-hero-subtitle {
+  position: relative;
+  z-index: 2;
+  max-width: 82%;
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #555D56;
+  margin: 0;
+}
+
+.hero-leaf-watermark {
+  position: absolute;
+  right: -10px;
+  bottom: -14px;
+  color: rgba(5, 55, 31, 0.08);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 2. Info Alert Banner ("Alergi & Gaya Hidup") */
+.allergy-info-banner {
+  background-color: #FDE4BA;
+  border-radius: 18px;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.allergy-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.allergy-icon-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: #6B4411;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.allergy-text-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.allergy-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  color: #2B1B06;
+  margin: 0;
+}
+
+.allergy-subtitle {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.35;
+  color: #5C421C;
+  margin: 0;
+}
+
+.btn-allergy-info {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: none;
+  background: transparent;
+  color: #5C421C;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+}
+
+.btn-allergy-info:hover {
+  background-color: rgba(107, 68, 17, 0.1);
+}
+
+/* 3. Grid Kartu Preferensi (2 Kolom di Mobile) */
+.preference-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.preference-card {
+  position: relative;
+  background-color: #F4F2EA;
+  border: 1.5px solid rgba(5, 55, 31, 0.05);
+  border-radius: 20px;
+  padding: 16px;
+  min-height: 152px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 18px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.22s ease, border-color 0.22s ease, transform 0.12s ease, box-shadow 0.22s ease;
+}
+
+.preference-card:hover {
+  border-color: rgba(5, 55, 31, 0.22);
+  box-shadow: 0 6px 16px rgba(5, 55, 31, 0.07);
+}
+
+.preference-card:active {
+  transform: scale(0.98);
+}
+
+.preference-checkbox {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.preference-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.preference-icon-box {
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  background-color: #EAE7DC;
+  color: var(--forest-green);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.22s ease, color 0.22s ease;
+}
+
+.preference-check-circle {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background-color: #E7E4D8;
+  color: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.22s ease, color 0.22s ease;
+}
+
+.preference-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.preference-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1.25;
+  color: var(--black);
+  margin: 0;
+  transition: color 0.22s ease;
+}
+
+.preference-desc {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 1.35;
+  color: var(--gray);
+  margin: 0;
+  transition: color 0.22s ease;
+}
+
+/* State Aktif / Terpilih (Hijau Tua seperti pada desain) */
+.preference-card.is-selected {
+  background-color: #144B2B;
+  border-color: #144B2B;
+  box-shadow: 0 8px 20px rgba(5, 55, 31, 0.18);
+}
+
+.preference-card.is-selected .preference-icon-box {
+  background-color: rgba(255, 255, 255, 0.12);
+  color: var(--white);
+}
+
+.preference-card.is-selected .preference-check-circle {
+  background-color: #FDE4BA;
+  color: #144B2B;
+}
+
+.preference-card.is-selected .preference-title {
+  color: var(--white);
+}
+
+.preference-card.is-selected .preference-desc {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* 4. Sticky Bottom Action Bar ("Lanjut ->") */
+.personalization-footer-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 45;
+  background: linear-gradient(180deg, rgba(252, 250, 231, 0.88) 0%, var(--bg-cream) 28%);
+  backdrop-filter: blur(10px);
+  padding: 12px 18px 16px;
+}
+
+.personalization-footer-inner {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-personalization-next {
+  width: 100%;
+  height: 52px;
+  border: none;
+  border-radius: 16px;
+  background-color: var(--forest-green);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(5, 55, 31, 0.22);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-personalization-next:hover {
+  background-color: var(--forest-green-hover);
+}
+
+.btn-personalization-next:active {
+  transform: scale(0.99);
+}
+
+.personalization-helper-text {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 12px;
+  color: #555D56;
+  text-align: center;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Desktop Adjustments (>= 768px) untuk Halaman Personalisasi
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  .personalization-header {
+    background-color: var(--white);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+  }
+
+  .personalization-header-inner {
+    max-width: 1200px;
+    padding: 16px 32px;
+  }
+
+  .personalization-page-title {
+    font-size: 21px;
+  }
+
+  .personalization-container {
+    gap: 22px;
+  }
+
+  .personalization-hero-card {
+    padding: 28px 32px;
+  }
+
+  .personalization-hero-title {
+    font-size: 28px;
+  }
+
+  .personalization-hero-subtitle {
+    font-size: 14.5px;
+    max-width: 640px;
+  }
+
+  .hero-leaf-watermark {
+    width: 120px;
+    height: 120px;
+    right: 12px;
+    bottom: -16px;
+  }
+
+  .allergy-info-banner {
+    padding: 16px 22px;
+  }
+
+  /* Grid 3 kolom di layar tablet/desktop agar proporsional */
+  .preference-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .preference-card {
+    min-height: 168px;
+    padding: 20px;
+  }
+
+  /* Footer bar di desktop menyatu rapi dalam aliran konten tanpa menutupi sidebar */
+  .personalization-footer-bar {
+    position: static;
+    background: transparent;
+    backdrop-filter: none;
+    padding: 12px 0 0;
+  }
+
+  .personalization-footer-inner {
+    max-width: 100%;
+    flex-direction: row-reverse;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 16px;
+    border-top: 1px solid rgba(5, 55, 31, 0.1);
+  }
+
+  .btn-personalization-next {
+    width: auto;
+    min-width: 220px;
+    padding: 0 28px;
+  }
+
+  .personalization-helper-text {
+    text-align: left;
+    font-size: 13px;
+  }
+}
+
+/* Mobile Layar Sangat Kecil (<= 360px) */
+@media (max-width: 360px) {
+  .preference-grid {
+    gap: 10px;
+  }
+
+  .preference-card {
+    padding: 14px;
+    min-height: 142px;
+  }
+
+  .preference-title {
+    font-size: 14.5px;
+  }
+}
+

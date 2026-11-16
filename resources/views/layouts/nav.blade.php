@@ -4,18 +4,18 @@
   $userRole = strtolower($role ?? (auth()->check() ? auth()->user()->role : session('role', 'pelanggan')));
 @endphp
 
-@if ($userRole === 'pelanggan')
-  <nav class="app-nav" id="appSidebar" aria-label="Navigasi Utama">
-    <!-- Brand Header (Hanya muncul di Desktop Left Sidebar seperti SB Admin 2) -->
-    <div class="sidebar-brand">
-      <a href="{{ url('/beranda') }}" class="sidebar-brand-link">
-        <img class="sidebar-brand-icon" src="{{ asset('img/logo.svg') }}" alt="Plan2Eat Logo">
-        <span class="sidebar-brand-text">PLAN2EAT</span>
-      </a>
-    </div>
+<nav class="app-nav" id="appSidebar" aria-label="Navigasi Utama">
+  <!-- Brand Header (Hanya muncul di Desktop Left Sidebar seperti SB Admin 2) -->
+  <div class="sidebar-brand">
+    <a href="{{ $userRole === 'umkm' ? url('/umkm/dashboard') : url('/pelanggan/beranda') }}" class="sidebar-brand-link">
+      <img class="sidebar-brand-icon" src="{{ asset('img/logo.svg') }}" alt="Plan2Eat Logo">
+      <span class="sidebar-brand-text">PLAN2EAT</span>
+    </a>
+  </div>
 
-    <hr class="sidebar-divider">
+  <hr class="sidebar-divider">
 
+  @if ($userRole === 'pelanggan')
     <!-- Label Kategori Menu (Desktop) -->
     <div class="sidebar-section-label">MENU UTAMA</div>
 
@@ -44,12 +44,16 @@
     </div>
 
     <hr class="sidebar-divider">
-    <a href="{{ route('pelanggan.meal_plan.index') }}" class="nav-item" style="display: block; width: 100%; text-align: left; text-decoration: none; color: inherit; cursor: pointer;">
-    <div class="nav-icon-box">
-        <img src="{{ asset('img/icon-logout.svg') }}" alt="Meal Plan"> 
-    </div>
-    <span class="nav-label">Meal Plan</span>
-</a>
+
+    <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+      @csrf
+      <button type="submit" class="nav-item" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
+        <div class="nav-icon-box">
+          <img src="{{ asset('img/icon-logout.svg') }}" alt="Logout">
+        </div>
+        <span class="nav-label">Logout</span>
+      </button>
+    </form>
 
     <!-- Info Card Bawah Sidebar (Hanya muncul di Desktop seperti SB Admin 2) -->
     <div class="sidebar-promo-card">
@@ -58,25 +62,8 @@
         Katering sehat tanpa limbah kemasan untuk gaya hidup berkelanjutan.
       </p>
     </div>
-  </nav>
 
-@elseif ($userRole === 'umkm')
-  <nav class="app-nav" id="appSidebar" aria-label="Navigasi UMKM">
-    <!-- Brand Header (Muncul di Desktop Left Sidebar seperti SB Admin 2) -->
-    <div class="sidebar-brand">
-      <a href="{{ url('/umkm/beranda') }}" class="sidebar-brand-link">
-        <div class="brand-logo-badge">
-          <img class="sidebar-brand-icon" src="{{ asset('img/logo.svg') }}" alt="Plan2Eat Logo">
-        </div>
-        <div class="sidebar-brand-info">
-          <span class="sidebar-brand-text">PLAN2EAT</span>
-          <span class="sidebar-brand-sub">Dapur Mitra</span>
-        </div>
-      </a>
-    </div>
-
-    <hr class="sidebar-divider">
-
+  @elseif ($userRole === 'umkm')
     <!-- Label Kategori Menu (Desktop) -->
     <div class="sidebar-section-label">MENU DAPUR MITRA</div>
 
@@ -113,6 +100,16 @@
 
     <hr class="sidebar-divider">
 
+    <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+      @csrf
+      <button type="submit" class="nav-item" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
+        <div class="nav-icon-box">
+          <img src="{{ asset('img/icon-logout.svg') }}" alt="Logout">
+        </div>
+        <span class="nav-label">Logout</span>
+      </button>
+    </form>
+
     <!-- Info Card Bawah Sidebar (Hanya muncul di Desktop) -->
     <div class="sidebar-promo-card">
       <div class="sidebar-promo-badge">Zero-Waste Partner</div>
@@ -120,5 +117,5 @@
         Kelola kuota katering harian dan kurangi sisa makanan lewat fitur Night Flash Sale.
       </p>
     </div>
-  </nav>
-@endif
+  @endif
+</nav>
