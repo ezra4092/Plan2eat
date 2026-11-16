@@ -13,6 +13,7 @@ class Flashsale extends Model
 
     protected $table = 'flash_sale';
     protected $primaryKey = 'id_flash_sale';
+    public $timestamps = false;
 
     protected $fillable = [
         'id_menu',

@@ -22,7 +22,6 @@ return new class extends Migration
             $table->decimal('harga_normal', 12, 2);
             $table->string('kategori_waktu');
             $table->string('foto_menu')->nullable();
-            $table->timestamps();
         });
     }
 
