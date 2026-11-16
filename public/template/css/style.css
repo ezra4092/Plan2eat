@@ -3683,3 +3683,2150 @@ body {
   }
 }
 
+
+
+
+/* --------------------------------------------------------------------------
+   Halaman Verifikasi OTP (Unified & Responsive Mobile + Desktop)
+   -------------------------------------------------------------------------- */
+.otp-page-wrapper {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  background-color: var(--bg-cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.otp-card-shell {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--bg-cream);
+}
+
+.otp-topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+}
+
+.otp-back-btn {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.otp-back-btn:hover {
+  background-color: rgba(5, 55, 31, 0.08);
+}
+
+.otp-topbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.otp-topbar-title {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--black);
+}
+
+.otp-main-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 8px 22px 28px;
+}
+
+/* Shield & Leaf Badge */
+.otp-shield-badge {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  margin-bottom: 18px;
+}
+
+.otp-shield-ring {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: #BCEAD5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.otp-shield-inner {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: #FCE5C0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.otp-leaf-mini {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--forest-green);
+  border: 2px solid var(--bg-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.otp-heading {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--forest-green);
+  margin: 0 0 8px;
+  letter-spacing: -0.4px;
+}
+
+.otp-subtext {
+  font-family: var(--font-inter);
+  font-size: 13px;
+  color: #414942;
+  margin: 0 0 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.otp-subtext strong {
+  font-weight: 500;
+  color: #414942;
+}
+
+.otp-edit-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: #414942;
+  text-decoration: none;
+}
+
+.otp-edit-link:hover {
+  color: var(--forest-green);
+  text-decoration: underline;
+}
+
+.otp-form {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.otp-boxes-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 9px;
+  width: 100%;
+}
+
+.otp-box {
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 1 / 1.14;
+  border-radius: 14px;
+  border: 1.5px solid transparent;
+  background-color: #EAE6D7;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--black);
+  caret-color: var(--forest-green);
+  outline: none;
+  padding: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.otp-box.is-focused,
+.otp-box:focus {
+  background-color: var(--white);
+  border-color: rgba(5, 55, 31, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.otp-box.is-filled {
+  background-color: var(--white);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+}
+
+.otp-error-msg {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: var(--danger);
+  margin: -10px 0 0;
+}
+
+.otp-resend-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  color: #414942;
+}
+
+.otp-resend-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--forest-green);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.btn-verify-otp {
+  width: 100%;
+  height: 50px;
+  border: none;
+  border-radius: 14px;
+  background-color: #7A9484;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: not-allowed;
+  transition: background-color 0.25s ease, transform 0.1s ease, box-shadow 0.25s ease;
+}
+
+.btn-verify-otp.is-ready {
+  background-color: var(--forest-green);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(5, 55, 31, 0.22);
+}
+
+.btn-verify-otp.is-ready:hover {
+  background-color: var(--forest-green-hover);
+}
+
+.btn-verify-otp.is-ready:active {
+  transform: scale(0.99);
+}
+
+/* Bottom Keypad Sheet (Mobile Default) */
+.otp-keypad-sheet {
+  width: 100%;
+  background-color: #ECE7D5;
+  border-radius: 26px 26px 0 0;
+  padding: 18px 20px 24px;
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.05);
+}
+
+.otp-keypad-grid {
+  max-width: 360px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 11px 14px;
+}
+
+.keypad-btn {
+  height: 46px;
+  border: none;
+  border-radius: 14px;
+  background-color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--black);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: background-color 0.15s ease, transform 0.08s ease;
+}
+
+.keypad-btn:hover {
+  background-color: #FAF9F5;
+}
+
+.keypad-btn:active {
+  transform: scale(0.96);
+  background-color: #F1EEDB;
+}
+
+.keypad-backspace {
+  background-color: #F7F5EE;
+}
+
+.keypad-dot-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.keypad-dot-cell span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #C7C5B8;
+}
+
+/* Mobile Layar Sangat Kecil (<= 360px) */
+@media (max-width: 360px) {
+  .otp-boxes-row {
+    gap: 6px;
+  }
+
+  .otp-box {
+    border-radius: 11px;
+    font-size: 16px;
+  }
+}
+
+/* Responsif Desktop (>= 768px) */
+@media (min-width: 768px) {
+  .otp-page-wrapper {
+    justify-content: center;
+    padding: 40px 24px;
+  }
+
+  .otp-card-shell {
+    min-height: auto;
+    max-width: 440px;
+    border-radius: 28px;
+    background-color: var(--card-cream);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    padding-bottom: 16px;
+  }
+
+  .otp-topbar {
+    padding: 22px 26px 8px;
+  }
+
+  .otp-main-body {
+    padding: 12px 36px 28px;
+  }
+
+  .otp-leaf-mini {
+    border-color: var(--card-cream);
+  }
+
+  .otp-boxes-row {
+    gap: 10px;
+  }
+
+  .otp-box {
+    font-size: 20px;
+  }
+
+  /* Sembunyikan keypad sentuh pada desktop karena user memakai keyboard fisik */
+  .otp-keypad-sheet {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Registrasi Mitra UMKM & Halaman OTP (Responsive Mobile + Desktop)
+   -------------------------------------------------------------------------- */
+:root {
+  --sage-surface: #E5ECE3;
+  --mitra-sage-card: #8FA896;
+}
+
+.is-hidden {
+  display: none !important;
+}
+
+/* Brand Lockup (Daftar Akun Baru) */
+.plan2eat-brand-lockup {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-wordmark-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+}
+
+.brand-wordmark {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 27px;
+  line-height: 1;
+  letter-spacing: -0.6px;
+}
+
+.brand-wordmark .word-dark {
+  color: var(--black);
+}
+
+.brand-wordmark .word-orange {
+  color: var(--brand-orange);
+}
+
+.brand-tagline {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 8.5px;
+  letter-spacing: 1.4px;
+  color: var(--gray);
+}
+
+.auth-card-bottom-line {
+  width: 100%;
+  height: 1px;
+  background-color: rgba(199, 199, 199, 0.45);
+  margin-top: 6px;
+}
+
+/* --------------------------------------------------------------------------
+   Pendaftaran Mitra Dapur (1. Profil Warung)
+   -------------------------------------------------------------------------- */
+.mitra-reg-page {
+  min-height: 100vh;
+  width: 100%;
+  background-color: var(--bg-cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mitra-reg-container {
+  width: 100%;
+  max-width: 480px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 92px;
+}
+
+.mitra-topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+}
+
+.mitra-hero-banner {
+  margin: 0 18px 16px;
+  padding: 18px 18px 20px;
+  background-color: #EFECE0;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.mitra-zero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background-color: #C2EBD4;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.4px;
+  color: var(--forest-green);
+}
+
+.mitra-hero-title {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--forest-green);
+  margin: 0;
+}
+
+.mitra-hero-desc {
+  font-family: var(--font-inter);
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: #414942;
+  margin: 0;
+}
+
+/* Stepper 3 Tahap */
+.mitra-stepper {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.mitra-step-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mitra-step-item .step-bar {
+  height: 5px;
+  width: 100%;
+  border-radius: 999px;
+  background-color: #D2D5CA;
+}
+
+.mitra-step-item.is-active .step-bar {
+  background-color: var(--forest-green);
+}
+
+.mitra-step-item .step-label {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  color: var(--gray);
+}
+
+.mitra-step-item.is-active .step-label {
+  font-weight: 700;
+  color: var(--forest-green);
+}
+
+.mitra-form-wrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+/* Sage Card Form */
+.mitra-sage-card {
+  margin: 0 18px;
+  padding: 20px 18px 22px;
+  background-color: var(--mitra-sage-card);
+  border-radius: 24px;
+  box-shadow: 0 8px 24px rgba(5, 55, 31, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.mitra-section-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 2px;
+}
+
+.mitra-store-icon-circle {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background-color: var(--forest-green);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mitra-section-title {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--black);
+  margin: 0 0 2px;
+}
+
+.mitra-section-sub {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: #243027;
+  margin: 0;
+}
+
+.mitra-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.mitra-label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--black);
+}
+
+.mitra-input-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 14px;
+  border-radius: 14px;
+  background-color: var(--card-cream);
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.mitra-input-box:focus-within,
+.mitra-textarea-box:focus-within,
+.mitra-phone-number-box:focus-within {
+  background-color: var(--white);
+  border-color: var(--forest-green);
+}
+
+.mitra-field-icon {
+  flex-shrink: 0;
+}
+
+.mitra-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: var(--font-inter);
+  font-size: 13.5px;
+  color: var(--black);
+  outline: none;
+}
+
+.mitra-input::placeholder,
+.mitra-textarea::placeholder {
+  color: var(--gray);
+}
+
+.mitra-phone-split {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.mitra-country-prefix {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 48px;
+  padding: 0 13px;
+  border-radius: 14px;
+  background-color: var(--card-cream);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--black);
+  flex-shrink: 0;
+}
+
+.mitra-phone-number-box {
+  flex: 1;
+  height: 48px;
+  padding: 0 14px;
+  border-radius: 14px;
+  background-color: var(--card-cream);
+  border: 1.5px solid transparent;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.mitra-textarea-box {
+  padding: 12px 14px;
+  border-radius: 14px;
+  background-color: var(--card-cream);
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.mitra-textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: var(--font-inter);
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: var(--black);
+  resize: vertical;
+  outline: none;
+}
+
+/* Pin Titik Jemput Kurir */
+.mitra-pin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.btn-pin-accurate {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: none;
+  padding: 2px 4px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--forest-green);
+  cursor: pointer;
+}
+
+.mitra-map-preview {
+  position: relative;
+  width: 100%;
+  height: 92px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #DCEFE4 0%, #E7F0FA 55%, #F2EFE4 100%);
+  border: 1.5px solid rgba(255, 255, 255, 0.7);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.map-grid-pattern {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.7) 2px, transparent 2px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.7) 2px, transparent 2px);
+  background-size: 36px 28px;
+  transform: rotate(-12deg) scale(1.2);
+}
+
+.map-poi-tag {
+  position: absolute;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 10px;
+  color: #5B4B8A;
+  background-color: rgba(255, 255, 255, 0.85);
+  padding: 2px 7px;
+  border-radius: 6px;
+}
+
+.poi-left {
+  top: 12px;
+  left: 12px;
+}
+
+.poi-right {
+  bottom: 10px;
+  right: 16px;
+  color: #2E5A44;
+}
+
+.map-center-pin {
+  position: relative;
+  z-index: 2;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.2));
+}
+
+/* Sticky Footer Biaya Pendaftaran GRATIS + Kirim Pendaftaran */
+.mitra-bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 45;
+  background-color: var(--bg-cream);
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  padding: 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.mitra-fee-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.mitra-fee-label {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #414942;
+}
+
+.mitra-fee-value {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 19px;
+  color: var(--forest-green);
+  letter-spacing: -0.3px;
+}
+
+.btn-submit-mitra {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  padding: 0 24px;
+  border: none;
+  border-radius: 999px;
+  background-color: var(--forest-green);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(5, 55, 31, 0.22);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-submit-mitra:hover {
+  background-color: var(--forest-green-hover);
+}
+
+.btn-submit-mitra:active {
+  transform: scale(0.98);
+}
+
+/* --------------------------------------------------------------------------
+   Halaman Verifikasi OTP 
+   -------------------------------------------------------------------------- */
+.otp-page-wrapper {
+  min-height: 100vh;
+  min-height: 100dvh;
+  width: 100%;
+  background-color: var(--bg-cream);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.otp-card-shell {
+  width: 100%;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--bg-cream);
+}
+
+.otp-topbar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+}
+
+.otp-back-btn {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.otp-back-btn:hover {
+  background-color: rgba(5, 55, 31, 0.08);
+}
+
+.otp-topbar-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.otp-topbar-title {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 16px;
+  color: var(--black);
+}
+
+.otp-main-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 8px 22px 28px;
+}
+
+.otp-shield-badge {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  margin-bottom: 18px;
+}
+
+.otp-shield-ring {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: #BCEAD5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.otp-shield-inner {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: #FCE5C0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.otp-leaf-mini {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--forest-green);
+  border: 2px solid var(--bg-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.otp-heading {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--forest-green);
+  margin: 0 0 8px;
+  letter-spacing: -0.4px;
+}
+
+.otp-subtext {
+  font-family: var(--font-inter);
+  font-size: 13px;
+  color: #414942;
+  margin: 0 0 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.otp-subtext strong {
+  font-weight: 500;
+  color: #414942;
+}
+
+.otp-edit-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: #414942;
+  text-decoration: none;
+}
+
+.otp-edit-link:hover {
+  color: var(--forest-green);
+  text-decoration: underline;
+}
+
+.otp-form {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.otp-boxes-row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 9px;
+  width: 100%;
+}
+
+.otp-box {
+  width: 100%;
+  min-width: 0;
+  aspect-ratio: 1 / 1.14;
+  border-radius: 14px;
+  border: 1.5px solid transparent;
+  background-color: #EAE6D7;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--black);
+  caret-color: var(--forest-green);
+  outline: none;
+  padding: 0;
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.otp-box.is-focused,
+.otp-box:focus {
+  background-color: var(--white);
+  border-color: rgba(5, 55, 31, 0.35);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+.otp-box.is-filled {
+  background-color: var(--white);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+}
+
+.otp-resend-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  color: #414942;
+}
+
+.otp-resend-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--forest-green);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.btn-verify-otp {
+  width: 100%;
+  height: 50px;
+  border: none;
+  border-radius: 14px;
+  background-color: #7A9484;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: not-allowed;
+  transition: background-color 0.25s ease, transform 0.1s ease, box-shadow 0.25s ease;
+}
+
+.btn-verify-otp.is-ready {
+  background-color: var(--forest-green);
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(5, 55, 31, 0.22);
+}
+
+.btn-verify-otp.is-ready:hover {
+  background-color: var(--forest-green-hover);
+}
+
+.btn-verify-otp.is-ready:active {
+  transform: scale(0.99);
+}
+
+/* Bottom Keypad Sheet (Mobile Default) */
+.otp-keypad-sheet {
+  width: 100%;
+  background-color: #ECE7D5;
+  border-radius: 26px 26px 0 0;
+  padding: 18px 20px 24px;
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.05);
+}
+
+.otp-keypad-grid {
+  max-width: 360px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 11px 14px;
+}
+
+.keypad-btn {
+  height: 46px;
+  border: none;
+  border-radius: 14px;
+  background-color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--black);
+  cursor: pointer;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  transition: background-color 0.15s ease, transform 0.08s ease;
+}
+
+.keypad-btn:hover {
+  background-color: #FAF9F5;
+}
+
+.keypad-btn:active {
+  transform: scale(0.96);
+  background-color: #F1EEDB;
+}
+
+.keypad-backspace {
+  background-color: #F7F5EE;
+}
+
+.keypad-dot-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.keypad-dot-cell span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #C7C5B8;
+}
+
+/* --------------------------------------------------------------------------
+   Desktop Web Layout (>= 768px) untuk Registrasi Mitra & OTP UMKM
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  .mitra-reg-page {
+    padding: 36px 24px 48px;
+    justify-content: center;
+  }
+
+  .mitra-reg-container {
+    max-width: 560px;
+    min-height: auto;
+    background-color: var(--card-cream);
+    border-radius: 28px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    padding-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .mitra-topbar {
+    padding: 22px 26px 12px;
+  }
+
+  .mitra-hero-banner {
+    margin: 0 26px 20px;
+    padding: 22px 24px;
+  }
+
+  .mitra-sage-card {
+    margin: 0 26px;
+    padding: 24px;
+  }
+
+  .mitra-bottom-bar {
+    position: static;
+    margin: 18px 26px 0;
+    padding: 16px 0 0;
+    background: transparent;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  .otp-page-wrapper {
+    justify-content: center;
+    padding: 40px 24px;
+  }
+
+  .otp-card-shell {
+    min-height: auto;
+    max-width: 440px;
+    border-radius: 28px;
+    background-color: var(--card-cream);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.14);
+    padding-bottom: 16px;
+  }
+
+  .otp-topbar {
+    padding: 22px 26px 8px;
+  }
+
+  .otp-main-body {
+    padding: 12px 36px 28px;
+  }
+
+  .otp-leaf-mini {
+    border-color: var(--card-cream);
+  }
+
+  .otp-box {
+    font-size: 20px;
+  }
+
+  .otp-keypad-sheet {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   DASHBOARD ADMIN & DETAIL LAPORAN MODAL (Responsive Mobile + Desktop)
+   ========================================================================== */
+
+/* Topbar khusus Admin (Breadcrumb kiri + Halo Admin kanan) */
+.admin-shell .app-header.admin-header {
+  background-color: var(--bg-cream);
+  color: var(--black);
+  border-radius: 0;
+  box-shadow: none;
+  border-bottom: 1px solid #E5E1D3;
+}
+
+.admin-header-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 14px 18px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-mobile-logo-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background-color: var(--emerald-bright);
+}
+
+.admin-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+}
+
+.breadcrumb-parent {
+  color: #6B726C;
+  font-weight: 500;
+}
+
+.breadcrumb-sep {
+  color: #9CA39D;
+}
+
+.breadcrumb-current {
+  color: var(--black);
+  font-weight: 700;
+}
+
+.admin-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-notif-btn {
+  color: var(--black);
+  background-color: transparent;
+}
+
+.admin-notif-btn:hover {
+  background-color: rgba(5, 55, 31, 0.08);
+}
+
+.admin-user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.admin-greeting-text {
+  display: none;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 13.5px;
+  color: var(--black);
+}
+
+.admin-initial-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #DCECE3;
+  color: var(--forest-green);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Container Konten Utama Admin */
+.admin-main-content {
+  max-width: 1240px;
+  padding: 20px 18px 32px;
+}
+
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Header Judul + Filter Periode & Unduh Laporan */
+.admin-page-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-page-title {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 24px;
+  line-height: 1.2;
+  letter-spacing: -0.5px;
+  color: var(--black);
+  margin: 0;
+}
+
+.admin-header-controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.admin-period-dropdown {
+  position: relative;
+}
+
+.btn-period-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #DCD9CD;
+  background-color: #FAF8F0;
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-period-trigger:hover {
+  background-color: var(--white);
+}
+
+.btn-period-trigger.is-open {
+  background-color: var(--forest-green);
+  border-color: var(--forest-green);
+  color: var(--white);
+}
+
+.admin-period-menu {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 35;
+  min-width: 165px;
+  margin: 0;
+  padding: 8px 6px;
+  list-style: none;
+  background-color: var(--white);
+  border: 1px solid #E5E1D3;
+  border-radius: 12px;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+}
+
+.period-option-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12.5px;
+  color: var(--black);
+  text-align: left;
+  cursor: pointer;
+}
+
+.period-option-btn:hover {
+  background-color: #F5F3E8;
+}
+
+.period-option-btn .period-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: var(--black);
+}
+
+.period-option-btn.is-selected {
+  font-weight: 700;
+  color: var(--forest-green);
+}
+
+.period-option-btn.is-selected .period-dot {
+  background-color: var(--forest-green);
+}
+
+.btn-download-report {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #DCD9CD;
+  background-color: #FAF8F0;
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-download-report:hover {
+  background-color: var(--white);
+}
+
+/* 1. Grid 4 Kartu KPI */
+.admin-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.admin-kpi-card {
+  background-color: #EFECE0;
+  border: 1px solid #E2DEC9;
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.admin-kpi-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12.5px;
+  color: #4D554E;
+}
+
+.admin-kpi-icon {
+  color: var(--forest-green);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-kpi-value {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 23px;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  color: var(--black);
+}
+
+/* 2. Grid 2 Kolom Tengah & Bawah */
+.admin-two-col-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.admin-panel-card {
+  background-color: var(--white);
+  border: 1px solid #ECE8DA;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-panel-head-col {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.admin-panel-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--black);
+  margin: 0;
+}
+
+.admin-panel-subtitle {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: var(--gray);
+  margin: 0;
+}
+
+.admin-see-all-link {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  color: var(--black);
+  text-decoration: none;
+}
+
+.admin-see-all-link:hover {
+  color: var(--forest-green);
+  text-decoration: underline;
+}
+
+/* Grafik Batang Pesanan Mingguan */
+.admin-chart-wrap {
+  display: flex;
+  align-items: stretch;
+  gap: 14px;
+  padding-top: 4px;
+}
+
+.admin-chart-yaxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 24px;
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #8C928D;
+  min-width: 30px;
+}
+
+.admin-chart-plot {
+  flex: 1;
+  min-width: 0;
+}
+
+.admin-chart-bars {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  gap: 10px;
+  height: 165px;
+}
+
+.admin-bar-item {
+  flex: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.admin-bar-track {
+  width: 100%;
+  flex: 1;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.admin-bar-fill {
+  width: 100%;
+  max-width: 34px;
+  border-radius: 5px 5px 0 0;
+  background-color: #A2D5B6;
+  transition: height 0.35s ease, background-color 0.25s ease;
+}
+
+.admin-bar-fill.is-peak {
+  background-color: #123F26;
+}
+
+.admin-bar-label {
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 500;
+  color: #6B726C;
+  white-space: nowrap;
+}
+
+.admin-bar-item.is-peak .admin-bar-label {
+  font-weight: 700;
+  color: var(--black);
+}
+
+/* Perlu Ditinjau */
+.admin-review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-review-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-review-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.admin-soft-icon-box {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background-color: #F3EFE2;
+  color: var(--forest-green);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-review-name {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--black);
+}
+
+.admin-review-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.admin-count-pill {
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  background-color: #F3EFE2;
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-review-action {
+  padding: 5px 12px;
+  border-radius: 8px;
+  border: 1px solid #DCD9CD;
+  background-color: #FAF8F0;
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.btn-review-action:hover {
+  background-color: #EFECE0;
+}
+
+/* Tabel Laporan Aduan */
+.admin-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-report-table {
+  width: 100%;
+  min-width: 480px;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+}
+
+.admin-report-table thead tr {
+  background-color: #EFECE0;
+}
+
+.admin-report-table th {
+  padding: 10px 14px;
+  font-weight: 600;
+  color: var(--black);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.admin-report-table th:first-child {
+  border-radius: 8px 0 0 8px;
+}
+
+.admin-report-table th:last-child {
+  border-radius: 0 8px 8px 0;
+}
+
+.admin-report-table td {
+  padding: 12px 14px;
+  color: var(--black);
+  border-bottom: 1px solid #F1EFE7;
+  white-space: nowrap;
+}
+
+.admin-report-table .col-id {
+  font-weight: 600;
+}
+
+.admin-report-table .text-center {
+  text-align: center;
+}
+
+.btn-table-detail {
+  background: transparent;
+  border: none;
+  padding: 2px 6px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  color: #8C928D;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.btn-table-detail:hover {
+  color: var(--forest-green);
+  text-decoration: underline;
+}
+
+.admin-table-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding-top: 2px;
+}
+
+.admin-pagination-info {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  color: #8C928D;
+}
+
+.admin-pagination-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.page-arrow-btn,
+.page-num-btn {
+  min-width: 26px;
+  height: 26px;
+  padding: 0 6px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  color: #6B726C;
+  cursor: pointer;
+}
+
+.page-num-btn.is-active {
+  background-color: var(--forest-green);
+  color: var(--white);
+}
+
+.page-ellipsis {
+  font-size: 12px;
+  color: #8C928D;
+  padding: 0 2px;
+}
+
+/* Aktivitas Terbaru */
+.admin-activity-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-activity-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.admin-activity-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-activity-icon.icon-mint {
+  background-color: #DCECE3;
+  color: var(--forest-green);
+}
+
+.admin-activity-icon.icon-cream {
+  background-color: #F3EFE2;
+  color: #7A5C2E;
+}
+
+.admin-activity-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.admin-activity-title {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--black);
+}
+
+.admin-activity-time {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  color: #8C928D;
+}
+
+/* Modal Detail Laporan / Aduan */
+.admin-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  background-color: rgba(28, 28, 17, 0.35);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.admin-modal-card {
+  width: 100%;
+  max-width: 640px;
+  background-color: var(--white);
+  border-radius: 20px;
+  padding: 20px 24px 24px;
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.18);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.admin-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.admin-modal-icon-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--black);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.admin-modal-icon-btn:hover {
+  background-color: #F3EFE2;
+}
+
+.admin-modal-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--black);
+  margin: 0;
+  text-align: center;
+  flex: 1;
+}
+
+.admin-modal-header-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-investigation-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background-color: #E7F5EC;
+  color: var(--forest-green);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.status-investigation-pill .status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #16A34A;
+}
+
+.admin-modal-divider {
+  border: 0;
+  border-top: 1px solid #ECE8DA;
+  margin: 0;
+}
+
+.admin-modal-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-modal-meta-left,
+.admin-modal-meta-right {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-modal-meta-right {
+  text-align: right;
+}
+
+.admin-modal-meta-label {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  color: #8C928D;
+}
+
+.admin-modal-id-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.admin-modal-id-val {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--black);
+}
+
+.admin-modal-inline-badge {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background-color: #E7F5EC;
+  color: var(--forest-green);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 10.5px;
+}
+
+.admin-modal-date-val {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--black);
+}
+
+.admin-modal-parties-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.admin-modal-info-box {
+  border: 1px solid #E5E1D3;
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-modal-box-label {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  color: #8C928D;
+}
+
+.admin-modal-box-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--black);
+}
+
+.admin-modal-box-sub {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: #6B726C;
+}
+
+.admin-modal-subject-text {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--black);
+  margin: 2px 0 0;
+}
+
+/* Mobile Layar Sangat Kecil (<= 420px) */
+@media (max-width: 420px) {
+  .admin-kpi-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .status-investigation-pill {
+    display: none;
+  }
+
+  .admin-modal-meta-right {
+    text-align: left;
+  }
+}
+
+/* Tablet & Desktop (>= 768px) */
+@media (min-width: 768px) {
+  .admin-header-inner {
+    padding: 16px 32px;
+    flex-direction: row;
+  }
+
+  .admin-greeting-text {
+    display: inline-block;
+  }
+
+  .admin-main-content {
+    padding: 24px 32px 44px;
+  }
+
+  .admin-page-header {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .admin-page-title {
+    font-size: 28px;
+  }
+
+  .admin-header-controls {
+    width: auto;
+  }
+
+  .admin-kpi-value {
+    font-size: 27px;
+  }
+
+  .admin-modal-parties-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Desktop Lebar (>= 1024px) */
+@media (min-width: 1024px) {
+  .admin-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .admin-two-col-grid {
+    display: grid;
+    grid-template-columns: 1.85fr 1fr;
+    gap: 18px;
+    align-items: stretch;
+  }
+}
