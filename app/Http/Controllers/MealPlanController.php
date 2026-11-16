@@ -1,0 +1,125 @@
+<?php
+
+namespace App\Http\Controllers;
+
+use App\Models\MealPlan;
+use App\Models\DetailMealPlan;
+use App\Models\Menu; // Pastikan model Menu sudah ada
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class MealPlanController extends Controller
+{
+    public function index()
+    {
+        // Muat meal plan beserta detail dan data menu dari relasi detail
+        $mealPlans = MealPlan::with('detailMealPlan.menu')
+            ->where('id_user', Auth::id())
+            ->get();
+            
+        // Ambil semua daftar menu untuk dropdown pilihan makanan
+        $daftarMenu = Menu::all(); 
+
+        return view('pelanggan.meal_plan', compact('mealPlans', 'daftarMenu'));
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'judul_plan' => 'required|string|max:255',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+        ]);
+
+        MealPlan::create([
+            'id_user' => Auth::id(),
+            'judul_plan' => $request->judul_plan,
+            'tanggal_mulai' => $request->tanggal_mulai,
+            'tanggal_selesai' => $request->tanggal_selesai,
+        ]);
+
+        return redirect()->route('pelanggan.meal_plan.index')->with('success', 'Meal Plan berhasil dibuat.');
+    }
+
+    public function update(Request $request, $id_plan)
+    {
+        $request->validate([
+            'judul_plan' => 'required|string|max:255',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+        ]);
+
+        $mealPlan = MealPlan::where('id_user', Auth::id())->findOrFail($id_plan);
+        $mealPlan->update($request->only(['judul_plan', 'tanggal_mulai', 'tanggal_selesai']));
+
+        return redirect()->route('pelanggan.meal_plan.index')->with('success', 'Informasi Meal Plan berhasil diperbarui.');
+    }
+
+    public function destroy($id_plan)
+    {
+        $mealPlan = MealPlan::where('id_user', Auth::id())->findOrFail($id_plan);
+        // Pastikan relasi onDelete cascade diaktifkan di tabel database
+        $mealPlan->delete(); 
+
+        return redirect()->route('pelanggan.meal_plan.index')->with('success', 'Meal Plan berhasil dihapus.');
+    }
+
+    // --- FUNGSI DETAIL ---
+    public function storeDetail(Request $request, $id_plan)
+    {
+        // 1. Ambil data meal plan-nya dulu untuk mendapatkan batas tanggal
+        $mealPlan = MealPlan::where('id_user', Auth::id())->findOrFail($id_plan);
+
+        // 2. Tambahkan validasi batas tanggal (after_or_equal & before_or_equal)
+        $request->validate([
+            'id_menu'      => 'required|exists:menu,id_menu', 
+            'jadwal_makan' => 'required|date|after_or_equal:' . $mealPlan->tanggal_mulai . '|before_or_equal:' . $mealPlan->tanggal_selesai,
+            'waktu_makan'  => 'required|string|max:255',
+        ], [
+            // (Opsional) Pesan error jika user memaksa memasukkan tanggal yang salah
+            'jadwal_makan.after_or_equal' => 'Jadwal makan tidak boleh sebelum tanggal mulai plan.',
+            'jadwal_makan.before_or_equal' => 'Jadwal makan tidak boleh melewati tanggal selesai plan.'
+        ]);
+
+        // 3. Simpan data jika validasi lolos
+        DetailMealPlan::create([
+            'id_plan'      => $mealPlan->id_plan,
+            'id_menu'      => $request->id_menu,
+            'jadwal_makan' => $request->jadwal_makan,
+            'waktu_makan'  => $request->waktu_makan,
+        ]);
+
+        return redirect()->route('pelanggan.meal_plan.index')->with('success', 'Menu berhasil ditambahkan ke jadwal.');
+    }
+
+    public function destroyDetail($id_detail_plan)
+    {
+        $detail = DetailMealPlan::whereHas('mealPlan', function($query) {
+            $query->where('id_user', Auth::id());
+        })->findOrFail($id_detail_plan);
+        
+        $detail->delete();
+
+        return redirect()->route('pelanggan.meal_plan.index')->with('success', 'Menu berhasil dihapus dari jadwal.');
+    }
+
+    public function updateDetail(Request $request, $id_detail_plan)
+    {
+        $request->validate([
+            'id_menu' => 'required|exists:menu,id_menu',
+            'waktu_makan' => 'required|string|max:255',
+        ]);
+
+        $detail = DetailMealPlan::whereHas('mealPlan', function($query) {
+            $query->where('id_user', Auth::id());
+        })->findOrFail($id_detail_plan);
+
+        // Update waktu dan menu (jadwal_makan sengaja tidak di-update agar tanggal terkunci)
+        $detail->update([
+            'id_menu' => $request->id_menu,
+            'waktu_makan' => $request->waktu_makan,
+        ]);
+
+        return redirect()->route('pelanggan.meal_plan.index')->with('success', 'Menu pada jadwal berhasil diperbarui.');
+    }
+}

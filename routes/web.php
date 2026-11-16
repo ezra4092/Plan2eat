@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfilKesehatanController;
 use App\Http\Controllers\UmkmController;
+use App\Http\Controllers\MealPlanController;
 
 Route::get('/', function () {
     return view('login');
@@ -33,6 +34,26 @@ Route::group(['middleware' => ['auth']], function() {
         ->name('pelanggan.profil_kesehatan.update');
     Route::delete('/pelanggan/profil-kesehatan/{id_profil}', [ProfilKesehatanController::class, 'destroy'])
         ->name('pelanggan.profil_kesehatan.destroy');
+
+    // Menampilkan halaman utama Meal Plan
+    Route::get('/pelanggan/meal-plan', [MealPlanController::class, 'index'])
+        ->name('pelanggan.meal_plan.index');
+    
+    // CRUD Utama Meal Plan
+    Route::post('/pelanggan/meal-plan', [MealPlanController::class, 'store'])
+        ->name('pelanggan.meal_plan.store');
+    Route::put('/pelanggan/meal-plan/{id_plan}', [MealPlanController::class, 'update'])
+        ->name('pelanggan.meal_plan.update');
+    Route::delete('/pelanggan/meal-plan/{id_plan}', [MealPlanController::class, 'destroy'])
+        ->name('pelanggan.meal_plan.destroy');
+
+    // CRUD Kelola Detail Meal Plan (Menu, Jadwal, Waktu)
+    Route::post('/pelanggan/meal-plan/{id_plan}/detail', [MealPlanController::class, 'storeDetail'])
+        ->name('pelanggan.meal_plan.detail.store');
+    Route::delete('/pelanggan/meal-plan/detail/{id_detail_plan}', [MealPlanController::class, 'destroyDetail'])
+        ->name('pelanggan.meal_plan.detail.destroy');
+
+    Route::put('/pelanggan/meal-plan/detail/{id}', [MealPlanController::class, 'updateDetail'])->name('pelanggan.meal_plan.detail.update');
 
     // Route Profil UMKM
     Route::get('/umkm/profil', [UmkmController::class, 'index'])

@@ -44,6 +44,12 @@
     </div>
 
     <hr class="sidebar-divider">
+    <a href="{{ route('pelanggan.meal_plan.index') }}" class="nav-item" style="display: block; width: 100%; text-align: left; text-decoration: none; color: inherit; cursor: pointer;">
+    <div class="nav-icon-box">
+        <img src="{{ asset('img/icon-logout.svg') }}" alt="Meal Plan"> 
+    </div>
+    <span class="nav-label">Meal Plan</span>
+</a>
 
     <!-- Info Card Bawah Sidebar (Hanya muncul di Desktop seperti SB Admin 2) -->
     <div class="sidebar-promo-card">
