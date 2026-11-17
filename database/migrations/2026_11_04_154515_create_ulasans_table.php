@@ -8,7 +8,6 @@ return new class extends Migration {
         Schema::create('ulasan', function (Blueprint $table) {
             $table->id('id_ulasan');
             $table->foreignId('id_pesanan')->constrained('pesanan', 'id_pesanan')->onDelete('cascade');
-            $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->integer('rating');
             $table->text('ulasan')->nullable();
             $table->timestamp('timestamp')->useCurrent();
