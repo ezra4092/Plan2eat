@@ -8,7 +8,7 @@ return new class extends Migration {
         Schema::create('profil_kesehatan', function (Blueprint $table) {
             $table->id('id_profil');
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
-            $table->string('riwayat_alergi')->nullable();
+            $table->json('riwayat_alergi')->nullable();
             $table->string('jenis_diet')->nullable();
             $table->text('catatan_khusus')->nullable();
             $table->bigInteger('batas_budget')->nullable();

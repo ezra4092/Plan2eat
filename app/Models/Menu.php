@@ -11,7 +11,6 @@ class Menu extends Model
 {
     use HasFactory;
 
-    // Matikan timestamps otomatis karena tidak ada di ERD
     public $timestamps = false;
 
     protected $table = 'menu';
@@ -19,11 +18,10 @@ class Menu extends Model
 
     protected $fillable = [
         'id_umkm',
-        // id_plan dihapus dari sini karena sudah dipindah ke tabel detail_meal_plan
+        'id_plan',
         'nama_makanan',
         'deskripsi_makanan',
         'foto_menu',
-        'kategori_waktu',
         'kandungan_kalori',
         'stok_harian',
         'harga_normal',

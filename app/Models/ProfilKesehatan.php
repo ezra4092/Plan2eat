@@ -24,6 +24,14 @@ class ProfilKesehatan extends Model
         'batas_budget',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'riwayat_alergi' => 'array',
+            'batas_budget' => 'integer',
+        ];
+    }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');

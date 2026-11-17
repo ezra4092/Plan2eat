@@ -18,17 +18,20 @@ class Pesanan extends Model
         'id_user',
         'id_umkm',
         'id_plan',
-        'tanggal_waktu_pesanan',
-        'jadwal_pengiriman',
-        'metode_pembayaran',
-        'total_pembayaran',
         'status_pesanan',
+        'total_pembayaran',
+        'tgl_mulai',
+        'tgl_selesai',
+        'metode_pembayaran',
+        'metode_pengiriman',
+        'jadwal_pengiriman',
     ];
 
     protected function casts(): array
     {
         return [
-            'tanggal_waktu_pesanan' => 'datetime',
+            'tgl_mulai' => 'datetime',
+            'tgl_selesai' => 'datetime',
             'jadwal_pengiriman' => 'datetime',
             'total_pembayaran' => 'decimal:2',
         ];

@@ -11,7 +11,7 @@ return new class extends Migration {
             $table->foreignId('id_plan')->constrained('meal_plan', 'id_plan')->onDelete('cascade');
             $table->foreignId('id_menu')->constrained('menu', 'id_menu')->onDelete('cascade');
             $table->date('jadwal_makan');
-            $table->string('waktu_makan'); // Contoh isi: 'Sarapan', 'Makan Siang', 'Makan Malam'
+            $table->string('waktu_makan'); 
         });
     }
 

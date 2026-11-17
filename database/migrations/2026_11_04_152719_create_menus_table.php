@@ -20,8 +20,7 @@ return new class extends Migration
             $table->integer('kandungan_kalori')->nullable();
             $table->integer('stok_harian')->default(0);
             $table->decimal('harga_normal', 12, 2);
-            $table->string('kategori_waktu');
-            $table->string('foto_menu')->nullable();
+            $table->string('foto_menu');
         });
     }
 

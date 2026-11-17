@@ -19,6 +19,7 @@ class DetailPesanan extends Model
         'id_menu',
         'id_flash_sale',
         'kuantitas',
+        'waktu',
         'harga_satuan',
         'subtotal',
     ];

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['nama_lengkap', 'email', 'password', 'role', 'created_at'])]
+#[Fillable(['nama_lengkap', 'email', 'password', 'role'])]
 #[Hidden(['password'])]
 class User extends Authenticatable
 {
@@ -22,7 +22,6 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            // email_verified_at dihapus karena tidak ada di ERD
             'password' => 'hashed',
         ];
     }

@@ -14,15 +14,15 @@ class UserSeeder extends Seeder
     {
         User::create([
             'nama_lengkap' => 'Admin Plan2Eat',
-            'email' => 'admin@plan2eat.com',
-            'password' => 'password123', // Otomatis di-hash oleh Laravel
+            'email' => 'admin@plan2eat.test',
+            'password' => 'password123',
             'role' => 'admin',
         ]);
 
         // Membuat akun Mahasiswa/Pelanggan
         User::create([
             'nama_lengkap' => 'Ezra Faira',
-            'email' => 'pelanggan@plan2eat.com',
+            'email' => 'pelanggan@plan2eat.test',
             'password' => 'password123',
             'role' => 'pelanggan',
         ]);
@@ -30,7 +30,28 @@ class UserSeeder extends Seeder
         // Membuat akun Pemilik UMKM
         User::create([
             'nama_lengkap' => 'Ibu Sifren',
-            'email' => 'umkm@plan2eat.com',
+            'email' => 'umkm@plan2eat.test',
+            'password' => 'password123',
+            'role' => 'umkm',
+        ]);
+
+        User::create([
+            'nama_lengkap' => 'Pak Budi',
+            'email' => 'budi@plan2eat.test',
+            'password' => 'password123',
+            'role' => 'umkm',
+        ]);
+
+        User::create([
+            'nama_lengkap' => 'Bu Siti',
+            'email' => 'siti@plan2eat.test',
+            'password' => 'password123',
+            'role' => 'umkm',
+        ]);
+
+        User::create([
+            'nama_lengkap' => 'Mas Dimas',
+            'email' => 'dimas@plan2eat.test',
             'password' => 'password123',
             'role' => 'umkm',
         ]);

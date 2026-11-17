@@ -10,11 +10,13 @@ return new class extends Migration {
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->foreignId('id_umkm')->constrained('umkm', 'id_umkm')->onDelete('cascade');
             $table->foreignId('id_plan')->nullable()->constrained('meal_plan', 'id_plan')->onDelete('set null');
-            $table->string('status_pesanan');
+            $table->enum('status_pesanan', ['persiapan', 'masak', 'diambil', 'selesai'])->default('persiapan');
             $table->decimal('total_pembayaran', 12, 2);
-            $table->dateTime('tanggal_waktu_pesanan');
+            $table->dateTime('tgl_mulai');
+            $table->dateTime('tgl_selesai');
             $table->string('metode_pembayaran');
-            $table->dateTime('jadwal_pengiriman')->nullable();
+            $table->string('metode_pengiriman');
+            $table->dateTime('jadwal_pengiriman');
         });
     }
     public function down(): void {

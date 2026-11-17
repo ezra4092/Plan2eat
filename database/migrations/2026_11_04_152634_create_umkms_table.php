@@ -11,12 +11,12 @@ return new class extends Migration {
             $table->foreignId('id_user')->constrained('users', 'id_user')->onDelete('cascade');
             $table->string('nama_vendor');
             $table->text('deskripsi_toko')->nullable();
-            $table->text('alamat_lengkap')->nullable();
-            $table->time('jam_buka')->nullable();
-            $table->time('jam_tutup')->nullable();
-            $table->string('status_operasional')->nullable();
+            $table->text('alamat_lengkap');
+            $table->time('jam_buka');
+            $table->time('jam_tutup');
+            $table->string('status_operasional');
             $table->decimal('saldo', 15, 2)->default(0);
-            $table->string('metode_pembayaran')->nullable();
+            $table->string('metode_pembayaran');
         });
     }
 
