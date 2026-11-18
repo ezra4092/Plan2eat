@@ -46,6 +46,32 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 // Route::get('/otp', [AuthController::class, 'showOtp'])->name('otp');
 // Route::post('/otp/verify', [AuthController::class, 'verifyOtp'])->name('otp-verify');
 
+// Personalisasi Pelanggan
+Route::get('/pelanggan/personalisasi', function () {
+    return view('pelanggan.personalisasi');
+})->name('pelanggan.personalisasi');
+
+// Pendaftaran Mitra UMKM
+Route::get('/umkm/pendaftaran-mitra', function () {
+    return view('umkm.pendaftaran-mitra');
+})->name('umkm.pendaftaran-mitra');
+
+// Registrasi Pelanggan
+Route::get('/register', [AuthController::class, 'showRegistrationForm'])
+    ->name('register.form');
+
+Route::post('/register', [AuthController::class, 'register'])
+    ->name('register');
+
+// Verifikasi OTP
+Route::get('/verify-otp', [AuthController::class, 'showOtpForm'])
+    ->name('otp.form');
+
+Route::post('/verify-otp', [AuthController::class, 'verifyOtp'])
+    ->name('verify-otp');
+
+Route::post('/resend-otp', [AuthController::class, 'resendOtp'])
+    ->name('resend-otp');
 
 // ==========================================
 // 2. ROUTE TERAUTENTIKASI (MIDDLEWARE AUTH)
@@ -67,14 +93,17 @@ Route::group(['middleware' => ['auth']], function() {
         return view('pelanggan.beranda');
     })->name('pelanggan.beranda');
 
+    
+
 
     // ==========================================
     // MODUL PELANGGAN
     // ==========================================
 
     // --- Profil Kesehatan ---
+    Route::get('/profil', [ProfilKesehatanController::class, 'index'])->name('pelanggan.profil');
     Route::get('/pelanggan/profil-kesehatan', [ProfilKesehatanController::class, 'index'])
-        ->name('pelanggan.profil_kesehatan');
+        ->name('pelanggan.profil_kesehata');
     Route::post('/pelanggan/profil-kesehatan', [ProfilKesehatanController::class, 'store'])
         ->name('pelanggan.profil_kesehatan-create');
     Route::put('/pelanggan/profil-kesehatan/{id_profil}', [ProfilKesehatanController::class, 'update'])
@@ -140,14 +169,14 @@ Route::group(['middleware' => ['auth']], function() {
     // --- Profil UMKM ---
     Route::get('/umkm/profil', [UmkmController::class, 'index'])
         ->name('umkm.profil');
-    Route::put('/umkm/profil/{id_umkm}', [UmkmController::class, 'update'])
-        ->name('umkm.profil-update');
-    Route::post('/umkm/logout', [UmkmController::class, 'logout'])
-        ->name('umkm.logout');
+    // Route::put('/umkm/profil/{id_umkm}', [UmkmController::class, 'update'])
+    //     ->name('umkm.profil-update');
+    // Route::post('/umkm/logout', [UmkmController::class, 'logout'])
+    //     ->name('umkm.logout');
 
-    // Alias kompatibilitas view lama
-    Route::get('/umkm/profil/legacy-index', [UmkmController::class, 'index'])->name('umkm.profil.index');
-    Route::put('/umkm/profil/{id_umkm}/legacy-update', [UmkmController::class, 'update'])->name('umkm.profil.update');
+    // // Alias kompatibilitas view lama
+    // Route::get('/umkm/profil/legacy-index', [UmkmController::class, 'index'])->name('umkm.profil.index');
+    // Route::put('/umkm/profil/{id_umkm}/legacy-update', [UmkmController::class, 'update'])->name('umkm.profil.update');
 
     // --- Manajemen Menu (CRUD Dialog) ---
     // Route::get('/umkm/menu', [MenuController::class, 'index'])->name('umkm.menu');

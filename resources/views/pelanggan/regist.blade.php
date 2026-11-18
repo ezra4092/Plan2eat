@@ -7,7 +7,7 @@
 @section('content')
 <main class="login-page-user">
   <section class="authentication">
-    {{-- Brand Header Plan2Eat --}}
+
     <div class="brand-header">
       <div class="plan2eat-brand-lockup" aria-label="Plan2Eat - Plan It, Order It, Irit">
         <svg width="46" height="46" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -19,6 +19,7 @@
           <circle cx="23" cy="25" r="11.5" fill="#FFFFFF"/>
           <circle cx="23" cy="25" r="6.8" fill="#E8702A"/>
         </svg>
+
         <div class="brand-wordmark-col">
           <div class="brand-wordmark">
             <span class="word-dark">Plan</span><span class="word-orange">2</span><span class="word-dark">Eat</span>
@@ -28,17 +29,25 @@
       </div>
     </div>
 
-    {{-- Heading --}}
     <div class="auth-heading">
       <h1 class="text-wrapper">Daftar Akun Baru</h1>
       <p class="subtitle">Silakan masukkan detail akun Anda di bawah ini</p>
     </div>
 
-    {{-- Form Registrasi --}}
+    @if ($errors->any())
+      <div class="auth-error">
+        @foreach ($errors->all() as $error)
+          <p>{{ $error }}</p>
+        @endforeach
+      </div>
+    @endif
+
     <form class="auth-form" action="{{ route('register') }}" method="POST">
       @csrf
 
-      {{-- Input Nama Lengkap --}}
+      {{-- Role pelanggan ditentukan dari halaman registrasi ini --}}
+      <input type="hidden" name="role" value="pelanggan">
+
       <div class="form-group-custom">
         <label for="name" class="label">Nama Lengkap</label>
         <div class="phone-OTP-input">
@@ -63,7 +72,6 @@
         </div>
       </div>
 
-      {{-- Input Email --}}
       <div class="form-group-custom">
         <label for="email" class="label">Email</label>
         <div class="phone-OTP-input">
@@ -88,7 +96,6 @@
         </div>
       </div>
 
-      {{-- Input Password --}}
       <div class="form-group-custom">
         <label for="password" class="label">Password</label>
         <div class="phone-OTP-input">
@@ -113,7 +120,6 @@
         </div>
       </div>
 
-      {{-- Input Konfirmasi Password --}}
       <div class="form-group-custom">
         <label for="password_confirmation" class="label">Konfirmasi Password</label>
         <div class="phone-OTP-input">
@@ -138,7 +144,6 @@
         </div>
       </div>
 
-      {{-- Tombol Lanjutkan --}}
       <button type="submit" class="action-primary">
         <span class="text-wrapper-4">Lanjutkan</span>
       </button>
@@ -147,11 +152,10 @@
     <div class="auth-card-bottom-line"></div>
   </section>
 
-  {{-- Link Login di Bawah Card --}}
   <div class="container-wrapper">
     <p class="belum-punya-akun">
       Sudah Punya Akun?
-      <a href="{{ route('login') }}" class="text-wrapper-5">Login</a>
+      <a href="{{ route('login_page') }}" class="text-wrapper-5">Login</a>
     </p>
   </div>
 </main>

@@ -22,7 +22,7 @@
             
             <!-- Brand Header / Logo -->
             <div class="brand-header">
-                <img src="{{ asset('template/img/logo-plan2eat.png') }}" alt="Plan2Eat - Plan It, Order It, Irit" class="horizontal-terang">
+                <img src="{{ asset('..\images\Logo 1.png') }}" alt="Plan2Eat - Plan It, Order It, Irit" class="horizontal-terang">
             </div>
 
             <!-- Title & Subtitle -->
@@ -106,7 +106,7 @@
             <!-- Footer Register Link -->
             <div class="container-wrapper">
                 <p class="belum-punya-akun">
-                    Belum Punya akun? <a href="" class="text-wrapper-5">Registrasi</a>
+                    Belum Punya akun? <a href="{{ route('register') }}" class="text-wrapper-5">Registrasi</a>
                 </p>
             </div>
 

@@ -8,7 +8,7 @@
   <!-- Brand Header (Hanya muncul di Desktop Left Sidebar seperti SB Admin 2) -->
   <div class="sidebar-brand">
     <a href="{{ $userRole === 'umkm' ? url('/umkm/dashboard') : url('/pelanggan/beranda') }}" class="sidebar-brand-link">
-      <img class="sidebar-brand-icon" src="{{ asset('img/logo.svg') }}" alt="Plan2Eat Logo">
+      <img class="sidebar-brand-icon" src="{{ asset('images/Logo 2.png') }}" alt="Plan2Eat Logo">
       <span class="sidebar-brand-text">PLAN2EAT</span>
     </a>
   </div>
@@ -44,15 +44,6 @@
     </div>
 
     <hr class="sidebar-divider">
-    <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
-      @csrf
-      <button type="submit" class="nav-item" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
-        <div class="nav-icon-box">
-          <img src="{{ asset('img/icon-logout.svg') }}" alt="Logout">
-        </div>
-        <span class="nav-label">Logout</span>
-      </button>
-    </form>
 
     <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
       @csrf
@@ -108,15 +99,6 @@
     </div>
 
     <hr class="sidebar-divider">
-    <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
-      @csrf
-      <button type="submit" class="nav-item" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
-        <div class="nav-icon-box">
-          <img src="{{ asset('img/icon-logout.svg') }}" alt="Logout">
-        </div>
-        <span class="nav-label">Logout</span>
-      </button>
-    </form>
 
     <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
       @csrf

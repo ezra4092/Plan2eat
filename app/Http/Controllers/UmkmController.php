@@ -3,45 +3,83 @@
 namespace App\Http\Controllers;
 
 use App\Models\Umkm;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rule;
 
 class UmkmController extends Controller
 {
-    // Menampilkan halaman profil UMKM milik user yang sedang login
+    // Menampilkan profil akun dan profil UMKM
     public function index()
     {
-        $umkm = Umkm::where('id_user', Auth::id())->first();
+        $user = User::where('id_user', Auth::id())->firstOrFail();
 
-        return view('umkm.profil', compact('umkm'));
+        $umkm = Umkm::where('id_user', $user->id_user)->firstOrFail();
+
+        return view('umkm.profil', compact('user', 'umkm'));
     }
 
-    // Memperbarui data profil UMKM
+    // Memperbarui data user dan UMKM
     public function update(Request $request, $id_umkm)
     {
+        // Memastikan UMKM merupakan milik user yang login
+        $user = User::where('id_user', Auth::id())->firstOrFail();
+
         $umkm = Umkm::where('id_umkm', $id_umkm)
-            ->where('id_user', Auth::id()) // Memastikan hanya pemilik toko yang bisa edit
+            ->where('id_user', $user->id_user)
             ->firstOrFail();
 
-        $validated = $request->validate([
-            'nama_vendor'        => 'required|string|max:255',
-            'deskripsi_toko'     => 'nullable|string',
-            'alamat_lengkap'     => 'nullable|string',
-            'jam_buka'           => 'nullable',
-            'jam_tutup'          => 'nullable',
-            'status_operasional' => 'required|string|max:50',
-            'metode_pembayaran'  => 'nullable|string|max:255',
+        // Mengubah input kosong menjadi NULL
+        $request->merge([
+            'deskripsi_toko' => $request->filled('deskripsi_toko')
+                ? trim($request->deskripsi_toko)
+                : null,
         ]);
 
-        // Kolom 'saldo' sengaja tidak dimasukkan ke validasi update agar tidak bisa diubah manual lewat form profil
+        // Validasi data akun
+        $validatedUser = $request->validate([
+            'nama_lengkap' => 'required|string|max:255',
+            'email' => [
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users', 'email')->ignore(
+                    $user->id_user,
+                    'id_user'
+                ),
+            ],
+        ]);
 
-        $umkm->update($validated);
+        // Validasi data UMKM
+        $validatedUmkm = $request->validate([
+            'nama_vendor' => 'required|string|max:255',
+            'deskripsi_toko' => 'nullable|string',
+            'alamat_lengkap' => 'required|string',
+            'jam_buka' => 'required|date_format:H:i',
+            'jam_tutup' => 'required|date_format:H:i',
+            'status_operasional' => 'required|string|max:50',
+            'metode_pembayaran' => 'required|string|max:100',
+        ]);
 
-        return redirect()->route('umkm.profil.index')
-            ->with('success', 'Profil UMKM berhasil diperbarui!');
+        // Update kedua tabel secara bersamaan
+        DB::transaction(function () use (
+            $user,
+            $umkm,
+            $validatedUser,
+            $validatedUmkm
+        ) {
+            $user->update($validatedUser);
+            $umkm->update($validatedUmkm);
+        });
+
+        return redirect()
+            ->route('umkm.profil')
+            ->with('success', 'Profil berhasil diperbarui!');
     }
 
-    // Fungsi Logout
+    // Logout akun UMKM
     public function logout(Request $request)
     {
         Auth::logout();

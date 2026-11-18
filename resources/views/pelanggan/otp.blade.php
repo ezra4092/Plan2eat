@@ -7,9 +7,9 @@
 @section('content')
 <main class="otp-page-wrapper">
   <div class="otp-card-shell">
-    {{-- Top Bar --}}
+
     <header class="otp-topbar">
-      <a href="{{ url()->previous() }}" class="otp-back-btn" aria-label="Kembali">
+      <a href="{{ route('register.form') }}" class="otp-back-btn" aria-label="Kembali">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C1C11" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"/>
           <polyline points="12 19 5 12 12 5"/>
@@ -28,9 +28,8 @@
       </div>
     </header>
 
-    {{-- Konten Utama Verifikasi OTP --}}
     <section class="otp-main-body">
-      {{-- Ilustrasi Perisai & Daun --}}
+
       <div class="otp-shield-badge" aria-hidden="true">
         <div class="otp-shield-ring">
           <div class="otp-shield-inner">
@@ -50,9 +49,10 @@
       </div>
 
       <h1 class="otp-heading">Verifikasi Kode</h1>
+
       <p class="otp-subtext">
-        Kode dikirim ke <strong>{{ $email ?? session('otp_email', 'joe@gmail.com') }}</strong>
-        <a href="{{ route('register') }}" class="otp-edit-link">
+        Kode dikirim ke <strong>{{ $email }}</strong>
+        <a href="{{ route('register.form') }}" class="otp-edit-link">
           Ubah
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
@@ -60,9 +60,13 @@
         </a>
       </p>
 
-      {{-- Form 6 Digit OTP (Dinamis: Kosong -> Terisi -> Tombol Aktif) --}}
-      <form id="otpForm" action="{{ url('/verify-otp') }}" method="POST" class="otp-form" novalidate>
+      @if (session('success'))
+        <p class="otp-success-msg">{{ session('success') }}</p>
+      @endif
+
+      <form id="otpForm" action="{{ route('verify-otp') }}" method="POST" class="otp-form" novalidate>
         @csrf
+
         <input type="hidden" name="otp_code" id="otpHiddenInput" value="">
 
         <div class="otp-boxes-row" id="otpBoxesGroup">
@@ -78,17 +82,25 @@
           <p class="otp-error-msg">{{ $message }}</p>
         @enderror
 
-        {{-- Timer Kirim Ulang --}}
         <div class="otp-resend-row">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#414942" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
             <path d="M3 3v5h5"/>
             <path d="M12 7v5l3 2"/>
           </svg>
-          <span id="otpResendWrapper">Kirim ulang (<span id="otpTimer">0:45</span>)</span>
+
+          <span id="otpResendWrapper">
+            Kirim ulang (<span id="otpTimer">0:45</span>)
+          </span>
+
+          <form id="otpResendForm" action="{{ route('resend-otp') }}" method="POST" style="display: none;">
+            @csrf
+            <button type="submit" class="otp-resend-btn">
+              Kirim ulang kode
+            </button>
+          </form>
         </div>
 
-        {{-- Tombol Verifikasi (Otomatis aktif saat 6 digit terisi) --}}
         <button type="submit" id="otpSubmitBtn" class="btn-verify-otp" disabled>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
             <circle cx="12" cy="12" r="10" fill="#FFFFFF"/>
@@ -99,7 +111,6 @@
       </form>
     </section>
 
-    {{-- Numeric Keypad Bawah (Tampil di Mobile < 768px, Disembunyikan di Desktop) --}}
     <section class="otp-keypad-sheet" aria-label="Keypad Numerik">
       <div class="otp-keypad-grid">
         <button type="button" class="keypad-btn" data-key="1">1</button>
@@ -122,137 +133,167 @@
         </button>
       </div>
     </section>
+
   </div>
 </main>
 @endsection
 
 @push('scripts')
 <script>
-  document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', () => {
     const boxes = Array.from(document.querySelectorAll('#otpBoxesGroup .otp-box'));
     const submitBtn = document.getElementById('otpSubmitBtn');
     const hiddenInput = document.getElementById('otpHiddenInput');
     const keypadButtons = document.querySelectorAll('.keypad-btn');
     const resendWrapper = document.getElementById('otpResendWrapper');
+    const resendForm = document.getElementById('otpResendForm');
 
     function syncOtpState(activeIndex = null) {
-      const code = boxes.map(b => b.value).join('');
-      hiddenInput.value = code;
+        const code = boxes.map(box => box.value).join('');
+        hiddenInput.value = code;
 
-      const targetFocus = activeIndex !== null
-        ? activeIndex
-        : Math.min(code.length, boxes.length - 1);
+        const targetFocus = activeIndex !== null
+            ? activeIndex
+            : Math.min(code.length, boxes.length - 1);
 
-      boxes.forEach((box, idx) => {
-        box.classList.toggle('is-filled', box.value !== '');
-        box.classList.toggle('is-focused', idx === targetFocus);
-      });
+        boxes.forEach((box, index) => {
+            box.classList.toggle('is-filled', box.value !== '');
+            box.classList.toggle('is-focused', index === targetFocus);
+        });
 
-      const isComplete = code.length === boxes.length;
-      submitBtn.disabled = !isComplete;
-      submitBtn.classList.toggle('is-ready', isComplete);
+        const isComplete = code.length === boxes.length;
+        submitBtn.disabled = !isComplete;
+        submitBtn.classList.toggle('is-ready', isComplete);
     }
 
-    // Input Keyboard Fisik & Navigasi Panah
-    boxes.forEach((box, idx) => {
-      box.addEventListener('focus', () => {
-        syncOtpState(idx);
-      });
-
-      box.addEventListener('input', (e) => {
-        const cleaned = e.target.value.replace(/[^0-9]/g, '');
-        if (cleaned.length > 1) {
-          // Handle autofill SMS/email multi-digit
-          cleaned.slice(0, boxes.length).split('').forEach((digit, i) => {
-            if (boxes[i]) boxes[i].value = digit;
-          });
-          const nextIdx = Math.min(cleaned.length, boxes.length - 1);
-          boxes[nextIdx].focus();
-          syncOtpState(nextIdx);
-          return;
-        }
-
-        e.target.value = cleaned;
-        if (cleaned && idx < boxes.length - 1) {
-          boxes[idx + 1].focus();
-          syncOtpState(idx + 1);
-        } else {
-          syncOtpState(idx);
-        }
-      });
-
-      box.addEventListener('keydown', (e) => {
-        if (e.key === 'Backspace') {
-          if (box.value) {
-            box.value = '';
-            syncOtpState(idx);
-          } else if (idx > 0) {
-            boxes[idx - 1].value = '';
-            boxes[idx - 1].focus();
-            syncOtpState(idx - 1);
-          }
-        } else if (e.key === 'ArrowLeft' && idx > 0) {
-          boxes[idx - 1].focus();
-        } else if (e.key === 'ArrowRight' && idx < boxes.length - 1) {
-          boxes[idx + 1].focus();
-        }
-      });
-
-      // Dukungan Paste Kode 6 Digit (Ctrl+V / Cmd+V)
-      box.addEventListener('paste', (e) => {
-        e.preventDefault();
-        const pasted = (e.clipboardData || window.clipboardData)
-          .getData('text')
-          .replace(/[^0-9]/g, '')
-          .slice(0, boxes.length);
-
-        if (!pasted) return;
-        pasted.split('').forEach((digit, i) => {
-          boxes[i].value = digit;
+    boxes.forEach((box, index) => {
+        box.addEventListener('focus', () => {
+            syncOtpState(index);
         });
-        const nextIdx = Math.min(pasted.length, boxes.length - 1);
-        boxes[nextIdx].focus();
-        syncOtpState(nextIdx);
-      });
+
+        box.addEventListener('input', (event) => {
+            const cleaned = event.target.value.replace(/[^0-9]/g, '');
+
+            if (cleaned.length > 1) {
+                const digits = cleaned.slice(0, boxes.length).split('');
+
+                boxes.forEach((item, i) => {
+                    item.value = digits[i] || '';
+                });
+
+                const nextIndex = Math.min(digits.length, boxes.length - 1);
+                boxes[nextIndex].focus();
+                syncOtpState(nextIndex);
+                return;
+            }
+
+            event.target.value = cleaned;
+
+            if (cleaned && index < boxes.length - 1) {
+                boxes[index + 1].focus();
+                syncOtpState(index + 1);
+            } else {
+                syncOtpState(index);
+            }
+        });
+
+        box.addEventListener('keydown', (event) => {
+            if (event.key === 'Backspace') {
+                if (box.value) {
+                    box.value = '';
+                    syncOtpState(index);
+                } else if (index > 0) {
+                    boxes[index - 1].value = '';
+                    boxes[index - 1].focus();
+                    syncOtpState(index - 1);
+                }
+            } else if (event.key === 'ArrowLeft' && index > 0) {
+                boxes[index - 1].focus();
+            } else if (event.key === 'ArrowRight' && index < boxes.length - 1) {
+                boxes[index + 1].focus();
+            }
+        });
+
+        box.addEventListener('paste', (event) => {
+            event.preventDefault();
+
+            const pasted = (event.clipboardData || window.clipboardData)
+                .getData('text')
+                .replace(/[^0-9]/g, '')
+                .slice(0, boxes.length);
+
+            if (!pasted) return;
+
+            boxes.forEach((item, i) => {
+                item.value = pasted[i] || '';
+            });
+
+            const nextIndex = Math.min(pasted.length, boxes.length - 1);
+            boxes[nextIndex].focus();
+            syncOtpState(nextIndex);
+        });
     });
 
-    // Input Keypad Numerik Layar Sentuh (Mobile)
-    keypadButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        const key = btn.dataset.key;
-        if (key === 'backspace') {
-          const lastFilledIndex = boxes.map(b => b.value !== '').lastIndexOf(true);
-          if (lastFilledIndex !== -1) {
-            boxes[lastFilledIndex].value = '';
-            syncOtpState(lastFilledIndex);
-          }
-        } else {
-          const emptyIndex = boxes.findIndex(b => b.value === '');
-          if (emptyIndex !== -1) {
-            boxes[emptyIndex].value = key;
-            const nextEmpty = boxes.findIndex(b => b.value === '');
-            syncOtpState(nextEmpty !== -1 ? nextEmpty : boxes.length - 1);
-          }
-        }
-      });
+    keypadButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const key = button.dataset.key;
+
+            if (key === 'backspace') {
+                const lastFilledIndex = boxes
+                    .map(box => box.value !== '')
+                    .lastIndexOf(true);
+
+                if (lastFilledIndex !== -1) {
+                    boxes[lastFilledIndex].value = '';
+                    boxes[lastFilledIndex].focus();
+                    syncOtpState(lastFilledIndex);
+                }
+
+                return;
+            }
+
+            const emptyIndex = boxes.findIndex(box => box.value === '');
+
+            if (emptyIndex !== -1) {
+                boxes[emptyIndex].value = key;
+
+                const nextEmpty = boxes.findIndex(box => box.value === '');
+                const nextIndex = nextEmpty !== -1
+                    ? nextEmpty
+                    : boxes.length - 1;
+
+                boxes[nextIndex].focus();
+                syncOtpState(nextIndex);
+            }
+        });
     });
 
-    // Countdown Timer Kirim Ulang (0:45 -> 0:00)
     let remainingSeconds = 45;
+
     const countdown = setInterval(() => {
-      remainingSeconds--;
-      const timerEl = document.getElementById('otpTimer');
-      if (remainingSeconds > 0 && timerEl) {
-        const mins = Math.floor(remainingSeconds / 60);
-        const secs = String(remainingSeconds % 60).padStart(2, '0');
-        timerEl.textContent = `${mins}:${secs}`;
-      } else {
-        clearInterval(countdown);
-        resendWrapper.innerHTML = `<button type="button" class="otp-resend-btn" onclick="location.reload()">Kirim ulang kode</button>`;
-      }
+        remainingSeconds--;
+
+        const timerEl = document.getElementById('otpTimer');
+
+        if (remainingSeconds > 0 && timerEl) {
+            const minutes = Math.floor(remainingSeconds / 60);
+            const seconds = String(remainingSeconds % 60).padStart(2, '0');
+
+            timerEl.textContent = `${minutes}:${seconds}`;
+        } else {
+            clearInterval(countdown);
+
+            if (resendWrapper) {
+                resendWrapper.style.display = 'none';
+            }
+
+            if (resendForm) {
+                resendForm.style.display = 'block';
+            }
+        }
     }, 1000);
 
     syncOtpState(0);
-  });
+});
 </script>
 @endpush
