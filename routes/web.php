@@ -14,7 +14,7 @@ use App\Http\Controllers\MealPlanController;
 use App\Http\Controllers\UlasanController;
 // use App\Http\Controllers\DashboardUmkmController;
 // use App\Http\Controllers\JadwalMasakController;
-// use App\Http\Controllers\LaporanKeuanganController;
+use App\Http\Controllers\LaporanKeuanganController;
 // use App\Http\Controllers\PenutupanHarianController;
 // use App\Http\Controllers\AdminController;
 // use App\Http\Controllers\MasterDataController;
@@ -200,7 +200,7 @@ Route::group(['middleware' => ['auth']], function() {
 
     // --- Dashboard, Jadwal Masak & Laporan UMKM ---
     // Route::get('/umkm/jadwal-masak', [JadwalMasakController::class, 'index'])->name('umkm.jadwal_masak');
-    // Route::get('/umkm/laporan-keuangan', [LaporanKeuanganController::class, 'index'])->name('umkm.laporan_keuangan');
+    Route::get('/umkm/laporan-keuangan', [LaporanKeuanganController::class, 'index'])->name('umkm.laporan_keuangan');
     // Route::post('/umkm/penutupan-harian', [PenutupanHarianController::class, 'store'])->name('umkm.penutupan_harian-create');
 
 
