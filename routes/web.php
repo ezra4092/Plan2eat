@@ -11,7 +11,7 @@ use App\Http\Controllers\MealPlanController;
 // use App\Http\Controllers\FlashSaleController;
 // use App\Http\Controllers\PesananController;
 // use App\Http\Controllers\PembayaranController;
-// use App\Http\Controllers\UlasanController;
+use App\Http\Controllers\UlasanController;
 // use App\Http\Controllers\DashboardUmkmController;
 // use App\Http\Controllers\JadwalMasakController;
 // use App\Http\Controllers\LaporanKeuanganController;
@@ -159,7 +159,7 @@ Route::group(['middleware' => ['auth']], function() {
 
     // --- Ulasan & Rating (Pelanggan) ---
     // Route::post('/pelanggan/ulasan', [UlasanController::class, 'store'])->name('pelanggan.ulasan-create');
-    // Route::put('/pelanggan/ulasan/{id_ulasan}', [UlasanController::class, 'update'])->name('pelanggan.ulasan-update');
+    Route::put('/pelanggan/ulasan/{id_ulasan}', [UlasanController::class, 'update'])->name('pelanggan.ulasan-update');
     // Route::delete('/pelanggan/ulasan/{id_ulasan}', [UlasanController::class, 'destroy'])->name('pelanggan.ulasan-delete');
 
 
