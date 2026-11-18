@@ -7980,3 +7980,448 @@ body {
     padding: 24px 26px;
   }
 }
+
+/* ==========================================================================
+   TAMBAHAN style.css — Manajemen Menu UMKM (CRUD + Flash Sale)
+   Tempel di BAGIAN PALING BAWAH style.css.
+   Memakai ulang: .mp-modal-* (modal), .is-hidden, .app-main-content, token :root
+   ========================================================================== */
+
+/* Toast notifikasi (success / error dari session) */
+.mm-toast {
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+.mm-toast.is-success { background-color: #D1FADF; color: var(--forest-green); }
+.mm-toast.is-error   { background-color: #FDECEC; color: #B42318; }
+
+.mm-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Baris "Kembali ke Beranda" */
+.mm-back-row { display: flex; align-items: center; }
+.mm-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 15.5px;
+  letter-spacing: -0.4px;
+}
+.mm-back-link:hover { color: var(--forest-green); }
+
+/* Toolbar: pencarian + ringkasan */
+.mm-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.mm-search {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  height: 56px;
+  padding: 0 20px;
+  background-color: var(--white);
+  border-radius: 999px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.14);
+  color: #4D554E;
+  transition: box-shadow 0.2s ease;
+}
+.mm-search:focus-within { box-shadow: 0 0 0 3px rgba(5, 55, 31, 0.14), 0 6px 16px rgba(0, 0, 0, 0.12); }
+.mm-search-icon, .mm-search-qr { flex-shrink: 0; }
+.mm-search-input {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-inter);
+  font-size: 15px;
+  color: var(--black);
+}
+.mm-search-input::placeholder { color: var(--gray); }
+.mm-search-input::-webkit-search-cancel-button { display: none; }
+
+.mm-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  background-color: #F7F2E1;
+  border-radius: 20px;
+  padding: 16px 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+.mm-stat {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  color: #2E362F;
+  border-right: 1.5px solid #E4DFC9;
+  white-space: nowrap;
+}
+.mm-stat:last-child { border-right: none; }
+.mm-stat-value { font-weight: 700; }
+.mm-stat.is-danger, .mm-stat.is-danger .mm-stat-label { color: #D32F2F; }
+
+.mm-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
+}
+.mm-dot.is-dark  { background-color: #1E5E41; }
+.mm-dot.is-green { background-color: #1E6B46; }
+.mm-dot.is-mint  { background-color: #B6EBD3; }
+.mm-dot.is-red   { background-color: #C81E1E; }
+
+/* Chip filter (scroll horizontal di mobile) */
+.mm-chips {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding: 2px 2px 6px;
+  margin: 0 -2px;
+  scrollbar-width: none;
+}
+.mm-chips::-webkit-scrollbar { display: none; }
+.mm-chip {
+  flex-shrink: 0;
+  height: 46px;
+  padding: 0 22px;
+  border: none;
+  border-radius: 999px;
+  background-color: #EFEAD8;
+  color: #3A423B;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.mm-chip:hover { background-color: #E6E0CB; }
+.mm-chip.is-active {
+  background-color: var(--forest-green);
+  color: var(--white);
+  font-weight: 600;
+}
+
+/* Daftar kartu */
+.mm-list {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.mm-card {
+  background-color: var(--white);
+  border-radius: 22px;
+  overflow: hidden;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+}
+.mm-card-main {
+  display: flex;
+  gap: 16px;
+  padding: 18px 18px 16px;
+  flex: 1;
+}
+
+.mm-thumb {
+  position: relative;
+  width: 104px;
+  height: 104px;
+  flex-shrink: 0;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #E9E4D2;
+}
+.mm-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.mm-thumb-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #8C928D;
+}
+.mm-thumb-badge {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  background-color: rgba(5, 55, 31, 0.82);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11px;
+}
+.mm-soldout-badge {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background-color: #D32F2F;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+}
+
+.mm-card-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mm-card-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mm-card-heading { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.mm-card-label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.2px;
+  color: #1E6B46;
+  text-transform: uppercase;
+}
+.mm-card-name {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 16px;
+  line-height: 1.4;
+  color: var(--black);
+  margin: 0;
+}
+.mm-edit-btn {
+  width: 42px;
+  height: 42px;
+  border: none;
+  border-radius: 50%;
+  background-color: #F1EDDC;
+  color: var(--black);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.mm-edit-btn:hover { background-color: #E6E0CB; }
+.mm-edit-btn:active { transform: scale(0.95); }
+
+.mm-price {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: -0.5px;
+  color: var(--forest-green);
+}
+
+.mm-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+.mm-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 13px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12.5px;
+}
+.mm-tag.is-green   { background-color: #D6F2E4; color: #2B7A54; }
+.mm-tag.is-amber   { background-color: #FDDCB0; color: #9A5A12; }
+.mm-tag.is-neutral { background-color: #EFEAD8; color: #4D554E; }
+
+/* Footer status + toggle */
+.mm-card-foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 18px;
+  background-color: #F9F5E9;
+}
+.mm-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 16px;
+  color: var(--black);
+}
+.mm-switch-form { margin: 0; display: inline-flex; }
+.mm-switch {
+  position: relative;
+  width: 64px;
+  height: 36px;
+  border: none;
+  border-radius: 999px;
+  background-color: var(--forest-green);
+  cursor: pointer;
+  padding: 0;
+  transition: background-color 0.25s ease;
+}
+.mm-switch-thumb {
+  position: absolute;
+  top: 4px;
+  left: 32px;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: var(--white);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  transition: left 0.25s ease;
+}
+.mm-switch.is-off { background-color: #C9C6B8; }
+.mm-switch.is-off .mm-switch-thumb { left: 4px; }
+
+/* State Habis */
+.mm-card.is-soldout { background-color: #FAF7EC; box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04); }
+.mm-card.is-soldout .mm-thumb img { filter: grayscale(1); opacity: 0.75; }
+.mm-card.is-soldout .mm-card-label,
+.mm-card.is-soldout .mm-card-name { color: #7B817C; }
+.mm-card.is-soldout .mm-price {
+  color: #7B817C;
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+.mm-card.is-soldout .mm-tag { opacity: 0.85; }
+.mm-card.is-soldout .mm-card-foot { background-color: #F5F1E3; }
+
+.mm-empty {
+  padding: 36px 16px;
+  text-align: center;
+  font-family: var(--font-inter);
+  font-size: 14px;
+  color: #717972;
+  background-color: var(--white);
+  border-radius: 20px;
+}
+.mm-list .is-hidden { display: none !important; }
+
+/* Tombol Tambah (FAB) — di atas bottom nav pada mobile */
+.mm-fab {
+  position: fixed;
+  right: 18px;
+  bottom: 92px;
+  z-index: 44;
+  height: 52px;
+  min-width: 52px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 999px;
+  background-color: var(--forest-green);
+  color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(5, 55, 31, 0.32);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+.mm-fab:hover { background-color: var(--forest-green-hover); }
+.mm-fab:active { transform: scale(0.96); }
+.mm-fab-text {
+  display: none;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+/* Modal: tambahan kecil di atas .mp-modal-* */
+.mm-modal-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.mm-modal-text {
+  font-family: var(--font-inter);
+  font-size: 13px;
+  line-height: 1.5;
+  color: #555D56;
+  margin: 0;
+}
+.mm-file-input { font-family: var(--font-inter); font-size: 12px; max-width: 100%; }
+.mp-modal-avatar-thumb.is-hidden { display: none; }
+.mm-icon-danger { background-color: #C81E1E; }
+.mm-icon-amber  { background-color: #E8A317; }
+.mm-modal-extra { display: flex; gap: 10px; }
+.mm-btn-soft {
+  flex: 1;
+  height: 40px;
+  border-radius: 12px;
+  border: 1px solid #DCD7C5;
+  background-color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+}
+.mm-btn-soft.is-danger { color: #C81E1E; border-color: #FBCACA; background-color: #FDECEC; }
+.mm-btn-soft.is-amber  { color: #8A530B; border-color: #F6D9A0; background-color: #FDF1D4; }
+.mm-btn-danger { background-color: #C81E1E; box-shadow: 0 4px 12px rgba(200, 30, 30, 0.25); }
+.mm-btn-danger:hover { background-color: #A91717; }
+
+/* Layar sangat kecil */
+@media (max-width: 360px) {
+  .mm-stat { font-size: 12.5px; gap: 4px; }
+  .mm-thumb { width: 88px; height: 88px; }
+  .mm-price { font-size: 21px; }
+  .mm-modal-grid-2 { grid-template-columns: 1fr; }
+}
+
+/* Desktop (>= 768px) */
+@media (min-width: 768px) {
+  .mm-page { gap: 22px; }
+
+  .mm-toolbar {
+    flex-direction: row;
+    align-items: center;
+    gap: 18px;
+  }
+  .mm-search { flex: 1.3; }
+  .mm-stats { flex: 1; padding: 18px 12px; }
+
+  .mm-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+  }
+
+  .mm-card-main { padding: 20px; }
+  .mm-thumb { width: 116px; height: 116px; }
+
+  .mm-fab { bottom: 28px; right: 32px; padding: 0 22px; }
+  .mm-fab-text { display: inline; }
+}
+
+/* Desktop lebar (>= 1280px) */
+@media (min-width: 1280px) {
+  .mm-list { grid-template-columns: repeat(3, 1fr); }
+}
