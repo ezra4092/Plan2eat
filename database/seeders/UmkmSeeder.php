@@ -21,8 +21,9 @@ class UmkmSeeder extends Seeder
             'jam_buka' => '07:00:00',
             'jam_tutup' => '21:00:00',
             'status_operasional' => 'Buka',
+            'status_verifikasi' => true,
             'saldo' => 500000.00,
-            'metode_pembayaran' => 'QRIS, Tunai, Transfer Bank',
+            'metode_pembayaran' => ['QRIS', 'Tunai', 'Transfer Bank'],
         ]);
 
         // UMKM 2 (id_user = 4)
@@ -34,8 +35,9 @@ class UmkmSeeder extends Seeder
             'jam_buka' => '08:00:00',
             'jam_tutup' => '19:00:00',
             'status_operasional' => 'Buka',
+            'status_verifikasi' => true,
             'saldo' => 750000.00,
-            'metode_pembayaran' => 'QRIS, Transfer Bank',
+            'metode_pembayaran' => ['QRIS', 'Transfer Bank'],
         ]);
 
         // UMKM 3 (id_user = 5)
@@ -47,8 +49,9 @@ class UmkmSeeder extends Seeder
             'jam_buka' => '10:00:00',
             'jam_tutup' => '22:00:00',
             'status_operasional' => 'Buka',
+            'status_verifikasi' => true,
             'saldo' => 300000.00,
-            'metode_pembayaran' => 'QRIS, Tunai',
+            'metode_pembayaran' => ['QRIS', 'Tunai'],
         ]);
 
         // UMKM 4 (id_user = 6)
@@ -60,8 +63,9 @@ class UmkmSeeder extends Seeder
             'jam_buka' => '09:00:00',
             'jam_tutup' => '20:00:00',
             'status_operasional' => 'Buka',
+            'status_verifikasi' => true,
             'saldo' => 450000.00,
-            'metode_pembayaran' => 'QRIS, Tunai, Transfer Bank',
+            'metode_pembayaran' => ['QRIS', 'Tunai', 'Transfer Bank'],
         ]);
     }
 }

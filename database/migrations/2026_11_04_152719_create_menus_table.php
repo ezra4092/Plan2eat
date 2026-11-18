@@ -14,13 +14,13 @@ return new class extends Migration
         Schema::create('menu', function (Blueprint $table) {
             $table->id('id_menu');
             $table->foreignId('id_umkm')->constrained('umkm', 'id_umkm')->onDelete('cascade');
-            $table->foreignId('id_plan')->nullable()->constrained('meal_plan', 'id_plan')->onDelete('set null');
+            $table->foreignId('jenis_menu')->nullable()->constrained('jenis_menu', 'id')->onDelete('set null');
             $table->string('nama_makanan');
             $table->text('deskripsi_makanan')->nullable();
             $table->integer('kandungan_kalori')->nullable();
             $table->integer('stok_harian')->default(0);
             $table->decimal('harga_normal', 12, 2);
-            $table->string('foto_menu');
+            $table->string('foto_menu')->nullable();
         });
     }
 
@@ -29,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('menus');
+        Schema::dropIfExists('menu');
     }
 };

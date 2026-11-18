@@ -23,7 +23,6 @@ class Flashsale extends Model
         'kuantitas',
         'stok_sisa',
         'harga_diskon',
-        'status_promo',
     ];
 
     protected function casts(): array

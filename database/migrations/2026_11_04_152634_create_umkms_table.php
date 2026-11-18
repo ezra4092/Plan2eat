@@ -12,11 +12,13 @@ return new class extends Migration {
             $table->string('nama_vendor');
             $table->text('deskripsi_toko')->nullable();
             $table->text('alamat_lengkap');
+            $table->string('foto_toko')->nullable();
             $table->time('jam_buka');
             $table->time('jam_tutup');
             $table->string('status_operasional');
+            $table->boolean('status_verifikasi')->default(false);
             $table->decimal('saldo', 15, 2)->default(0);
-            $table->string('metode_pembayaran');
+            $table->json('metode_pembayaran');
         });
     }
 

@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Umkm extends Model
 {
@@ -20,15 +22,36 @@ class Umkm extends Model
         'nama_vendor',
         'deskripsi_toko',
         'alamat_lengkap',
+        'foto_toko',
         'jam_buka',
         'jam_tutup',
         'status_operasional',
+        'status_verifikasi',
         'saldo',
-        'metode_pembayaran'
+        'metode_pembayaran',
     ];
 
-    public function user()
+    protected function casts(): array
+    {
+        return [
+            'status_verifikasi' => 'boolean',
+            'saldo' => 'decimal:2',
+            'metode_pembayaran' => 'array',
+        ];
+    }
+
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
+    }
+
+    public function menus(): HasMany
+    {
+        return $this->hasMany(Menu::class, 'id_umkm', 'id_umkm');
+    }
+
+    public function pesanan(): HasMany
+    {
+        return $this->hasMany(Pesanan::class, 'id_umkm', 'id_umkm');
     }
 }

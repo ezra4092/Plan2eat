@@ -12,7 +12,6 @@ return new class extends Migration {
             $table->foreignId('id_flash_sale')->nullable()->constrained('flash_sale', 'id_flash_sale')->onDelete('set null');
             $table->integer('kuantitas');
             $table->time('waktu');
-            $table->decimal('harga_satuan', 12, 2);
             $table->decimal('subtotal', 12, 2);
         });
     }

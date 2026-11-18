@@ -20,7 +20,6 @@ class DetailPesanan extends Model
         'id_flash_sale',
         'kuantitas',
         'waktu',
-        'harga_satuan',
         'subtotal',
     ];
 
@@ -28,7 +27,6 @@ class DetailPesanan extends Model
     {
         return [
             'kuantitas' => 'integer',
-            'harga_satuan' => 'decimal:2',
             'subtotal' => 'decimal:2',
         ];
     }

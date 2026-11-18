@@ -14,7 +14,6 @@ return new class extends Migration {
             $table->time('waktu_mulai');
             $table->time('waktu_selesai');
             $table->decimal('harga_diskon', 12, 2);
-            $table->string('status_promo');
         });
     }
     public function down(): void {

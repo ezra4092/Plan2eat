@@ -18,7 +18,7 @@ class Menu extends Model
 
     protected $fillable = [
         'id_umkm',
-        'id_plan',
+        'jenis_menu',
         'nama_makanan',
         'deskripsi_makanan',
         'foto_menu',
@@ -41,6 +41,11 @@ class Menu extends Model
         return $this->belongsTo(Umkm::class, 'id_umkm', 'id_umkm');
     }
 
+    public function jenisMenu(): BelongsTo
+    {
+        return $this->belongsTo(JenisMenu::class, 'jenis_menu', 'id');
+    }
+
     public function flashSales(): HasMany
     {
         return $this->hasMany(Flashsale::class, 'id_menu', 'id_menu');
@@ -49,5 +54,10 @@ class Menu extends Model
     public function detailPesanan(): HasMany
     {
         return $this->hasMany(DetailPesanan::class, 'id_menu', 'id_menu');
+    }
+
+    public function detailMealPlan(): HasMany
+    {
+        return $this->hasMany(DetailMealPlan::class, 'id_menu', 'id_menu');
     }
 }

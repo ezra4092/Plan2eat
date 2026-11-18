@@ -16,9 +16,10 @@ class Ulasan extends Model
 
     protected $fillable = [
         'id_pesanan',
-        'id_umkm',
+        'id_user',
         'rating',
         'ulasan',
+        'foto_ulasan',
         'timestamp',
     ];
 
@@ -38,10 +39,5 @@ class Ulasan extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
-    }
-
-    public function umkm(): BelongsTo
-    {
-        return $this->belongsTo(Umkm::class, 'id_umkm', 'id_umkm');
     }
 }

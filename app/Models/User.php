@@ -5,10 +5,12 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['nama_lengkap', 'email', 'password', 'role'])]
+#[Fillable(['nama_lengkap', 'email', 'password', 'role', 'no_hp', 'foto'])]
 #[Hidden(['password'])]
 class User extends Authenticatable
 {
@@ -26,15 +28,28 @@ class User extends Authenticatable
         ];
     }
 
-    // Relasi ke Profil Kesehatan
-    public function profilKesehatan()
+    public function profilKesehatan(): HasOne
     {
         return $this->hasOne(ProfilKesehatan::class, 'id_user', 'id_user');
     }
 
-    // Relasi ke UMKM
-    public function umkm()
+    public function umkm(): HasOne
     {
         return $this->hasOne(Umkm::class, 'id_user', 'id_user');
+    }
+
+    public function mealPlans(): HasMany
+    {
+        return $this->hasMany(MealPlan::class, 'id_user', 'id_user');
+    }
+
+    public function pesanan(): HasMany
+    {
+        return $this->hasMany(Pesanan::class, 'id_user', 'id_user');
+    }
+
+    public function ulasan(): HasMany
+    {
+        return $this->hasMany(Ulasan::class, 'id_user', 'id_user');
     }
 }

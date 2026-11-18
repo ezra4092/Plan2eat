@@ -90,7 +90,7 @@
         <span class="nav-label">Saldo</span>
       </a>
 
-      <a href="{{ route('umkm.profil.index') }}" class="nav-item {{ $activeMenu === 'profil' ? 'active' : '' }}">
+      <a href="{{ route('umkm.profil') }}" class="nav-item {{ $activeMenu === 'profil' ? 'active' : '' }}">
         <div class="nav-icon-box">
           <img src="{{ asset('img/icon-2.svg') }}" alt="Profil">
         </div>
