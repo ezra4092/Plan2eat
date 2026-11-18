@@ -11,6 +11,8 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->string('password');
             $table->enum('role', ['admin', 'umkm', 'pelanggan'])->default('pelanggan');
+            $table->string('no_hp', 20)->nullable();
+            $table->string('foto')->nullable();
         });
     }
     public function down(): void {
