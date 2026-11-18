@@ -1,3 +1,4 @@
+update route UMKM/Pelanggan
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -10,7 +11,7 @@ use App\Http\Controllers\MealPlanController;
 // use App\Http\Controllers\FlashSaleController;
 // use App\Http\Controllers\PesananController;
 // use App\Http\Controllers\PembayaranController;
-use App\Http\Controllers\UlasanController;
+// use App\Http\Controllers\UlasanController;
 // use App\Http\Controllers\DashboardUmkmController;
 // use App\Http\Controllers\JadwalMasakController;
 // use App\Http\Controllers\LaporanKeuanganController;
@@ -157,10 +158,9 @@ Route::group(['middleware' => ['auth']], function() {
     // Route::post('/pelanggan/pembayaran', [PembayaranController::class, 'bayar'])->name('pelanggan.pembayaran-create');
 
     // --- Ulasan & Rating (Pelanggan) ---
-    Route::get('/pelanggan/ulasan', [App\Http\Controllers\UlasanController::class, 'index'])->name('pelanggan.ulasan-index');
-    Route::post('/pelanggan/ulasan', [UlasanController::class, 'store'])->name('pelanggan.ulasan-create');
-    Route::put('/pelanggan/ulasan/{id_ulasan}', [UlasanController::class, 'update'])->name('pelanggan.ulasan-update');
-    Route::delete('/pelanggan/ulasan/{id_ulasan}', [UlasanController::class, 'destroy'])->name('pelanggan.ulasan-delete');
+    // Route::post('/pelanggan/ulasan', [UlasanController::class, 'store'])->name('pelanggan.ulasan-create');
+    // Route::put('/pelanggan/ulasan/{id_ulasan}', [UlasanController::class, 'update'])->name('pelanggan.ulasan-update');
+    // Route::delete('/pelanggan/ulasan/{id_ulasan}', [UlasanController::class, 'destroy'])->name('pelanggan.ulasan-delete');
 
 
     // ==========================================
@@ -170,14 +170,14 @@ Route::group(['middleware' => ['auth']], function() {
     // --- Profil UMKM ---
     Route::get('/umkm/profil', [UmkmController::class, 'index'])
         ->name('umkm.profil');
-    // Route::put('/umkm/profil/{id_umkm}', [UmkmController::class, 'update'])
-    //     ->name('umkm.profil-update');
-    // Route::post('/umkm/logout', [UmkmController::class, 'logout'])
-    //     ->name('umkm.logout');
+     Route::put('/umkm/profil/{id_umkm}', [UmkmController::class, 'update'])
+         ->name('umkm.profil-update');
+     Route::post('/umkm/logout', [UmkmController::class, 'logout'])
+         ->name('umkm.logout');
 
     // // Alias kompatibilitas view lama
-    // Route::get('/umkm/profil/legacy-index', [UmkmController::class, 'index'])->name('umkm.profil.index');
-    // Route::put('/umkm/profil/{id_umkm}/legacy-update', [UmkmController::class, 'update'])->name('umkm.profil.update');
+    Route::get('/umkm/profil/legacy-index', [UmkmController::class, 'index'])->name('umkm.profil.index');
+    Route::put('/umkm/profil/{id_umkm}/legacy-update', [UmkmController::class, 'update'])->name('umkm.profil.update');
 
     // --- Manajemen Menu (CRUD Dialog) ---
     // Route::get('/umkm/menu', [MenuController::class, 'index'])->name('umkm.menu');

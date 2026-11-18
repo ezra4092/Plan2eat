@@ -21,7 +21,7 @@
 
     <!-- Daftar Menu Navigasi Pelanggan (Horizontal di Mobile, Vertikal di Desktop) -->
     <div class="nav-menu-list">
-      <a href="{{ url('/beranda') }}" class="nav-item {{ $activeMenu === 'beranda' ? 'active' : '' }}">
+      <a href="{{ url('/pelanggan/beranda') }}" class="nav-item {{ $activeMenu === 'beranda' ? 'active' : '' }}">
         <div class="nav-icon-box">
           <img src="{{ asset('img/icon-9.svg') }}" alt="Beranda">
         </div>

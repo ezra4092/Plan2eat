@@ -5837,3 +5837,2146 @@ body {
     align-items: stretch;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Profil Kesehatan Page (Mobile-First & Responsive Desktop)
+   -------------------------------------------------------------------------- */
+
+/* Badge Logo Kotak Putih pada Header & Sidebar */
+.brand-logo-badge {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background-color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.app-header .btn-notification {
+  color: var(--white);
+}
+
+.app-header .page-status-pill svg {
+  color: var(--primary);
+}
+
+/* Mobile: Sembunyikan topbar standar & bottom nav agar tampilan identik dengan desain */
+@media (max-width: 767.98px) {
+  .page-profile-kesehatan .desktop-only-header,
+  .page-profile-kesehatan .app-nav {
+    display: none;
+  }
+
+  .page-profile-kesehatan .app-content-wrapper {
+    padding-bottom: 28px;
+  }
+
+  .page-profile-kesehatan .app-main-content {
+    padding-top: 18px;
+  }
+}
+
+/* 1. Hero Header Hijau Tua */
+.customer-profile-hero-wrap {
+  width: 100%;
+}
+
+.customer-profile-hero {
+  background-color: #16442B;
+  color: var(--white);
+  border-radius: 0 0 28px 28px;
+  padding: 18px 20px 26px;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  box-shadow: 0 8px 22px rgba(5, 55, 31, 0.16);
+}
+
+.profile-hero-topbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.btn-hero-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+}
+
+.btn-hero-back:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.usr-id-pill {
+  padding: 6px 12px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  color: rgba(255, 255, 255, 0.92);
+}
+
+.profile-hero-identity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.hero-avatar-wrapper {
+  position: relative;
+  width: 88px;
+  height: 88px;
+}
+
+.hero-avatar-photo {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.32);
+  background-color: #D6E2D9;
+}
+
+.btn-avatar-camera {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background-color: #C89B5E;
+  color: var(--white);
+  border: 2.5px solid #16442B;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  transition: transform 0.15s ease;
+}
+
+.btn-avatar-camera:hover {
+  transform: scale(1.06);
+}
+
+.hero-identity-text {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-pill-ubah-username {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 13px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.14);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-pill-ubah-username:hover {
+  background-color: rgba(255, 255, 255, 0.22);
+}
+
+.hero-username-title {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.2;
+  letter-spacing: -0.4px;
+  color: var(--white);
+  margin: 0;
+}
+
+/* Container Form & Grid Kartu */
+.customer-profile-container {
+  width: 100%;
+}
+
+.customer-profile-grid,
+.profile-col-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Base White Card */
+.profile-white-card {
+  background-color: var(--white);
+  border-radius: 22px;
+  padding: 18px 18px 20px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.045);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.profile-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.head-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.soft-mint-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background-color: #E6F4EC;
+  color: #16442B;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.profile-card-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--black);
+  margin: 0;
+}
+
+/* Input & Field Blocks */
+.profile-field-block {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.profile-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.profile-field-label {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: #374139;
+}
+
+.char-counter-text {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #8C928D;
+}
+
+.btn-map-pin-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+  border: none;
+  padding: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11.5px;
+  color: #16442B;
+  cursor: pointer;
+}
+
+.btn-map-pin-link:hover {
+  text-decoration: underline;
+}
+
+.cream-input-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border-radius: 12px;
+  background-color: #F6F3EB;
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.cream-input-box:focus-within,
+.cream-address-box:focus-within,
+.cream-textarea-box:focus-within {
+  background-color: var(--white);
+  border-color: #16442B;
+}
+
+.cream-text-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13.5px;
+  color: var(--black);
+  outline: none;
+}
+
+.cream-text-input::placeholder {
+  color: #9CA39D;
+  font-weight: 500;
+}
+
+.btn-inline-edit {
+  background: transparent;
+  border: none;
+  padding: 2px;
+  color: #717972;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.cream-address-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background-color: #F6F3EB;
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.address-pin-prefix {
+  color: #16442B;
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.cream-address-textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--black);
+  resize: none;
+  outline: none;
+}
+
+.cream-textarea-box {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background-color: #F6F3EB;
+  border: 1.5px solid transparent;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.cream-notes-textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--black);
+  resize: vertical;
+  outline: none;
+}
+
+.field-helper-caption {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #8C928D;
+}
+
+/* 2. Kartu Akun */
+.badge-account-active {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: #DCFCE7;
+  color: #15803D;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.badge-account-active .active-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #16A34A;
+}
+
+.account-info-group {
+  background-color: #FAF8F2;
+  border: 1px solid #EFECE2;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.account-info-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 14px;
+  border-bottom: 1px solid #EFECE2;
+}
+
+.account-info-row:last-child {
+  border-bottom: none;
+}
+
+.account-row-left {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.account-row-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background-color: #EFECE2;
+  color: #555D56;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.account-row-icon.is-mint {
+  background-color: #E2F5EA;
+  color: #16A34A;
+}
+
+.account-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.account-mini-label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.5px;
+  color: #8C928D;
+}
+
+.account-main-value {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-lock-icon {
+  color: #9CA39D;
+  display: inline-flex;
+}
+
+.badge-wa-connected {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: #D1FADF;
+  color: #16442B;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+.email-verified-check {
+  color: #16A34A;
+  display: inline-flex;
+  flex-shrink: 0;
+}
+
+/* 3. Kartu Personalisasi Menu & Preferensi */
+.menu-pref-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.pill-personalisasi-menu {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border-radius: 999px;
+  background-color: #D1FADF;
+  color: #16442B;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.menu-pref-title {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 18px;
+  letter-spacing: -0.3px;
+  color: var(--black);
+  margin: 2px 0 0;
+}
+
+.menu-pref-subtitle {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  line-height: 1.4;
+  color: #717972;
+  margin: 0;
+}
+
+.pref-selection-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.pref-section-caps {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.4px;
+  color: #717972;
+}
+
+.pill-selected-count {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: #E3F5EA;
+  color: #16442B;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+/* Grid 6 Kartu Pola Makan */
+.profile-pref-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 11px;
+}
+
+.profile-pref-card {
+  position: relative;
+  background-color: #F6F3EB;
+  border: 1.5px solid transparent;
+  border-radius: 16px;
+  padding: 13px;
+  min-height: 122px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  cursor: pointer;
+  user-select: none;
+  transition: background-color 0.2s ease, transform 0.1s ease, border-color 0.2s ease;
+}
+
+.profile-pref-card:hover {
+  border-color: rgba(22, 68, 43, 0.25);
+}
+
+.profile-pref-card:active {
+  transform: scale(0.98);
+}
+
+.profile-pref-checkbox {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.profile-pref-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.profile-pref-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background-color: #EAE6D7;
+  color: #4D554E;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.profile-pref-check {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1.5px solid #D1CEC2;
+  background-color: transparent;
+  color: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.profile-pref-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.profile-pref-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  line-height: 1.25;
+  color: var(--black);
+  margin: 0;
+}
+
+.profile-pref-desc {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  line-height: 1.3;
+  color: #717972;
+  margin: 0;
+}
+
+/* Kartu Terpilih (Hijau Tua Gelap sesuai Gambar) */
+.profile-pref-card.is-selected {
+  background-color: #16442B;
+  border-color: #16442B;
+}
+
+.profile-pref-card.is-selected .profile-pref-icon {
+  background-color: rgba(255, 255, 255, 0.14);
+  color: var(--white);
+}
+
+.profile-pref-card.is-selected .profile-pref-check {
+  background-color: var(--white);
+  border-color: var(--white);
+  color: #16442B;
+}
+
+.profile-pref-card.is-selected .profile-pref-title {
+  color: var(--white);
+}
+
+.profile-pref-card.is-selected .profile-pref-desc {
+  color: rgba(255, 255, 255, 0.78);
+}
+
+/* 4. Kartu Batas Budget Harian */
+.budget-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.budget-left-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.budget-wallet-box {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: #F3EFE2;
+  color: #16442B;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.budget-info-col {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.budget-mini-label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  color: #717972;
+}
+
+.budget-amount-row {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.budget-amount-text {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--black);
+}
+
+.budget-unit-text {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: #717972;
+}
+
+.btn-budget-ubah {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background-color: #F6F3EB;
+  border: 1px solid #E5E0CE;
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-budget-ubah:hover {
+  background-color: #ECE7D8;
+}
+
+.budget-edit-drawer {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.currency-prefix {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  color: #16442B;
+}
+
+.budget-preset-row {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.btn-budget-preset {
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid #DCD7C5;
+  background-color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  color: var(--black);
+  cursor: pointer;
+}
+
+.btn-budget-preset:hover {
+  background-color: #E6F4EC;
+  border-color: #16442B;
+}
+
+.budget-helper-footer {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding-top: 10px;
+  border-top: 1px solid #F1EFE7;
+  font-family: var(--font-inter);
+  font-size: 11px;
+  line-height: 1.4;
+  color: #8C928D;
+}
+
+.budget-helper-footer svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* 5. Tombol Simpan, Reset, Logout */
+.profile-actions-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  margin-top: 4px;
+}
+
+.btn-save-profile {
+  width: 100%;
+  height: 50px;
+  border: none;
+  border-radius: 14px;
+  background-color: #16442B;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(22, 68, 43, 0.22);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.btn-save-profile:hover {
+  background-color: var(--forest-green);
+}
+
+.btn-save-profile:active {
+  transform: scale(0.99);
+}
+
+.btn-reset-profile {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  padding: 4px 8px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  color: #DC2626;
+  cursor: pointer;
+}
+
+.btn-reset-profile:hover {
+  text-decoration: underline;
+}
+
+.btn-logout-profile {
+  width: 100%;
+  height: 48px;
+  border-radius: 14px;
+  background-color: #FDECEC;
+  border: 1px solid #FBCACA;
+  color: #DC2626;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-logout-profile:hover {
+  background-color: #FBD9D9;
+}
+
+/* --------------------------------------------------------------------------
+   Responsive Desktop Adjustments (>= 768px) untuk Halaman Profil Pelanggan
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  .app-header .btn-notification {
+    color: var(--forest-green);
+  }
+
+  .app-header .page-status-pill svg {
+    color: var(--forest-green);
+  }
+
+  /* Hero Profil berubah menjadi Banner Kartu Elegan di atas konten */
+  .customer-profile-hero-wrap {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 32px 0;
+  }
+
+  .customer-profile-hero {
+    max-width: none;
+    border-radius: 24px;
+    padding: 24px 32px 28px;
+    flex-direction: row-reverse;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .profile-hero-topbar {
+    width: auto;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+
+  .profile-hero-identity {
+    flex-direction: row;
+    text-align: left;
+    gap: 20px;
+  }
+
+  .hero-identity-text {
+    align-items: flex-start;
+  }
+
+  .hero-username-title {
+    font-size: 26px;
+  }
+
+  /* Grid 2 Kolom Seimbang di Desktop */
+  .customer-profile-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .profile-col-stack {
+    gap: 22px;
+  }
+
+  .profile-white-card {
+    padding: 22px 24px;
+  }
+
+  .profile-pref-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+}
+
+/* Mobile Layar Sangat Kecil (<= 360px) */
+@media (max-width: 360px) {
+  .profile-pref-grid {
+    gap: 8px;
+  }
+
+  .profile-pref-card {
+    padding: 11px;
+    min-height: 114px;
+  }
+
+  .profile-pref-title {
+    font-size: 12.5px;
+  }
+}
+
+/* ==========================================================================
+   Profil UMKM / Dapur Mitra (Mobile-First & Responsive Desktop + Modal)
+   ========================================================================== */
+
+/* Header & Navigasi Dapur Mitra */
+.mitra-brand-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: #1B6B3A;
+  color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mitra-brand-circle.is-sidebar {
+  background-color: rgba(255, 255, 255, 0.16);
+}
+
+.mitra-app-header .btn-notification {
+  position: relative;
+  color: var(--white);
+}
+
+.notif-amber-dot {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #FACC15;
+  border: 1.5px solid var(--forest-green);
+}
+
+.mitra-status-pill .pill-green-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--primary);
+}
+
+.mitra-nav-list .nav-icon-box {
+  position: relative;
+}
+
+.nav-active-dot {
+  position: absolute;
+  top: -1px;
+  right: -2px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--primary);
+}
+
+/* Container Halaman Profil Mitra */
+.mp-page-container {
+  width: 100%;
+}
+
+.mp-main-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.mp-sections-grid,
+.mp-col-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* 1. Kartu Identitas Warung */
+.mp-identity-card {
+  background-color: var(--white);
+  border-radius: 22px;
+  padding: 18px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.045);
+  display: flex;
+  flex-direction: column;
+  gap: 13px;
+}
+
+.mp-identity-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mp-avatar-box {
+  position: relative;
+  width: 68px;
+  height: 68px;
+  flex-shrink: 0;
+}
+
+.mp-avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  background-color: #D6E2D9;
+}
+
+.mp-avatar-verified {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background-color: #16442B;
+  color: var(--white);
+  border: 2px solid var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mp-identity-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mp-title-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mp-store-title {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.2;
+  color: var(--black);
+  margin: 0;
+}
+
+.mp-pill-verified {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: #FDE7B2;
+  color: #8A530B;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10.5px;
+  white-space: nowrap;
+}
+
+.mp-owner-subtitle {
+  font-family: var(--font-inter);
+  font-size: 12.5px;
+  color: #555D56;
+  margin: 0;
+}
+
+.mp-rating-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.mp-pill-rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background-color: #D3F3DF;
+  color: #16442B;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.mp-review-count {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  color: #717972;
+}
+
+.mp-soft-divider {
+  border: 0;
+  border-top: 1px solid #F1EFE7;
+  margin: 0;
+}
+
+.mp-partner-meta-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.mp-eco-since {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  color: #1E6B3E;
+}
+
+.mp-partner-id-pill {
+  padding: 4px 9px;
+  border-radius: 8px;
+  background-color: #F3F1E8;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  color: #6B726C;
+}
+
+.mp-address-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 11px 13px;
+  border-radius: 12px;
+  background-color: #FAF8F2;
+  border: 1px solid #EFECE2;
+}
+
+.mp-address-pin {
+  color: #1E6B3E;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.mp-address-text {
+  font-family: var(--font-inter);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #414942;
+  margin: 0;
+}
+
+.mp-btn-edit-warung {
+  width: 100%;
+  height: 44px;
+  border: 1px solid #E5E0CE;
+  border-radius: 13px;
+  background-color: #F3EFE2;
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.mp-btn-edit-warung:hover {
+  background-color: #EAE4D2;
+}
+
+.mp-btn-edit-warung:active {
+  transform: scale(0.99);
+}
+
+/* Section Headers & Subcards */
+.mp-section-block {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.mp-section-header-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mp-section-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mp-section-icon {
+  color: #16442B;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.mp-section-title {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 15.5px;
+  color: var(--black);
+  margin: 0;
+}
+
+.mp-subcard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mp-white-row-card {
+  background-color: var(--white);
+  border-radius: 16px;
+  padding: 13px 15px;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.035);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--black);
+}
+
+.mp-white-row-card.is-clickable {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.mp-white-row-card.is-clickable:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.07);
+}
+
+.mp-row-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.mp-cream-icon-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background-color: #F3EFE2;
+  color: #374139;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mp-row-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mp-row-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--black);
+}
+
+.mp-row-sub {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  color: #717972;
+}
+
+.mp-row-caption {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #717972;
+}
+
+.mp-hours-value {
+  font-family: var(--font-sans);
+  font-size: 14px;
+  color: var(--black);
+}
+
+.mp-hours-value small {
+  font-size: 11px;
+  font-weight: 600;
+  color: #717972;
+}
+
+/* Toggle Switch ON/OFF Status Buka Toko */
+.mp-status-switch {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  height: 34px;
+  min-width: 92px;
+  padding: 4px 6px 4px 13px;
+  border: none;
+  border-radius: 999px;
+  background-color: #16442B;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.25s ease;
+}
+
+.mp-switch-knob {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.25s ease;
+}
+
+.mp-switch-knob::after {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #16442B;
+  transition: background-color 0.25s ease;
+}
+
+/* State OFF (TUTUP) */
+.mp-status-switch.is-off {
+  background-color: #DC2626;
+  flex-direction: row-reverse;
+  padding: 4px 13px 4px 6px;
+}
+
+.mp-status-switch.is-off .mp-switch-knob::after {
+  background-color: #DC2626;
+}
+
+/* Jam Buka & Drawer Edit */
+.mp-hours-card {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.mp-hours-main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mp-pill-action-btn {
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: 1px solid #E5E0CE;
+  background-color: #FAF8F2;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11.5px;
+  color: var(--black);
+  cursor: pointer;
+}
+
+.mp-pill-action-btn:hover {
+  background-color: #EFECE0;
+}
+
+.mp-hours-drawer {
+  padding-top: 10px;
+  border-top: 1px solid #F1EFE7;
+}
+
+.mp-time-inputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: #555D56;
+}
+
+.mp-mini-time-input {
+  width: 78px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 9px;
+  border: 1px solid #DCD7C5;
+  background-color: #FAF8F2;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--black);
+  text-align: center;
+}
+
+/* Cream Info Box */
+.mp-cream-note-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 11px 14px;
+  border-radius: 14px;
+  background-color: #F3EFE2;
+}
+
+.mp-note-icon {
+  color: #717972;
+  margin-top: 1px;
+  flex-shrink: 0;
+}
+
+.mp-note-text {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: #555D56;
+  margin: 0;
+}
+
+/* 3. Metode Pembayaran */
+.mp-pill-3-aktif {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: #D3F3DF;
+  color: #16442B;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.mp-pill-3-aktif .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: #16A34A;
+}
+
+.mp-payment-wrapper-card {
+  background-color: var(--white);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mp-payment-accordion-head {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  text-align: left;
+  color: var(--black);
+}
+
+.mp-payment-accordion-head svg {
+  transition: transform 0.2s ease;
+}
+
+.mp-payment-head-left {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.mp-qris-logo-box {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background-color: #E2F5EA;
+  color: #16442B;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mp-payment-head-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.mp-payment-head-title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--black);
+}
+
+.mp-pill-utama {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background-color: #D3F3DF;
+  color: #16442B;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.mp-payment-head-sub {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  color: #717972;
+}
+
+.mp-payment-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 12px;
+  border-top: 1px solid #F1EFE7;
+}
+
+.mp-payment-caps {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  color: #8C928D;
+}
+
+.mp-payment-options-list {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+.mp-payment-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 13px;
+  border-radius: 14px;
+  border: 1.5px solid #EAE7DC;
+  background-color: var(--white);
+  cursor: pointer;
+  transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.mp-payment-option.is-selected {
+  border-color: #16442B;
+  background-color: #FAFDFB;
+}
+
+.mp-option-left {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.mp-payment-radio {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mp-custom-radio {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 1.5px solid #BFC4BC;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mp-payment-option.is-selected .mp-custom-radio {
+  border-color: #16442B;
+  background-color: #16442B;
+}
+
+.mp-payment-option.is-selected .mp-custom-radio::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--white);
+}
+
+.mp-option-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mp-option-title-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  color: var(--black);
+}
+
+.mp-account-num {
+  font-weight: 500;
+  color: #414942;
+}
+
+.mp-pill-aktif-mini {
+  padding: 2px 7px;
+  border-radius: 999px;
+  background-color: #D3F3DF;
+  color: #16442B;
+  font-weight: 700;
+  font-size: 9.5px;
+}
+
+.mp-option-sub {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #717972;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mp-btn-mini-outline {
+  padding: 5px 11px;
+  border-radius: 8px;
+  border: 1px solid #DCD7C5;
+  background-color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--black);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mp-btn-mini-outline:hover {
+  background-color: #F6F3EB;
+}
+
+.mp-btn-add-payment {
+  width: 100%;
+  height: 40px;
+  border-radius: 11px;
+  border: 1px dashed #CFC9B6;
+  background-color: #FAF8F2;
+  color: #374139;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mp-btn-add-payment:hover {
+  background-color: #F1EDE0;
+}
+
+/* 4. Panel Manajemen Toko (Sage Surface) */
+.mp-sage-panel {
+  background-color: #EAECE2;
+  border-radius: 22px;
+  padding: 18px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mp-arrow-right {
+  color: #717972;
+  display: inline-flex;
+}
+
+/* 5. Tombol Bawah & Footer Versi */
+.mp-bottom-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.mp-btn-save-primary {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 14px;
+  background-color: #16442B;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 6px 16px rgba(22, 68, 43, 0.22);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.mp-btn-save-primary:hover {
+  background-color: var(--forest-green);
+}
+
+.mp-btn-save-primary:active {
+  transform: scale(0.99);
+}
+
+.mp-btn-logout-danger {
+  width: 100%;
+  height: 46px;
+  border-radius: 14px;
+  background-color: #FDECEC;
+  border: 1px solid #FBCACA;
+  color: #DC2626;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mp-btn-logout-danger:hover {
+  background-color: #FBD8D8;
+}
+
+.mp-version-footer {
+  text-align: center;
+  padding: 6px 0 4px;
+}
+
+.mp-version-main {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  color: #717972;
+  margin: 0 0 2px;
+}
+
+.mp-version-sub {
+  font-family: var(--font-inter);
+  font-size: 10px;
+  color: #9CA39D;
+  margin: 0;
+}
+
+/* ==========================================================================
+   Dialog Box (Modal) Edit Profil Warung (Sesuai Tema Plan2Eat)
+   ========================================================================== */
+.mp-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background-color: rgba(28, 28, 17, 0.48);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.mp-modal-card {
+  width: 100%;
+  max-width: 460px;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: var(--bg-cream);
+  border: 1px solid #E5E0CE;
+  border-radius: 24px;
+  padding: 20px 22px 22px;
+  box-shadow: 0 22px 50px rgba(5, 55, 31, 0.25);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mp-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mp-modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.mp-modal-icon-badge {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: #16442B;
+  color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mp-modal-title {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--black);
+  margin: 0 0 2px;
+}
+
+.mp-modal-subtitle {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: #555D56;
+  margin: 0;
+}
+
+.mp-modal-close-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background-color: #EFECE0;
+  color: var(--black);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.mp-modal-close-btn:hover {
+  background-color: #E3DEC9;
+}
+
+.mp-modal-divider {
+  border: 0;
+  border-top: 1px solid #E5E0CE;
+  margin: 0;
+}
+
+.mp-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mp-modal-photo-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  background-color: var(--white);
+  border: 1px solid #EAE6D8;
+}
+
+.mp-modal-avatar-thumb {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #16442B;
+}
+
+.mp-modal-photo-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.mp-modal-photo-label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--black);
+}
+
+.mp-btn-change-photo {
+  padding: 4px 10px;
+  border-radius: 8px;
+  border: 1px solid #DCD7C5;
+  background-color: #F3EFE2;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  color: #16442B;
+  cursor: pointer;
+}
+
+.mp-modal-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.mp-modal-label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--black);
+}
+
+.mp-modal-input-wrap,
+.mp-modal-textarea-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 13px;
+  border-radius: 12px;
+  background-color: var(--white);
+  border: 1.5px solid #DCD7C5;
+  color: #16442B;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mp-modal-textarea-wrap {
+  align-items: flex-start;
+}
+
+.mp-modal-textarea-wrap svg {
+  margin-top: 2px;
+  flex-shrink: 0;
+}
+
+.mp-modal-input-wrap:focus-within,
+.mp-modal-textarea-wrap:focus-within {
+  border-color: #16442B;
+  box-shadow: 0 0 0 3px rgba(22, 68, 43, 0.12);
+}
+
+.mp-modal-input,
+.mp-modal-textarea {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font-family: var(--font-inter);
+  font-size: 13.5px;
+  color: var(--black);
+  outline: none;
+}
+
+.mp-modal-textarea {
+  resize: vertical;
+  line-height: 1.45;
+}
+
+/* Footer Paling Bawah Dialog Box: Batal & Konfirmasi Perubahan */
+.mp-modal-footer {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 10px;
+  padding-top: 6px;
+  border-top: 1px solid #E5E0CE;
+}
+
+.mp-modal-btn-cancel {
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #D5CFC0;
+  background-color: var(--white);
+  color: #414942;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.mp-modal-btn-cancel:hover {
+  background-color: #F3EFE2;
+}
+
+.mp-modal-btn-confirm {
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  background-color: #16442B;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(22, 68, 43, 0.2);
+  transition: background-color 0.2s ease;
+}
+
+.mp-modal-btn-confirm:hover {
+  background-color: var(--forest-green);
+}
+
+/* ==========================================================================
+   Responsive Desktop Adjustments (>= 768px) untuk Profil UMKM
+   ========================================================================== */
+@media (min-width: 768px) {
+  .mitra-app-header .btn-notification {
+    color: var(--forest-green);
+  }
+
+  .notif-amber-dot {
+    border-color: var(--card-cream);
+  }
+
+  .mp-main-form {
+    gap: 24px;
+  }
+
+  .mp-identity-card {
+    padding: 24px 28px;
+  }
+
+  .mp-avatar-box {
+    width: 82px;
+    height: 82px;
+  }
+
+  .mp-store-title {
+    font-size: 22px;
+  }
+
+  .mp-sections-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.15fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  .mp-col-stack {
+    gap: 22px;
+  }
+
+  .mp-modal-card {
+    padding: 24px 26px;
+  }
+}
