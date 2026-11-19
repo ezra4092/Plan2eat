@@ -83,9 +83,9 @@ Route::group(['middleware' => ['auth']], function() {
         return view('admin.dashboard');
     })->name('admin.dashboard');
 
-    Route::get('/umkm/dashboard', function () {
-        return view('umkm.dashboard');
-    })->name('umkm.dashboard');
+    Route::get('/pesanan/tambah', function () {
+        return view('pelanggan.mitra');
+    })->name('pelanggan.mitra');
 
     Route::get('/pelanggan/beranda', [MenuController::class, 'berandaPelanggan'])
     ->name('pelanggan.beranda');

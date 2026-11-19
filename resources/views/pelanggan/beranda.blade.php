@@ -53,13 +53,14 @@
     <section class="order-status-card">
       <div class="order-status-content">
         <p class="order-empty-text">Anda belum membuat pesanan</p>
-        <a href="{{ url('/pesanan/tambah') }}" class="btn-add-order">
-          <img src="{{ asset('img/vector-5.svg') }}" alt="Tambah">
-          <span>Tambahkan Pesanan</span>
-        </a>
+          <form action="{{ route('pelanggan.mitra') }}" method="GET">
+           <button type="submit" class="btn-add-order">
+            <img src="{{ asset('img/vector-5.svg') }}" alt="Tambah">
+             <span>Tambahkan Pesanan</span>
+            </button>
+          </form>
       </div>
     </section>
-
   </div>
 
   <!-- SECTION FLASH SALE (Promo Harian Jam 20:00 - 22:00) -->

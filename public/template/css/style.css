@@ -9228,3 +9228,946 @@ body {
 @media (min-width: 1280px) {
   .po-order-list { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* ==========================================================================
+   Halaman Daftar Mitra UMKM (User Pelanggan)
+   ========================================================================== */
+
+/* Dukungan ikon SVG pada navigasi & desktop topbar */
+.nav-icon-box svg {
+  width: 22px;
+  height: 22px;
+}
+
+@media (min-width: 768px) {
+  .nav-icon-box svg {
+    width: 19px;
+    height: 19px;
+    color: var(--white);
+    opacity: 0.85;
+  }
+
+  .nav-item.active .nav-icon-box svg {
+    opacity: 1;
+  }
+
+  .location-picker .icon-location,
+  .location-picker .icon-chevron {
+    color: var(--forest-green);
+  }
+}
+
+/* Container Halaman Daftar Mitra */
+.mtr-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Baris Kembali ke Beranda */
+.mtr-back-row {
+  display: flex;
+  align-items: center;
+}
+
+.mtr-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14.5px;
+  letter-spacing: -0.2px;
+  transition: color 0.2s ease, transform 0.1s ease;
+}
+
+.mtr-back-link:hover {
+  color: var(--forest-green);
+}
+
+.mtr-back-link:active {
+  transform: translateX(-2px);
+}
+
+/* Header Judul Halaman */
+.mtr-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 2px;
+}
+
+.mtr-page-title {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+  color: var(--black);
+  margin: 0;
+}
+
+.mtr-page-subtitle {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: var(--gray);
+  margin: 0;
+}
+
+/* Grid Daftar Kartu Mitra (1 kolom di mobile) */
+.mtr-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Kartu Mitra UMKM */
+.mtr-card {
+  background-color: var(--white);
+  border-radius: 22px;
+  padding: 16px;
+  box-shadow: 0 6px 22px rgba(0, 0, 0, 0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.mtr-card:hover {
+  box-shadow: 0 10px 26px rgba(5, 55, 31, 0.09);
+}
+
+/* Bagian Atas Kartu: Foto Dapur & Detail Singkat */
+.mtr-card-top {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mtr-store-thumb {
+  width: 78px;
+  height: 78px;
+  border-radius: 14px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background-color: #EAE4D2;
+}
+
+.mtr-store-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mtr-store-name {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 19px;
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  color: var(--black);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.mtr-store-meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  color: var(--gray);
+  min-width: 0;
+}
+
+.mtr-rating-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  color: var(--black);
+}
+
+.mtr-rating-group strong {
+  font-weight: 700;
+}
+
+.mtr-review-count {
+  color: var(--gray);
+  font-weight: 400;
+}
+
+.mtr-meta-sep {
+  color: #C7C7C7;
+  flex-shrink: 0;
+}
+
+.mtr-store-address {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--gray);
+}
+
+.mtr-price-start {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 13.5px;
+  color: var(--black);
+  margin: 2px 0 0;
+}
+
+.mtr-price-start strong {
+  font-weight: 800;
+  font-size: 15.5px;
+  color: var(--black);
+}
+
+.mtr-price-start span {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 11.5px;
+  color: var(--gray);
+}
+
+/* Strip 4 Preview Menu di Dalam Kartu */
+.mtr-menu-strip {
+  background-color: #EAE3CD;
+  border-radius: 14px;
+  padding: 10px 10px 11px;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.mtr-menu-mini {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mtr-menu-mini-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 9px;
+  overflow: hidden;
+  background-color: #DCD4BC;
+}
+
+.mtr-menu-mini-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.mtr-menu-mini-price {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1.15;
+  color: var(--black);
+  margin-top: 2px;
+}
+
+.mtr-menu-mini-name {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 1.2;
+  color: #555D56;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Tombol CTA Lihat Menu & Rincian Gizi */
+.mtr-btn-detail {
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  background-color: #16442B;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.mtr-btn-detail:hover {
+  background-color: var(--forest-green);
+  color: var(--white);
+}
+
+.mtr-btn-detail:active {
+  transform: scale(0.99);
+}
+
+.mtr-empty-state {
+  grid-column: 1 / -1;
+  background-color: var(--white);
+  border-radius: 20px;
+  padding: 36px 20px;
+  text-align: center;
+  font-family: var(--font-inter);
+  font-size: 14px;
+  color: var(--gray);
+}
+
+/* Mobile Layar Sangat Kecil (<= 360px) */
+@media (max-width: 360px) {
+  .mtr-store-thumb {
+    width: 68px;
+    height: 68px;
+  }
+
+  .mtr-store-name {
+    font-size: 17px;
+  }
+
+  .mtr-menu-strip {
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .mtr-menu-mini-price {
+    font-size: 11px;
+  }
+}
+
+/* Responsif Desktop (>= 768px) */
+@media (min-width: 768px) {
+  .mtr-page {
+    gap: 20px;
+  }
+
+  .mtr-page-title {
+    font-size: 24px;
+  }
+
+  .mtr-page-subtitle {
+    font-size: 14px;
+  }
+
+  .mtr-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 22px;
+  }
+
+  .mtr-card {
+    padding: 20px;
+    gap: 16px;
+  }
+
+  .mtr-store-thumb {
+    width: 86px;
+    height: 86px;
+  }
+
+  .mtr-store-name {
+    font-size: 20px;
+  }
+
+  .mtr-menu-strip {
+    padding: 12px;
+    gap: 10px;
+  }
+
+  .mtr-menu-mini-price {
+    font-size: 12.5px;
+  }
+
+  .mtr-menu-mini-name {
+    font-size: 11px;
+  }
+}
+
+/* Desktop Layar Lebar (>= 1280px) */
+@media (min-width: 1280px) {
+  .mtr-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* ==========================================================================
+   Halaman Daftar Menu Katering UMKM (User Pelanggan)
+   ========================================================================== */
+
+/* Header & Navigasi Pelanggan (Logo Ring, Notifikasi Dot, Status Pill) */
+.cmn-brand-ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.cmn-notif-btn {
+  position: relative;
+  color: var(--white);
+}
+
+.cmn-notif-dot {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #FACC15;
+  border: 1.5px solid var(--forest-green);
+}
+
+.cmn-pin-emerald {
+  color: #34D399;
+}
+
+.cmn-status-pill .cmn-pill-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #34D399;
+  flex-shrink: 0;
+}
+
+/* Sembunyikan bottom-nav default pada mobile khusus halaman menu agar digantikan bar checkout */
+@media (max-width: 767.98px) {
+  .page-customer-menu .app-nav {
+    display: none;
+  }
+
+  .page-customer-menu .app-content-wrapper {
+    padding-bottom: 94px;
+  }
+}
+
+/* Container Halaman Daftar Menu */
+.cmn-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Baris Kembali ke Menu Mitra */
+.cmn-back-row {
+  display: flex;
+  align-items: center;
+}
+
+.cmn-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 11px;
+  text-decoration: none;
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14.5px;
+  letter-spacing: -0.2px;
+  transition: color 0.2s ease, transform 0.1s ease;
+}
+
+.cmn-back-link:hover {
+  color: var(--forest-green);
+}
+
+.cmn-back-link:active {
+  transform: translateX(-2px);
+}
+
+/* Header Judul Kiri & Nama Mitra Kanan */
+.cmn-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 2px;
+}
+
+.cmn-header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.cmn-page-title {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+  color: var(--black);
+  margin: 0;
+}
+
+.cmn-page-subtitle {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 12px;
+  color: var(--gray);
+  margin: 0;
+}
+
+.cmn-header-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.cmn-mitra-name {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 15px;
+  line-height: 1.2;
+  color: #16442B;
+}
+
+.cmn-mitra-verified {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.6px;
+  color: #10B981;
+  text-transform: uppercase;
+}
+
+/* Grid Kartu Menu (2 Kolom di Mobile) */
+.cmn-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 13px;
+}
+
+/* Kartu Menu */
+.cmn-card {
+  background-color: var(--white);
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.055);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.cmn-card:hover {
+  box-shadow: 0 8px 22px rgba(5, 55, 31, 0.1);
+}
+
+/* Bagian Foto & Badge Overlay */
+.cmn-card-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background-color: #EAE4D2;
+  overflow: hidden;
+}
+
+.cmn-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cmn-kcal-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background-color: rgba(28, 28, 17, 0.72);
+  backdrop-filter: blur(4px);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10px;
+  color: var(--white);
+}
+
+.cmn-tag-badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  z-index: 2;
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 9.5px;
+  color: var(--white);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.16);
+}
+
+.cmn-tag-badge.is-teal    { background-color: #197B5B; }
+.cmn-tag-badge.is-amber   { background-color: #D97724; }
+.cmn-tag-badge.is-blue    { background-color: #2563A6; }
+.cmn-tag-badge.is-olive   { background-color: #246A3B; }
+
+/* Bagian Konten Kartu */
+.cmn-card-body {
+  padding: 11px 11px 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+  gap: 12px;
+}
+
+.cmn-card-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cmn-card-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.32;
+  color: var(--black);
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cmn-card-macro {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 10.5px;
+  line-height: 1.3;
+  color: var(--gray);
+  margin: 0;
+}
+
+/* Footer Kartu: Harga & Kontrol Kuantitas */
+.cmn-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+}
+
+.cmn-card-price {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: -0.2px;
+  color: var(--black);
+}
+
+/* Kontrol Kuantitas (- qty + dan tombol + tunggal) */
+.cmn-qty-control {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.cmn-qty-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 28px;
+  padding: 2px 3px 2px 7px;
+  border-radius: 999px;
+  background-color: #F3EFE2;
+}
+
+.cmn-qty-minus {
+  width: 18px;
+  height: 18px;
+  border: none;
+  padding: 0;
+  background: transparent;
+  color: var(--black);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.cmn-qty-val {
+  min-width: 12px;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  color: var(--black);
+}
+
+.cmn-qty-plus {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 50%;
+  background-color: #16442B;
+  color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.cmn-qty-plus.is-in-pill {
+  width: 23px;
+  height: 23px;
+}
+
+.cmn-qty-plus:hover {
+  background-color: var(--forest-green);
+}
+
+.cmn-qty-plus:active {
+  transform: scale(0.93);
+}
+
+/* Sticky Bottom Checkout Bar */
+.cmn-checkout-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 48;
+  background-color: var(--white);
+  border-top: 1px solid #ECE8DA;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
+  padding: 12px 18px 14px;
+}
+
+.cmn-checkout-inner {
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.cmn-subtotal-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cmn-subtotal-label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  color: var(--gray);
+}
+
+.cmn-subtotal-amount {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 1.15;
+  letter-spacing: -0.4px;
+  color: var(--black);
+}
+
+.cmn-checkout-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cmn-cart-btn {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 13px;
+  background-color: #E4F4EC;
+  color: #16442B;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.2s ease;
+}
+
+.cmn-cart-btn:hover {
+  background-color: #D4ECDF;
+}
+
+.cmn-cart-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  min-width: 19px;
+  height: 19px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background-color: #F59E0B;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 10.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
+}
+
+.cmn-order-btn {
+  height: 46px;
+  padding: 0 18px;
+  border-radius: 13px;
+  background-color: #16442B;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px rgba(22, 68, 43, 0.2);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.cmn-order-btn:hover {
+  background-color: var(--forest-green);
+  color: var(--white);
+}
+
+.cmn-order-btn:active {
+  transform: scale(0.98);
+}
+
+/* Layar Mobile Sangat Kecil (<= 360px) */
+@media (max-width: 360px) {
+  .cmn-menu-grid {
+    gap: 10px;
+  }
+
+  .cmn-card-price {
+    font-size: 13px;
+  }
+
+  .cmn-subtotal-amount {
+    font-size: 18px;
+  }
+
+  .cmn-order-btn {
+    padding: 0 14px;
+    font-size: 12.5px;
+  }
+}
+
+/* Responsif Desktop (>= 768px) */
+@media (min-width: 768px) {
+  .cmn-notif-btn {
+    color: var(--forest-green);
+  }
+
+  .cmn-notif-dot {
+    border-color: var(--card-cream);
+  }
+
+  .cmn-pin-emerald {
+    color: var(--forest-green);
+  }
+
+  .cmn-status-pill .cmn-pill-dot {
+    background-color: var(--forest-green);
+  }
+
+  .page-customer-menu .app-content-wrapper {
+    padding-bottom: 104px;
+  }
+
+  .cmn-page {
+    gap: 20px;
+  }
+
+  .cmn-page-title {
+    font-size: 24px;
+  }
+
+  .cmn-page-subtitle {
+    font-size: 14px;
+  }
+
+  .cmn-mitra-name {
+    font-size: 18px;
+  }
+
+  .cmn-mitra-verified {
+    font-size: 10.5px;
+  }
+
+  .cmn-menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .cmn-card-body {
+    padding: 14px 16px 16px;
+  }
+
+  .cmn-card-title {
+    font-size: 15px;
+  }
+
+  .cmn-card-macro {
+    font-size: 12px;
+  }
+
+  .cmn-card-price {
+    font-size: 16px;
+  }
+
+  /* Sticky Checkout Bar sejajar dengan area konten kanan sidebar */
+  .cmn-checkout-bar {
+    left: var(--sidebar-width);
+    padding: 14px 32px;
+  }
+
+  .cmn-checkout-inner {
+    max-width: 1136px;
+  }
+
+  .cmn-subtotal-amount {
+    font-size: 22px;
+  }
+
+  .cmn-order-btn {
+    padding: 0 24px;
+    font-size: 14px;
+  }
+}
+
+/* Desktop Layar Lebar (>= 1280px) */
+@media (min-width: 1280px) {
+  .cmn-menu-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
