@@ -18,7 +18,7 @@ class AuthController extends Controller
 
     public function showRegistrationForm()
     {
-        return view('pelanggan.regist');
+        return view('registpelanggan');
     }
 
     public function register(Request $request)
