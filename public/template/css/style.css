@@ -8425,3 +8425,422 @@ body {
 @media (min-width: 1280px) {
   .mm-list { grid-template-columns: repeat(3, 1fr); }
 }
+
+/* Flash Sale Section Styles (Plan2Eat Theme) */
+.flash-sale-section {
+  background: #FFFFFF;
+  border-radius: 24px;
+  padding: 24px 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+  border: 1px solid #ECECEC;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* Header Banner Promo */
+.fs-header-banner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  background: linear-gradient(135deg, #16442B 0%, #1f5738 100%);
+  border-radius: 18px;
+  padding: 16px 20px;
+  color: #FFFFFF;
+}
+
+.fs-header-title-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fs-lightning-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FCD34D;
+  font-size: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.fs-header-text h2 {
+  font-size: 18px;
+  font-weight: 800;
+  margin: 0;
+  color: #FFFFFF;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  letter-spacing: -0.2px;
+}
+
+.fs-header-text p {
+  font-size: 12.5px;
+  color: #D1FAE5;
+  margin: 2px 0 0;
+}
+
+/* Countdown & Status Badge */
+.fs-countdown-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 8px 14px;
+  border-radius: 12px;
+  backdrop-filter: blur(6px);
+}
+
+.fs-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #FFFFFF;
+}
+
+.fs-pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10B981;
+  box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+  animation: fsPulse 1.6s infinite;
+}
+
+@keyframes fsPulse {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.fs-timer-display {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.fs-timer-unit {
+  background: #111827;
+  color: #F9FAFB;
+  font-family: 'Inter', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 4px 6px;
+  border-radius: 6px;
+  min-width: 26px;
+  text-align: center;
+}
+
+.fs-timer-sep {
+  font-weight: 700;
+  color: #FCD34D;
+}
+
+/* Filter Mitra Row */
+.fs-mitra-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.fs-mitra-filter-label {
+  font-size: 13px;
+  font-weight: 700;
+  color: #374151;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.fs-mitra-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fs-mitra-chip {
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border: 1px solid #D1D5DB;
+  background: #F9FAFB;
+  color: #4B5563;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.fs-mitra-chip:hover {
+  border-color: #16442B;
+  color: #16442B;
+  background: #E8F5E9;
+}
+
+.fs-mitra-chip.active {
+  background: #16442B;
+  border-color: #16442B;
+  color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(22, 68, 43, 0.2);
+}
+
+/* Grid Produk Flash Sale (Desktop / Tablet / Mobile) */
+.fs-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+@media (max-width: 1024px) {
+  .fs-cards-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (max-width: 640px) {
+  .fs-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  .flash-sale-section {
+    padding: 18px 14px;
+    border-radius: 18px;
+  }
+}
+
+/* Card Item */
+.fs-card {
+  background: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  position: relative;
+}
+
+.fs-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(22, 68, 43, 0.08);
+  border-color: #10B981;
+}
+
+/* Media Visual Container */
+.fs-card-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  background: #F3F4F6;
+  overflow: hidden;
+}
+
+.fs-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.35s ease;
+}
+
+.fs-card:hover .fs-card-img {
+  transform: scale(1.06);
+}
+
+/* Badge Mitra (Top Left) */
+.fs-card-vendor-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(4px);
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: #16442B;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  max-width: calc(100% - 60px);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  z-index: 2;
+}
+
+/* Discount Ribbon Bookmark (Top Right - Sesuai Contoh Foto, Warna Amber/Emas Plan2Eat) */
+.fs-card-ribbon {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  background: #F59E0B;
+  color: #FFFFFF;
+  font-size: 11.5px;
+  font-weight: 800;
+  padding: 6px 7px 11px;
+  text-align: center;
+  line-height: 1.1;
+  box-shadow: 0 2px 6px rgba(245, 158, 11, 0.35);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 82%, 0 100%);
+  z-index: 2;
+}
+
+.fs-card-ribbon span {
+  font-size: 9px;
+  display: block;
+  opacity: 0.92;
+  letter-spacing: 0.2px;
+}
+
+/* Tag Khusus di Bawah Foto */
+.fs-card-tag-special {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background: #16442B;
+  color: #A7F3D0;
+  padding: 3px 7px;
+  border-radius: 6px;
+  font-size: 9.5px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 2;
+}
+
+/* Card Body */
+.fs-card-body {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.fs-card-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1F2937;
+  margin: 0;
+  line-height: 1.35;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  min-height: 36px;
+}
+
+/* Pricing */
+.fs-pricing-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fs-price-strike {
+  font-size: 11.5px;
+  color: #9CA3AF;
+  text-decoration: line-through;
+  font-weight: 500;
+}
+
+.fs-price-discount {
+  font-size: 16px;
+  font-weight: 800;
+  color: #16442B;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+/* Progress Bar / Kapsul Stok (Sesuai Referensi Foto) */
+.fs-stock-capsule {
+  position: relative;
+  width: 100%;
+  height: 18px;
+  background: #FEE2E2;
+  border-radius: 999px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+}
+
+.fs-stock-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+  border-radius: 999px;
+  transition: width 0.4s ease;
+}
+
+.fs-stock-fill.is-low {
+  background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%);
+}
+
+.fs-stock-text {
+  position: absolute;
+  width: 100%;
+  text-align: center;
+  font-size: 9.5px;
+  font-weight: 800;
+  color: #FFFFFF;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  pointer-events: none;
+}
+
+/* Tombol Pesan Cepat */
+.fs-btn-order {
+  background: #16442B;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: background 0.2s ease;
+  display: block;
+  margin-top: 4px;
+  font-family: inherit;
+}
+
+.fs-btn-order:hover {
+  background: #0f301e;
+  color: #FFFFFF;
+}
+
+.fs-btn-order:disabled {
+  background: #D1D5DB;
+  cursor: not-allowed;
+  color: #6B7280;
+}
+
+.fs-empty-message {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 30px 20px;
+  background: #F9FAFB;
+  border-radius: 14px;
+  color: #6B7280;
+  font-size: 13.5px;
+}

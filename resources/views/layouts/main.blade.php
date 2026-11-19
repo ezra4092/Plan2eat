@@ -14,7 +14,6 @@
   <link rel="stylesheet" href="{{ asset('template/css/globals.css') }}">
   <link rel="stylesheet" href="{{ asset('template/css/style.css') }}">
   <script src="https://kit.fontawesome.com/04689dffa8.js" crossorigin="anonymous"></script>
-
   @stack('styles')
 </head>
 <body class="app-shell">
@@ -71,6 +70,7 @@
     </div>
   </div>
 
+  @stack('modals')
   @stack('scripts')
 </body>
 </html>

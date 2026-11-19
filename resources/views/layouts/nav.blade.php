@@ -7,7 +7,7 @@
 <nav class="app-nav" id="appSidebar" aria-label="Navigasi Utama">
   <!-- Brand Header (Hanya muncul di Desktop Left Sidebar seperti SB Admin 2) -->
   <div class="sidebar-brand">
-    <a href="{{ $userRole === 'umkm' ? url('/umkm/dashboard') : url('/pelanggan/beranda') }}" class="sidebar-brand-link">
+    <a href="{{ $userRole === 'umkm' ? (Route::has('umkm.dashboard') ? route('umkm.dashboard') : url('/umkm/dashboard')) : (Route::has('pelanggan.beranda') ? route('pelanggan.beranda') : url('/pelanggan/beranda')) }}" class="sidebar-brand-link">
       <img class="sidebar-brand-icon" src="{{ asset('images/Logo 2.png') }}" alt="Plan2Eat Logo">
       <span class="sidebar-brand-text">PLAN2EAT</span>
     </a>
@@ -21,26 +21,32 @@
 
     <!-- Daftar Menu Navigasi Pelanggan (Horizontal di Mobile, Vertikal di Desktop) -->
     <div class="nav-menu-list">
-      <a href="{{ url('/pelanggan/beranda') }}" class="nav-item {{ $activeMenu === 'beranda' ? 'active' : '' }}">
-        <div class="nav-icon-box">
-          <img src="{{ asset('img/icon-9.svg') }}" alt="Beranda">
-        </div>
-        <span class="nav-label">Beranda</span>
-      </a>
+      <form action="{{ route('pelanggan.beranda') }}" method="GET" style="margin: 0;">
+        <button type="submit" class="nav-item {{ $activeMenu === 'beranda' ? 'active' : '' }}" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
+          <div class="nav-icon-box">
+            <img src="{{ asset('img/icon-9.svg') }}" alt="Beranda">
+          </div>
+          <span class="nav-label">Beranda</span>
+        </button>
+      </form>
 
-      <a href="{{ url('/langganan') }}" class="nav-item {{ $activeMenu === 'langganan' ? 'active' : '' }}">
-        <div class="nav-icon-box">
-          <img src="{{ asset('img/icon-7.svg') }}" alt="Langganan">
-        </div>
-        <span class="nav-label">Langganan</span>
-      </a>
+      <form action="" method="GET" style="margin: 0;">
+        <button type="submit" class="nav-item {{ $activeMenu === 'langganan' || $activeMenu === 'meal_plan' ? 'active' : '' }}" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
+          <div class="nav-icon-box">
+            <img src="{{ asset('img/icon-7.svg') }}" alt="Langganan">
+          </div>
+          <span class="nav-label">Langganan</span>
+        </button>
+      </form>
 
-      <a href="{{ url('/profil') }}" class="nav-item {{ $activeMenu === 'profil' ? 'active' : '' }}">
-        <div class="nav-icon-box">
-          <img src="{{ asset('img/icon-5.svg') }}" alt="Profil">
-        </div>
-        <span class="nav-label">Profil</span>
-      </a>
+      <form action="{{ route('pelanggan.profil_kesehatan') }}" method="POST" style="margin: 0;">
+        <button type="submit" class="nav-item {{ $activeMenu === 'profil' ? 'active' : '' }}" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
+          <div class="nav-icon-box">
+            <img src="{{ asset('img/icon-5.svg') }}" alt="Profil">
+          </div>
+          <span class="nav-label">Profil</span>
+        </button>
+      </form>
     </div>
 
     <hr class="sidebar-divider">
@@ -69,33 +75,41 @@
 
     <!-- Daftar Menu Navigasi UMKM (Horizontal di Mobile, Vertikal di Desktop) -->
     <div class="nav-menu-list">
-      <a href="{{ route('umkm.dashboard') }}" class="nav-item {{ $activeMenu === 'beranda' ? 'active' : '' }}">
-        <div class="nav-icon-box">
-          <img src="{{ asset('img/icon-3.svg') }}" alt="Beranda">
-        </div>
-        <span class="nav-label">Beranda</span>
-      </a>
+      <form action="{{ route('umkm.dashboard') }}" method="GET" style="margin: 0;">
+        <button type="submit" class="nav-item {{ $activeMenu === 'beranda' ? 'active' : '' }}" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
+          <div class="nav-icon-box">
+            <img src="{{ asset('img/icon-3.svg') }}" alt="Beranda">
+          </div>
+          <span class="nav-label">Beranda</span>
+        </button>
+      </form>
 
-      <a href="{{ url('/umkm/manajemen') }}" class="nav-item {{ $activeMenu === 'manajemen' ? 'active' : '' }}">
-        <div class="nav-icon-box">
-          <img src="{{ asset('img/icon-4.svg') }}" alt="Manajemen">
-        </div>
-        <span class="nav-label">Manajemen</span>
-      </a>
+      <form action="{{ route('umkm.menu')}}" method="GET" style="margin: 0;">
+        <button type="submit" class="nav-item {{ $activeMenu === 'manajemen' || $activeMenu === 'menu' ? 'active' : '' }}" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
+          <div class="nav-icon-box">
+            <img src="{{ asset('img/icon-4.svg') }}" alt="Manajemen Menu">
+          </div>
+          <span class="nav-label">Manajemen Menu</span>
+        </button>
+      </form>
 
-      <a href="{{ url('/umkm/saldo') }}" class="nav-item {{ $activeMenu === 'saldo' ? 'active' : '' }}">
-        <div class="nav-icon-box">
-          <img src="{{ asset('img/icon-park-outline-funds.svg') }}" alt="Saldo">
-        </div>
-        <span class="nav-label">Saldo</span>
-      </a>
+      <form action="{{ route('umkm.laporan_keuangan') }}" method="GET" style="margin: 0;">
+        <button type="submit" class="nav-item {{ $activeMenu === 'saldo' || $activeMenu === 'laporan' ? 'active' : '' }}" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
+          <div class="nav-icon-box">
+            <img src="{{ asset('img/icon-park-outline-funds.svg') }}" alt="Keuangan">
+          </div>
+          <span class="nav-label">Keuangan</span>
+        </button>
+      </form>
 
-      <a href="{{ route('umkm.profil') }}" class="nav-item {{ $activeMenu === 'profil' ? 'active' : '' }}">
-        <div class="nav-icon-box">
-          <img src="{{ asset('img/icon-2.svg') }}" alt="Profil">
-        </div>
-        <span class="nav-label">Profil</span>
-      </a>
+      <form action="{{ route('umkm.profil') }}" method="GET" style="margin: 0;">
+        <button type="submit" class="nav-item {{ $activeMenu === 'profil' ? 'active' : '' }}" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
+          <div class="nav-icon-box">
+            <img src="{{ asset('img/icon-2.svg') }}" alt="Profil">
+          </div>
+          <span class="nav-label">Profil</span>
+        </button>
+      </form>
     </div>
 
     <hr class="sidebar-divider">

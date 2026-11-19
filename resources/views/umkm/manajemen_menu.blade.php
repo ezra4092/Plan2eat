@@ -1,15 +1,4 @@
-{{--
-    Halaman Manajemen Menu UMKM (CRUD + Flash Sale)
-    Route : umkm.menu, umkm.menu-create, umkm.menu-update, umkm.menu-delete,
-            umkm.menu-stok, umkm.flashsale-create
-    (Route yang masih di-comment akan jatuh ke '#', jadi view tetap aman dirender.)
-
-    Catatan data: $menus idealnya dikirim dari MenuController@index sebagai
-    array/collection berisi key: id_menu, id_plan, nama_makanan, deskripsi_makanan,
-    kandungan_kalori, stok_harian, harga_normal, foto_menu, + kategori, label, badge, tags
-    (kategori/label/badge/tags belum ada di schema, lihat catatan di bawah).
---}}
-@extends('main')
+@extends('layouts.main')
 
 @section('title', 'Manajemen Menu - Plan2Eat')
 @section('nav_active', 'menu')
@@ -27,33 +16,58 @@
     $urlStok    = $safe('umkm.menu-stok', '__ID__');
     $urlFlash   = $safe('umkm.flashsale-create');
 
-    // Data contoh (hapus jika $menus sudah dikirim dari controller)
-    $sample = [
-        ['id_menu' => 1, 'kategori' => 'Paket Katering', 'label' => 'PAKET KATERING MAHASISWA', 'nama_makanan' => 'Nasi Box Ayam Rica-Rica',
-         'deskripsi_makanan' => '', 'kandungan_kalori' => 520, 'stok_harian' => 25, 'harga_normal' => 20000, 'foto_menu' => null,
-         'badge' => 'Best Seller', 'tags' => [['Tanpa Kacang', 'amber', true], ['Pedas Sedang', 'green', false]]],
-        ['id_menu' => 2, 'kategori' => 'Meal Plan', 'label' => 'MEAL PLAN CLEAN EATING', 'nama_makanan' => 'Paket Diet Sehat Ayam Panggang',
-         'deskripsi_makanan' => '', 'kandungan_kalori' => 380, 'stok_harian' => 12, 'harga_normal' => 28000, 'foto_menu' => null,
-         'badge' => 'Low Cal', 'tags' => [['Rendah Kalori', 'green', false], ['Bebas Gluten', 'amber', false]]],
-        ['id_menu' => 3, 'kategori' => 'Menu Harian', 'label' => 'MENU HARIAN ALACARTE', 'nama_makanan' => 'Tumis Kangkung & Tempe Orek',
-         'deskripsi_makanan' => '', 'kandungan_kalori' => 290, 'stok_harian' => 0, 'harga_normal' => 12000, 'foto_menu' => null,
-         'badge' => null, 'tags' => [['Tinggi Serat', 'neutral', false], ['Vegetarian', 'neutral', false]]],
-    ];
+    // Jika controller belum mengirimkan $menus, ambil dari database atau fallback ke sample
+    if (!isset($menus)) {
+        try {
+            $dbMenus = \App\Models\Menu::all();
+            $menus = $dbMenus->isNotEmpty() ? $dbMenus : null;
+        } catch (\Throwable $e) {
+            $menus = null;
+        }
 
-    $isSample = !isset($menus);
-    $menus    = collect($menus ?? $sample)->map(fn ($m) => (object) $m);
+        if (!$menus) {
+            $sample = [
+                ['id_menu' => 1, 'kategori' => 'Paket Katering', 'label' => 'PAKET KATERING MAHASISWA', 'nama_makanan' => 'Nasi Box Ayam Rica-Rica',
+                 'deskripsi_makanan' => '', 'kandungan_kalori' => 520, 'stok_harian' => 25, 'harga_normal' => 20000, 'foto_menu' => null,
+                 'badge' => 'Best Seller', 'tags' => [['Tanpa Kacang', 'amber', true], ['Pedas Sedang', 'green', false]]],
+                ['id_menu' => 2, 'kategori' => 'Meal Plan', 'label' => 'MEAL PLAN CLEAN EATING', 'nama_makanan' => 'Paket Diet Sehat Ayam Panggang',
+                 'deskripsi_makanan' => '', 'kandungan_kalori' => 380, 'stok_harian' => 12, 'harga_normal' => 28000, 'foto_menu' => null,
+                 'badge' => 'Low Cal', 'tags' => [['Rendah Kalori', 'green', false], ['Bebas Gluten', 'amber', false]]],
+                ['id_menu' => 3, 'kategori' => 'Menu Harian', 'label' => 'MENU HARIAN ALACARTE', 'nama_makanan' => 'Tumis Kangkung & Tempe Orek',
+                 'deskripsi_makanan' => '', 'kandungan_kalori' => 290, 'stok_harian' => 0, 'harga_normal' => 12000, 'foto_menu' => null,
+                 'badge' => null, 'tags' => [['Tinggi Serat', 'neutral', false], ['Vegetarian', 'neutral', false]]],
+            ];
+            $menus = collect($sample);
+        }
+    }
 
-    if ($isSample) {
-        // Angka pratinjau persis seperti desain Figma (hapus saat data asli dari controller dipakai)
-        $total = 18; $tersedia = 16; $habis = 2;
-        $kategoriList = collect(['Paket Katering', 'Menu Harian', 'Meal Plan']);
-        $kategoriCount = ['Paket Katering' => 8, 'Menu Harian' => 7, 'Meal Plan' => 3];
-    } else {
-        $total    = $menus->count();
-        $tersedia = $menus->where('stok_harian', '>', 0)->count();
-        $habis    = $total - $tersedia;
-        $kategoriList = $menus->pluck('kategori')->unique()->values();
-        $kategoriCount = $menus->groupBy('kategori')->map->count()->all();
+    $menus    = collect($menus)->map(fn ($m) => is_array($m) ? (object) $m : $m);
+    $total    = $menus->count();
+    $tersedia = $menus->where('stok_harian', '>', 0)->count();
+    $habis    = $total - $tersedia;
+
+    if (!isset($jenisMenuList)) {
+        try {
+            $jenisMenuList = \App\Models\JenisMenu::all();
+        } catch (\Throwable $e) {
+            $jenisMenuList = collect();
+        }
+    }
+
+    if (!isset($kategoriList)) {
+        if ($jenisMenuList->isNotEmpty()) {
+            $kategoriList = $jenisMenuList->pluck('nama')->values();
+            $kategoriCount = [];
+            foreach ($jenisMenuList as $jm) {
+                $kategoriCount[$jm->nama] = $menus->where('jenis_menu', $jm->id)->count();
+            }
+        } else {
+            $kategoriList = $menus->pluck('kategori')->filter()->unique()->values();
+            if ($kategoriList->isEmpty()) {
+                $kategoriList = collect(['Paket Katering', 'Menu Harian', 'Meal Plan']);
+            }
+            $kategoriCount = $menus->groupBy('kategori')->map->count()->all();
+        }
     }
 
     $foto = function ($path) {
@@ -69,6 +83,27 @@
      data-url-delete="{{ $urlDelete }}"
      data-url-stok="{{ $urlStok }}"
      data-url-flash="{{ $urlFlash }}">
+
+    {{-- Notifikasi Flash --}}
+    @if (session('success'))
+        <div style="background: #E8F5E9; border-left: 4px solid #2E7D32; color: #1B5E20; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; font-weight: 500;">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div style="background: #FFEBEE; border-left: 4px solid #C62828; color: #B71C1C; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; font-weight: 500;">
+            {{ session('error') }}
+        </div>
+    @endif
+    @if ($errors->any())
+        <div style="background: #FFEBEE; border-left: 4px solid #C62828; color: #B71C1C; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
+            <ul style="margin: 0; padding-left: 20px;">
+                @foreach ($errors->all() as $err)
+                    <li>{{ $err }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
 
     {{-- Kembali --}}
     <div class="mm-back-row">
@@ -122,15 +157,21 @@
             @php
                 $soldout = ($m->stok_harian ?? 0) <= 0;
                 $img = $foto($m->foto_menu ?? null);
+                $kategoriNama = $m->jenisMenu->nama ?? ($m->kategori ?? 'Umum');
                 $payload = [
-                    'id' => $m->id_menu, 'nama' => $m->nama_makanan, 'deskripsi' => $m->deskripsi_makanan ?? '',
-                    'kalori' => $m->kandungan_kalori ?? '', 'stok' => $m->stok_harian ?? 0,
-                    'harga' => (int) $m->harga_normal, 'foto' => $img,
+                    'id' => $m->id_menu,
+                    'nama' => $m->nama_makanan,
+                    'deskripsi' => $m->deskripsi_makanan ?? '',
+                    'kalori' => $m->kandungan_kalori ?? '',
+                    'stok' => $m->stok_harian ?? 0,
+                    'harga' => (int) $m->harga_normal,
+                    'foto' => $img,
+                    'jenis_menu' => $m->jenis_menu ?? '',
                 ];
             @endphp
             <article class="mm-card {{ $soldout ? 'is-soldout' : '' }}"
-                     data-kategori="{{ $m->kategori ?? '' }}"
-                     data-search="{{ strtolower(($m->nama_makanan ?? '') . ' ' . ($m->label ?? '')) }}"
+                     data-kategori="{{ $kategoriNama }}"
+                     data-search="{{ strtolower(($m->nama_makanan ?? '') . ' ' . $kategoriNama) }}"
                      data-menu='@json($payload)'>
 
                 <div class="mm-card-main">
@@ -153,7 +194,7 @@
                     <div class="mm-card-info">
                         <div class="mm-card-top">
                             <div class="mm-card-heading">
-                                <span class="mm-card-label">{{ $m->label ?? '' }}</span>
+                                <span class="mm-card-label">{{ strtoupper($kategoriNama) }}</span>
                                 <h3 class="mm-card-name">{{ $m->nama_makanan }}</h3>
                             </div>
                             <button type="button" class="mm-edit-btn" data-action="edit" aria-label="Edit {{ $m->nama_makanan }}">
@@ -236,6 +277,18 @@
                 <label class="mp-modal-label" for="fNama">Nama Makanan</label>
                 <div class="mp-modal-input-wrap">
                     <input class="mp-modal-input" type="text" id="fNama" name="nama_makanan" maxlength="255" placeholder="cth. Nasi Box Ayam Rica-Rica" required>
+                </div>
+            </div>
+
+            <div class="mp-modal-field">
+                <label class="mp-modal-label" for="fJenisMenu">Jenis Menu / Kategori</label>
+                <div class="mp-modal-input-wrap">
+                    <select class="mp-modal-input" id="fJenisMenu" name="jenis_menu" style="cursor: pointer;">
+                        <option value="">-- Pilih Jenis Menu --</option>
+                        @foreach ($jenisMenuList ?? [] as $jm)
+                            <option value="{{ $jm->id }}">{{ $jm->nama }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
 
@@ -378,7 +431,6 @@
                     </div>
                 </div>
             </div>
-            <input type="hidden" name="status_promo" value="aktif">
         </div>
 
         <div class="mp-modal-footer">
@@ -444,6 +496,7 @@
         $('menuMethod').disabled = true;
         $('menuModalTitle').textContent = 'Tambah Menu';
         $('menuModalSub').textContent = 'Isi detail menu yang akan dijual';
+        $('fJenisMenu').value = '';
         $('menuExtra').classList.add('is-hidden');
         setFoto(null);
         open('menuModal');
@@ -457,6 +510,7 @@
         $('menuModalTitle').textContent = 'Edit Menu';
         $('menuModalSub').textContent = data.nama;
         $('fNama').value = data.nama;
+        $('fJenisMenu').value = data.jenis_menu || '';
         $('fDeskripsi').value = data.deskripsi || '';
         $('fHarga').value = data.harga;
         $('fStok').value = data.stok;

@@ -62,123 +62,234 @@
 
   </div>
 
+  <!-- SECTION FLASH SALE (Promo Harian Jam 20:00 - 22:00) -->
+  <section class="flash-sale-section" id="flashSaleSection">
+    
+    <!-- Banner Header Flash Sale -->
+    <div class="fs-header-banner">
+      <div class="fs-header-title-box">
+        <div class="fs-lightning-icon">
+          <i class="fa-solid fa-bolt"></i>
+        </div>
+        <div class="fs-header-text">
+          <h2>FLASH SALE MALAM</h2>
+          <p>Promo hemat harian setiap pukul 20:00 - 22:00 WIB</p>
+        </div>
+      </div>
+
+      <div class="fs-countdown-box">
+        <div class="fs-status-pill">
+          <span class="fs-pulse-dot"></span>
+          <span id="fsStatusLabel">{{ ($isPromoActive ?? false) ? 'Sedang Berlangsung' : 'Dimulai Pukul 20:00' }}</span>
+        </div>
+        <div class="fs-timer-display" id="fsTimerDisplay">
+          <span class="fs-timer-unit" id="timerHours">00</span>
+          <span class="fs-timer-sep">:</span>
+          <span class="fs-timer-unit" id="timerMinutes">00</span>
+          <span class="fs-timer-sep">:</span>
+          <span class="fs-timer-unit" id="timerSeconds">00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filter Tab Mitra Pilihan Pelanggan -->
+    <div class="fs-mitra-filter-row">
+      <div class="fs-mitra-filter-label">
+        <i class="fa-solid fa-store" style="color: #16442B;"></i>
+        <span>Pilih Mitra:</span>
+      </div>
+      <div class="fs-mitra-chips" role="tablist">
+        <button type="button" class="fs-mitra-chip active" data-mitra="all">
+          Semua Mitra ({{ $flashSales->count() }})
+        </button>
+        @foreach ($mitraList as $mitra)
+          @php
+            $mCount = $flashSales->where('menu.id_umkm', $mitra->id_umkm)->count();
+          @endphp
+          <button type="button" class="fs-mitra-chip" data-mitra="{{ $mitra->id_umkm }}">
+            {{ $mitra->nama_vendor }} ({{ $mCount }})
+          </button>
+        @endforeach
+      </div>
+    </div>
+
+    <!-- Grid Card Flash Sale (Responsif Web Desktop & Mobile) -->
+    <div class="fs-cards-grid" id="fsCardsGrid">
+      @forelse ($flashSales as $fs)
+        @php
+          $nama = $fs->menu->nama_makanan ?? 'Menu Flash Sale';
+          $vendor = $fs->menu->umkm->nama_vendor ?? 'Mitra Pilihan';
+          $idUmkm = $fs->menu->id_umkm ?? 0;
+          $hargaNormal = (float) ($fs->menu->harga_normal ?? 0);
+          $hargaDiskon = (float) $fs->harga_diskon;
+          $stokSisa = (int) $fs->stok_sisa;
+          $kuantitas = max(1, (int) $fs->kuantitas);
+          $terjual = max(0, $kuantitas - $stokSisa);
+          $persenDiskon = $hargaNormal > 0 ? round((($hargaNormal - $hargaDiskon) / $hargaNormal) * 100) : 0;
+          $persenTerjual = min(100, round(($terjual / $kuantitas) * 100));
+          $fotoMenu = $fs->menu->foto_menu ?? null;
+          $fotoUrl = $fotoMenu
+              ? (str_starts_with($fotoMenu, 'http') ? $fotoMenu : asset('storage/' . $fotoMenu))
+              : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80';
+          $isHabis = ($stokSisa <= 0);
+        @endphp
+
+        <article class="fs-card" data-mitra="{{ $idUmkm }}">
+          <!-- Visual Media & Badges -->
+          <div class="fs-card-media">
+            <img src="{{ $fotoUrl }}" alt="{{ $nama }}" class="fs-card-img" loading="lazy">
+            
+            <!-- Badge Mitra di Kiri Atas -->
+            <div class="fs-card-vendor-badge" title="{{ $vendor }}">
+              <i class="fa-solid fa-store"></i>
+              <span>{{ $vendor }}</span>
+            </div>
+
+            <!-- Pita Diskon di Kanan Atas -->
+            @if ($persenDiskon > 0)
+              <div class="fs-card-ribbon">
+                {{ $persenDiskon }}%
+                <span>OFF</span>
+              </div>
+            @endif
+
+            <!-- Tag Ekstra di Bawah Foto -->
+            <div class="fs-card-tag-special">
+              <i class="fa-solid fa-tag"></i>
+              <span>Zero-Waste Promo</span>
+            </div>
+          </div>
+
+          <!-- Card Body Detail Informasi Promo -->
+          <div class="fs-card-body">
+            <h3 class="fs-card-title" title="{{ $nama }}">{{ $nama }}</h3>
+            
+            <div class="fs-pricing-group">
+              <div class="fs-price-strike">Rp {{ number_format($hargaNormal, 0, ',', '.') }}</div>
+              <div class="fs-price-discount">Rp {{ number_format($hargaDiskon, 0, ',', '.') }}</div>
+            </div>
+
+            <!-- Progress Bar Stok / Terjual -->
+            <div class="fs-stock-capsule">
+              <div class="fs-stock-fill {{ $stokSisa <= 5 ? 'is-low' : '' }}" style="width: {{ max(18, $persenTerjual) }}%;"></div>
+              <span class="fs-stock-text">
+                {{ $stokSisa <= 5 ? 'STOK TERBATAS • SISA ' . $stokSisa : $terjual . ' TERJUAL' }}
+              </span>
+            </div>
+
+            <!-- Tombol Pesan -->
+            <a href="{{ $isHabis ? '#' : route('pelanggan.keranjang', ['menu' => $fs->id_menu, 'fs' => $fs->id_flash_sale]) }}" class="fs-btn-order {{ $isHabis ? 'disabled' : '' }}">
+              {{ $isHabis ? 'Stok Habis' : 'Pesan Sekarang' }}
+            </a>
+          </div>
+        </article>
+      @empty
+        <div class="fs-empty-message">
+          Belum ada menu Flash Sale aktif saat ini.
+        </div>
+      @endforelse
+
+      <div class="fs-empty-message" id="fsNoFilterResult" style="display: none;">
+        Tidak ada menu Flash Sale dari mitra ini saat ini.
+      </div>
+    </div>
+  </section>
+
   <!-- 3. Section Rekomendasi Paket Sehat -->
   <section class="recommended-section">
     <div class="section-heading">
       <h2 class="section-title">Rekomendasi Paket Sehat</h2>
-      <p class="section-subtitle">Dikurasi khusus berdasarkan preferensi nutrisi Anda</p>
+      <p class="section-subtitle">
+        @if(!empty($profilKesehatan?->jenis_diet))
+          Dikurasi khusus untuk preferensi diet {{ $profilKesehatan->jenis_diet }} Anda
+        @else
+          Dikurasi khusus berdasarkan preferensi nutrisi Anda
+        @endif
+      </p>
     </div>
 
     <div class="vendor-cards-list">
-      <!-- Vendor Card 1 -->
-      <article class="vendor-card">
-        <div class="vendor-media-header">
-          <div class="vendor-cover-img uf" style="background-image: url('{{ asset('img/paket-keto.jpg') }}');"></div>
-          <div class="vendor-media-gradient"></div>
+      @forelse($rekomendasiMenu as $index => $menu)
+        @php
+          $coverImage = $menu->foto_menu
+              ? (str_starts_with($menu->foto_menu, 'http') ? $menu->foto_menu : asset('storage/' . $menu->foto_menu))
+              : ($index % 2 === 0 ? asset('img/paket-keto.jpg') : asset('img/paket-earth-bowl.jpg'));
 
-          <div class="vendor-badges-top">
-            <div class="badge-glass-white">
-              <img src="{{ asset('img/icon-3.svg') }}" alt="Dietitian">
-              <span>Pilihan Dietitian</span>
-            </div>
-            <div class="badge-glass-white">
-              <img src="{{ asset('img/icon-2.svg') }}" alt="Rating">
-              <span>4.9 (1.4k)</span>
-            </div>
-          </div>
+          $badgeIcon = $index % 2 === 0 ? asset('img/icon-3.svg') : asset('img/icon-16.svg');
+          $ratingIcon = $index % 2 === 0 ? asset('img/icon-2.svg') : asset('img/icon-13.svg');
+          $actionIcon = $index % 2 === 0 ? asset('img/icon-11.svg') : asset('img/icon-10.svg');
+        @endphp
 
-          <div class="vendor-media-bottom">
-            <div class="vendor-title-group">
-              <p class="vendor-location">Dapur Botanika &bull; 1.2 km</p>
-              <h3 class="vendor-package-name">Paket Keto Clean Energizer</h3>
-            </div>
-            <span class="badge-eco-blur">Eco Packaging</span>
-          </div>
-        </div>
+        <article class="vendor-card">
+          <div class="vendor-media-header">
+            <div class="vendor-cover-img {{ $index % 2 === 0 ? 'uf' : 'div-2' }}" style="background-image: url('{{ $coverImage }}');"></div>
+            <div class="vendor-media-gradient"></div>
 
-        <div class="vendor-card-body">
-          <div class="nutrition-tags">
-            <span class="tag-pill tag-green">Bebas Gluten</span>
-            <span class="tag-pill tag-amber">Kacang Terpisah</span>
-            <span class="tag-pill tag-neutral">450 kkal/menu</span>
-            <span class="tag-pill tag-neutral">0g Gula Rafinasi</span>
-          </div>
-
-          <p class="vendor-description">
-            Siklus menu 5 hari bebas inflamasi dengan sumber lemak sehat organik dari perkebunan lokal Bogor.
-          </p>
-
-          <div class="vendor-card-footer">
-            <div class="price-info">
-              <span class="price-label">Langganan Mulai</span>
-              <div class="price-amount">
-                <span class="price-value">Rp 100.000</span>
-                <span class="price-period">/minggu</span>
+            <div class="vendor-badges-top">
+              <div class="badge-glass-white">
+                <img src="{{ $badgeIcon }}" alt="Kategori">
+                <span>{{ $menu->jenisMenu->nama ?? 'Pilihan Dietitian' }}</span>
+              </div>
+              <div class="badge-glass-white">
+                <img src="{{ $ratingIcon }}" alt="Stok">
+                <span>Stok {{ $menu->stok_harian }}</span>
               </div>
             </div>
 
-            <a href="{{ url('/paket/keto-clean-energizer') }}" class="btn-select-package">
-              <span>Pilih Paket</span>
-              <img src="{{ asset('img/icon-11.svg') }}" alt="Pilih">
-            </a>
-          </div>
-        </div>
-      </article>
-
-      <!-- Vendor Card 2 -->
-      <article class="vendor-card">
-        <div class="vendor-media-header">
-          <div class="vendor-cover-img div-2" style="background-image: url('{{ asset('img/paket-earth-bowl.jpg') }}');"></div>
-          <div class="vendor-media-gradient"></div>
-
-          <div class="vendor-badges-top">
-            <div class="badge-glass-white">
-              <img src="{{ asset('img/icon-16.svg') }}" alt="Plant-Based">
-              <span>100% Plant-Based</span>
-            </div>
-            <div class="badge-glass-white">
-              <img src="{{ asset('img/icon-13.svg') }}" alt="Rating">
-              <span>4.8 (890)</span>
-            </div>
-          </div>
-
-          <div class="vendor-media-bottom">
-            <div class="vendor-title-group">
-              <p class="vendor-location">Kebun Jiwa Artisan Kitchen &bull; 2.4 km</p>
-              <h3 class="vendor-package-name">Regenerative Earth Bowl Plan</h3>
-            </div>
-            <span class="badge-eco-blur">Food-Miles<br>Rendah</span>
-          </div>
-        </div>
-
-        <div class="vendor-card-body">
-          <div class="nutrition-tags">
-            <span class="tag-pill tag-green">Vegan Ramah Alergi</span>
-            <span class="tag-pill tag-amber">Bebas Susu Hewani</span>
-            <span class="tag-pill tag-neutral">390 kkal/menu</span>
-            <span class="tag-pill tag-neutral">High Fiber</span>
-          </div>
-
-          <p class="vendor-description">
-            Protein nabati fermentasi tradisional berpadu dengan sayur organik bebas pestisida langsung dari petani mitra.
-          </p>
-
-          <div class="vendor-card-footer">
-            <div class="price-info">
-              <span class="price-label">Langganan Mulai</span>
-              <div class="price-amount">
-                <span class="price-value">Rp 98.000</span>
-                <span class="price-period">/minggu</span>
+            <div class="vendor-media-bottom">
+              <div class="vendor-title-group">
+                <p class="vendor-location">{{ $menu->umkm->nama_vendor ?? 'Mitra Dapur Plan2Eat' }} &bull; Bogor</p>
+                <h3 class="vendor-package-name">{{ $menu->nama_makanan }}</h3>
               </div>
+              <span class="badge-eco-blur">Eco Packaging</span>
+            </div>
+          </div>
+
+          <div class="vendor-card-body">
+            <div class="nutrition-tags">
+              @if($menu->jenisMenu)
+                <span class="tag-pill tag-green">{{ $menu->jenisMenu->nama }}</span>
+              @else
+                <span class="tag-pill tag-green">Menu Satuan</span>
+              @endif
+
+              @if(!empty($profilKesehatan?->jenis_diet))
+                <span class="tag-pill tag-amber">Sesuai {{ $profilKesehatan->jenis_diet }}</span>
+              @else
+                <span class="tag-pill tag-amber">Bahan Segar Lokal</span>
+              @endif
+
+              <span class="tag-pill tag-neutral">{{ number_format($menu->kandungan_kalori, 0, ',', '.') }} kkal/menu</span>
+              <span class="tag-pill tag-neutral">Tersedia {{ $menu->stok_harian }} porsi</span>
             </div>
 
-            <a href="{{ url('/paket/regenerative-earth-bowl') }}" class="btn-select-package">
-              <span>Pilih Paket</span>
-              <img src="{{ asset('img/icon-10.svg') }}" alt="Pilih">
-            </a>
+            <p class="vendor-description">
+              {{ $menu->deskripsi_makanan }}
+            </p>
+
+            <div class="vendor-card-footer">
+              <div class="price-info">
+                <span class="price-label">{{ $menu->jenisMenu ? 'Paket Mulai' : 'Harga Menu' }}</span>
+                <div class="price-amount">
+                  <span class="price-value">Rp {{ number_format($menu->harga_normal, 0, ',', '.') }}</span>
+                  <span class="price-period">{{ $menu->jenisMenu ? '/paket' : '/porsi' }}</span>
+                </div>
+              </div>
+
+              <a href="{{ route('pelanggan.keranjang', ['menu' => $menu->id_menu]) }}" class="btn-select-package">
+                <span>Pilih Paket</span>
+                <img src="{{ $actionIcon }}" alt="Pilih">
+              </a>
+            </div>
           </div>
-        </div>
-      </article>
+        </article>
+      @empty
+        <article class="vendor-card">
+          <div class="vendor-card-body">
+            <p class="vendor-description">Belum ada rekomendasi paket menu yang tersedia saat ini.</p>
+          </div>
+        </article>
+      @endforelse
     </div>
   </section>
 
@@ -215,6 +326,73 @@
         carouselCard.style.display = 'none';
       });
     }
+
+    // ==========================================
+    // FLASH SALE: Countdown Timer & Filter Mitra
+    // ==========================================
+    const timerH = document.getElementById('timerHours');
+    const timerM = document.getElementById('timerMinutes');
+    const timerS = document.getElementById('timerSeconds');
+    const statusLabel = document.getElementById('fsStatusLabel');
+
+    function updateFlashSaleTimer() {
+      const now = new Date();
+      const currentH = now.getHours();
+
+      let target = new Date(now);
+
+      if (currentH < 20) {
+        target.setHours(20, 0, 0, 0);
+        if (statusLabel) statusLabel.textContent = 'Dimulai Pukul 20:00';
+      } else if (currentH < 22) {
+        target.setHours(22, 0, 0, 0);
+        if (statusLabel) statusLabel.textContent = 'Sedang Berlangsung';
+      } else {
+        target.setDate(target.getDate() + 1);
+        target.setHours(20, 0, 0, 0);
+        if (statusLabel) statusLabel.textContent = 'Dimulai Besok 20:00';
+      }
+
+      const diff = Math.max(0, Math.floor((target - now) / 1000));
+      const hours = Math.floor(diff / 3600);
+      const minutes = Math.floor((diff % 3600) / 60);
+      const seconds = diff % 60;
+
+      if (timerH) timerH.textContent = String(hours).padStart(2, '0');
+      if (timerM) timerM.textContent = String(minutes).padStart(2, '0');
+      if (timerS) timerS.textContent = String(seconds).padStart(2, '0');
+    }
+
+    updateFlashSaleTimer();
+    setInterval(updateFlashSaleTimer, 1000);
+
+    // Filter Mitra Interaktif
+    const mitraChips = document.querySelectorAll('.fs-mitra-chip');
+    const fsCards = document.querySelectorAll('.fs-card');
+    const noResultMsg = document.getElementById('fsNoFilterResult');
+
+    mitraChips.forEach(chip => {
+      chip.addEventListener('click', function () {
+        mitraChips.forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+
+        const selectedMitra = this.dataset.mitra;
+        let visibleCount = 0;
+
+        fsCards.forEach(card => {
+          if (selectedMitra === 'all' || card.dataset.mitra === selectedMitra) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        if (noResultMsg) {
+          noResultMsg.style.display = (visibleCount === 0 && fsCards.length > 0) ? 'block' : 'none';
+        }
+      });
+    });
   });
 </script>
 @endpush

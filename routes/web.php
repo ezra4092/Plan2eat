@@ -1,4 +1,3 @@
-update route UMKM/Pelanggan
 <?php
 
 use Illuminate\Support\Facades\Route;
@@ -7,9 +6,9 @@ use App\Http\Controllers\ProfilKesehatanController;
 use App\Http\Controllers\UmkmController;
 use App\Http\Controllers\MealPlanController;
 // Controller berikut belum dibuat / masih dalam tahap pengembangan (lihat timeline)
-// use App\Http\Controllers\MenuController;
-// use App\Http\Controllers\FlashSaleController;
-// use App\Http\Controllers\PesananController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\FlashSaleController;
+use App\Http\Controllers\PesananController;
 // use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\UlasanController;
 // use App\Http\Controllers\DashboardUmkmController;
@@ -34,9 +33,7 @@ use App\Http\Controllers\LaporanKeuanganController;
 // ==========================================
 // 1. AUTENTIKASI (PUBLIC & GUEST)
 // ==========================================
-Route::get('/', function () {
-    return view('login');
-})->name('login_page');
+Route::get('/', function () {return view('login');})->name('login_page');
 
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
@@ -90,9 +87,8 @@ Route::group(['middleware' => ['auth']], function() {
         return view('umkm.dashboard');
     })->name('umkm.dashboard');
 
-    Route::get('/pelanggan/beranda', function () {
-        return view('pelanggan.beranda');
-    })->name('pelanggan.beranda');
+    Route::get('/pelanggan/beranda', [MenuController::class, 'berandaPelanggan'])
+    ->name('pelanggan.beranda');
 
     
 
@@ -102,9 +98,8 @@ Route::group(['middleware' => ['auth']], function() {
     // ==========================================
 
     // --- Profil Kesehatan ---
-    Route::get('/profil', [ProfilKesehatanController::class, 'index'])->name('pelanggan.profil');
     Route::get('/pelanggan/profil-kesehatan', [ProfilKesehatanController::class, 'index'])
-        ->name('pelanggan.profil_kesehata');
+        ->name('pelanggan.profil_kesehatan');
     Route::post('/pelanggan/profil-kesehatan', [ProfilKesehatanController::class, 'store'])
         ->name('pelanggan.profil_kesehatan-create');
     Route::put('/pelanggan/profil-kesehatan/{id_profil}', [ProfilKesehatanController::class, 'update'])
@@ -146,8 +141,8 @@ Route::group(['middleware' => ['auth']], function() {
 
     // --- Eksplorasi Menu & Flash Sale (Pelanggan) ---
     // Route::get('/pelanggan/menu', [MenuController::class, 'pelangganMenu'])->name('pelanggan.menu');
-    // Route::get('/pelanggan/menu/{id_menu}', [MenuController::class, 'show'])->name('pelanggan.menu-detail');
-    // Route::get('/pelanggan/flash-sale', [FlashSaleController::class, 'pelangganFlashSale'])->name('pelanggan.flashsale');
+    Route::get('/pelanggan/menu/{id_menu}', [MenuController::class, 'show'])->name('pelanggan.menu-detail');
+    Route::get('/pelanggan/flash-sale', [FlashSaleController::class, 'pelangganFlashSale'])->name('pelanggan.flashsale');
 
     // --- Pemesanan & Pembayaran (Pelanggan) ---
     // Route::get('/pelanggan/checkout', [PesananController::class, 'checkoutPage'])->name('pelanggan.checkout');
@@ -156,6 +151,15 @@ Route::group(['middleware' => ['auth']], function() {
     // Route::get('/pelanggan/pesanan/{id_pesanan}', [PesananController::class, 'show'])->name('pelanggan.pesanan-detail');
     // Route::put('/pelanggan/pesanan/{id_pesanan}/cancel', [PesananController::class, 'cancel'])->name('pelanggan.pesanan-cancel');
     // Route::post('/pelanggan/pembayaran', [PembayaranController::class, 'bayar'])->name('pelanggan.pembayaran-create');
+
+    // --- Pemesanan & Pembayaran (Pelanggan) ---
+    Route::get('/pelanggan/keranjang', [PesananController::class, 'keranjang'])->name('pelanggan.keranjang');
+    Route::post('/pelanggan/keranjang/update', [PesananController::class, 'updateKeranjang'])->name('pelanggan.keranjang-update');
+    Route::delete('/pelanggan/keranjang/hapus/{index}', [PesananController::class, 'hapusItemKeranjang'])->name('pelanggan.keranjang-hapus');
+    Route::get('/pelanggan/checkout', [PesananController::class, 'checkoutPage'])->name('pelanggan.checkout');
+    Route::post('/pelanggan/pesanan', [PesananController::class, 'store'])->name('pelanggan.pesanan-create');
+    Route::get('/pelanggan/riwayat-pesanan', [PesananController::class, 'history'])->name('pelanggan.pesanan');
+    Route::get('/pelanggan/pesanan/{id_pesanan}', [PesananController::class, 'show'])->name('pelanggan.pesanan-detail');
 
     // --- Ulasan & Rating (Pelanggan) ---
     // Route::post('/pelanggan/ulasan', [UlasanController::class, 'store'])->name('pelanggan.ulasan-create');
@@ -180,17 +184,17 @@ Route::group(['middleware' => ['auth']], function() {
     Route::put('/umkm/profil/{id_umkm}/legacy-update', [UmkmController::class, 'update'])->name('umkm.profil.update');
 
     // --- Manajemen Menu (CRUD Dialog) ---
-    // Route::get('/umkm/menu', [MenuController::class, 'index'])->name('umkm.menu');
-    // Route::post('/umkm/menu', [MenuController::class, 'store'])->name('umkm.menu-create');
-    // Route::put('/umkm/menu/{id_menu}', [MenuController::class, 'update'])->name('umkm.menu-update');
-    // Route::delete('/umkm/menu/{id_menu}', [MenuController::class, 'destroy'])->name('umkm.menu-delete');
-    // Route::patch('/umkm/menu/{id_menu}/stok', [MenuController::class, 'updateStok'])->name('umkm.menu-stok');
+    Route::get('/umkm/menu', [MenuController::class, 'index'])->name('umkm.menu');
+    Route::post('/umkm/menu', [MenuController::class, 'store'])->name('umkm.menu-create');
+    Route::put('/umkm/menu/{id_menu}', [MenuController::class, 'update'])->name('umkm.menu-update');
+    Route::delete('/umkm/menu/{id_menu}', [MenuController::class, 'destroy'])->name('umkm.menu-delete');
+    Route::patch('/umkm/menu/{id_menu}/stok', [MenuController::class, 'updateStok'])->name('umkm.menu-stok');
 
     // --- Manajemen Flash Sale (CRUD Dialog) ---
-    // Route::get('/umkm/flash-sale', [FlashSaleController::class, 'index'])->name('umkm.flashsale');
-    // Route::post('/umkm/flash-sale', [FlashSaleController::class, 'store'])->name('umkm.flashsale-create');
-    // Route::put('/umkm/flash-sale/{id_flash_sale}', [FlashSaleController::class, 'update'])->name('umkm.flashsale-update');
-    // Route::delete('/umkm/flash-sale/{id_flash_sale}', [FlashSaleController::class, 'destroy'])->name('umkm.flashsale-delete');
+    Route::get('/umkm/flash-sale', [FlashSaleController::class, 'index'])->name('umkm.flashsale');
+    Route::post('/umkm/flash-sale', [FlashSaleController::class, 'store'])->name('umkm.flashsale-create');
+    Route::put('/umkm/flash-sale/{id_flash_sale}', [FlashSaleController::class, 'update'])->name('umkm.flashsale-update');
+    Route::delete('/umkm/flash-sale/{id_flash_sale}', [FlashSaleController::class, 'destroy'])->name('umkm.flashsale-delete');
 
     // --- Manajemen Pesanan Masuk UMKM ---
     // Route::get('/umkm/pesanan', [PesananController::class, 'pesananMasuk'])->name('umkm.pesanan');
