@@ -8844,3 +8844,387 @@ body {
   color: #6B7280;
   font-size: 13.5px;
 }
+
+
+/* ==========================================================================
+   TAMBAHAN style.css — Manajemen Pesanan UMKM + penyesuaian nav (4 menu)
+   Tempel di BAGIAN PALING BAWAH style.css (setelah tambahan Manajemen Menu).
+   ========================================================================== */
+
+/* ---------- Penyesuaian nav (ikon SVG inline + Logout) ---------- */
+.nav-icon-box svg { width: 22px; height: 22px; display: block; }
+/* Ikon menu aktif terisi pada bottom nav (mobile) */
+.nav-item.active svg { fill: currentColor; }
+.nav-item.active svg .cut { stroke: var(--card-cream); }
+
+.nav-logout-form,
+.nav-logout-divider { display: none; margin: 0; }
+.nav-logout {
+  width: 100%;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+}
+
+@media (min-width: 768px) {
+  .nav-icon-box svg { width: 20px; height: 20px; }
+  /* Sidebar: ikon aktif cukup outline putih, bukan terisi */
+  .nav-item.active svg { fill: none; }
+  .nav-logout-divider { display: block; margin: 14px 0 10px; }
+  .nav-logout-form { display: block; }
+}
+
+/* ---------- Halaman Manajemen Pesanan ---------- */
+.page-order-management .is-hidden { display: none !important; }
+
+.po-page {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.po-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  align-self: flex-start;
+  text-decoration: none;
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 15.5px;
+  letter-spacing: -0.4px;
+}
+.po-back:hover { color: var(--forest-green); }
+
+/* --- Kartu Alur Masak --- */
+.po-flow-card {
+  background-color: #F6F1DF;
+  border-radius: 24px;
+  padding: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+.po-flow-inner {
+  background-color: #F9F6EA;
+  border: 1px solid rgba(0, 0, 0, 0.03);
+  border-radius: 16px;
+  padding: 16px 16px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.po-flow-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.po-flow-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.2;
+  color: var(--black);
+}
+.po-flow-step {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: #2B7A54;
+}
+
+.po-track {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.po-line {
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  top: 16px;
+  height: 4px;
+  border-radius: 999px;
+  background-color: #DAD7C8;
+  overflow: hidden;
+}
+.po-line-fill {
+  display: block;
+  height: 100%;
+  width: calc(var(--po-progress, 0) * 1%);
+  background-color: #2E6B4D;
+  border-radius: inherit;
+  transition: width 0.35s ease;
+}
+.po-step {
+  position: relative;
+  z-index: 1;
+  width: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.po-step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.25s ease, box-shadow 0.25s ease;
+}
+.po-step-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12px;
+  color: #7B817C;
+  white-space: nowrap;
+}
+.po-step .po-ic-check { display: none; }
+
+.po-step.is-done .po-step-circle { background-color: var(--forest-green); color: var(--white); }
+.po-step.is-done .po-step-label { color: var(--forest-green); font-weight: 700; }
+.po-step.is-done .po-ic-check { display: block; }
+.po-step.is-done .po-ic-main { display: none; }
+
+.po-step.is-current .po-step-circle {
+  background-color: #FDDCB0;
+  color: #3A2A10;
+  box-shadow: 0 0 0 5px rgba(253, 220, 176, 0.5);
+}
+.po-step.is-current .po-step-label { color: var(--black); font-weight: 700; }
+
+.po-step.is-upcoming .po-step-circle { background-color: #E4E0D1; color: #8C928D; }
+
+/* --- Kartu Manajemen Pesanan --- */
+.po-orders-card {
+  background-color: #9CAEA3;
+  border-radius: 24px;
+  padding: 20px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.po-orders-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.po-orders-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 21px;
+  letter-spacing: -0.3px;
+  color: var(--black);
+}
+.po-live {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  color: #38443C;
+  white-space: nowrap;
+}
+
+.po-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 3px;
+  margin: -3px;
+  scrollbar-width: none;
+}
+.po-tabs::-webkit-scrollbar { display: none; }
+.po-tab {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 34px;
+  padding: 0 10px;
+  border: none;
+  border-radius: 999px;
+  background-color: #EFEBDB;
+  color: #3A423B;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, box-shadow 0.2s ease;
+}
+.po-tab:hover { background-color: #F5F1E2; }
+.po-tab.is-active {
+  background-color: #FBF8EC;
+  box-shadow: 0 0 0 2px rgba(5, 55, 31, 0.45);
+  font-weight: 600;
+}
+.po-badge {
+  min-width: 22px;
+  height: 20px;
+  padding: 0 7px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+}
+.po-badge.is-red  { background-color: #FBD7D7; color: #B42318; }
+.po-badge.is-dark { background-color: var(--forest-green); color: var(--white); }
+.po-badge.is-mint { background-color: #C2EBD4; color: #1E6B46; }
+
+.po-order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.po-order {
+  background-color: #F7F3E1;
+  border-radius: 14px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.po-order-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+.po-order-code {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--black);
+  white-space: nowrap;
+}
+.po-order-divider {
+  width: 1.5px;
+  height: 18px;
+  background-color: var(--black);
+  flex-shrink: 0;
+}
+.po-order-name {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 14px;
+  color: var(--black);
+  min-width: 0;
+}
+.po-order-items {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  line-height: 1.6;
+  color: #4D554E;
+}
+
+.po-empty {
+  padding: 28px 16px;
+  text-align: center;
+  border-radius: 14px;
+  background-color: #F7F3E1;
+  font-family: var(--font-inter);
+  font-size: 13.5px;
+  color: #555D56;
+}
+
+.po-actions {
+  display: flex;
+  gap: 12px;
+}
+.po-btn {
+  flex: 1;
+  height: 46px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, transform 0.1s ease, opacity 0.2s ease;
+}
+.po-btn:active { transform: scale(0.98); }
+.po-btn:disabled { opacity: 0.6; cursor: progress; }
+.po-btn.is-dark { background-color: var(--forest-green); color: var(--white); box-shadow: 0 4px 12px rgba(5, 55, 31, 0.25); }
+.po-btn.is-dark:hover { background-color: var(--forest-green-hover); }
+.po-btn.is-amber { background-color: #FDDCB0; color: var(--black); }
+.po-btn.is-amber:hover { background-color: #FCD39B; }
+.po-btn.is-block { width: 100%; font-size: 14.5px; }
+
+/* Toast kecil */
+.po-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 110px;
+  transform: translateX(-50%);
+  z-index: 80;
+  max-width: calc(100vw - 32px);
+  padding: 11px 18px;
+  border-radius: 999px;
+  background-color: var(--forest-green);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.22);
+}
+.po-toast.is-error { background-color: #B42318; }
+
+/* Layar sangat kecil */
+@media (max-width: 360px) {
+  .po-tab { padding: 0 10px; font-size: 12.5px; gap: 6px; }
+  .po-btn { font-size: 12.5px; padding: 0 10px; }
+  .po-orders-title { font-size: 19px; }
+}
+
+/* Desktop (>= 768px) */
+@media (min-width: 768px) {
+  .po-page { gap: 24px; }
+  .po-toast { bottom: 32px; }
+
+  .po-flow-card { padding: 20px; }
+  .po-flow-inner { padding: 20px 28px 16px; }
+  .po-track { max-width: 620px; width: 100%; margin: 0 auto; }
+
+  .po-orders-card { padding: 24px; gap: 20px; }
+  .po-orders-title { font-size: 24px; }
+  .po-tab { height: 38px; padding: 0 16px; font-size: 14px; }
+
+  .po-order-list {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    align-items: start;
+  }
+  .po-order { padding: 16px 18px; }
+
+  .po-actions { justify-content: flex-end; }
+  .po-btn { flex: 0 0 auto; min-width: 210px; height: 48px; }
+  .po-btn.is-block { width: auto; min-width: 260px; }
+}
+
+/* Desktop lebar (>= 1280px) */
+@media (min-width: 1280px) {
+  .po-order-list { grid-template-columns: repeat(3, 1fr); }
+}
