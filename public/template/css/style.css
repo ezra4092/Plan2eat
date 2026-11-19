@@ -10171,3 +10171,601 @@ body {
     grid-template-columns: repeat(4, 1fr);
   }
 }
+
+/* ==========================================================================
+   Halaman Langganan Pelanggan (Active, Holiday, Empty)
+   Responsif Mobile Web & Desktop Web
+   ========================================================================== */
+
+.lgn-page {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.lgn-section {
+  display: flex;
+  flex-direction: column;
+}
+
+.lgn-section-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 1.25;
+  letter-spacing: -0.3px;
+  color: var(--black);
+  margin: 0 0 12px;
+}
+
+/* --------------------------------------------------------------------------
+   1. Kartu Status Pesanan (Soft Mint Card)
+   -------------------------------------------------------------------------- */
+.lgn-status-card {
+  background-color: #DCF2E2;
+  border-radius: 22px;
+  padding: 18px 16px;
+  box-shadow: 0 6px 20px rgba(5, 55, 31, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+/* State: Non-Aktif / Belum Memesan */
+.lgn-status-card.is-empty {
+  align-items: center;
+  gap: 18px;
+  padding: 20px 16px 22px;
+}
+
+.lgn-mint-banner {
+  width: 100%;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background-color: #CFE9D7;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: #1E5631;
+  text-align: center;
+}
+
+.lgn-btn-add-order {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 999px;
+  background-color: #0D4226;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(13, 66, 38, 0.22);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.lgn-btn-add-order:hover {
+  background-color: var(--forest-green);
+  color: var(--white);
+}
+
+.lgn-btn-add-order:active {
+  transform: scale(0.98);
+}
+
+/* State: Mitra Sedang Libur */
+.lgn-status-card.is-holiday {
+  justify-content: center;
+  align-items: center;
+  min-height: 118px;
+  padding: 18px;
+}
+
+.lgn-holiday-pill {
+  width: 100%;
+  padding: 26px 20px;
+  border-radius: 999px;
+  background-color: #CFE9D7;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  color: #1E5631;
+  text-align: center;
+}
+
+/* State: Pesanan Aktif */
+.lgn-status-card.is-active {
+  gap: 14px;
+}
+
+.lgn-schedule-pill {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background-color: #CBE8D4;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11.5px;
+  color: #16442B;
+}
+
+.lgn-green-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #166534;
+  flex-shrink: 0;
+}
+
+.lgn-order-product {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.lgn-product-thumb {
+  width: 78px;
+  height: 78px;
+  border-radius: 14px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background-color: #C7E2CF;
+}
+
+.lgn-product-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.lgn-vendor-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  color: #1E5631;
+}
+
+.lgn-dish-title {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 17px;
+  line-height: 1.25;
+  color: var(--black);
+  margin: 0;
+}
+
+.lgn-dish-meta {
+  font-family: var(--font-inter);
+  font-weight: 400;
+  font-size: 12px;
+  color: #3A4D3F;
+  margin: 0;
+}
+
+.lgn-today-badge {
+  align-self: flex-start;
+  margin-top: 3px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background-color: #C7E8D2;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  color: #16442B;
+}
+
+/* Box Putih Progress (Prep -> Masak -> Siap) */
+.lgn-progress-box {
+  background-color: var(--white);
+  border-radius: 16px;
+  padding: 14px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.lgn-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.lgn-progress-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--black);
+}
+
+.lgn-progress-status {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  color: #2E6B4D;
+}
+
+.lgn-stepper {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.lgn-stepper-track {
+  position: absolute;
+  top: 13px;
+  left: 20px;
+  right: 20px;
+  height: 4px;
+  border-radius: 999px;
+  background-color: #DCE5DF;
+  overflow: hidden;
+}
+
+.lgn-stepper-fill {
+  display: block;
+  height: 100%;
+  width: calc(var(--lgn-progress, 100) * 1%);
+  background-color: #0D4226;
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+
+.lgn-step {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  min-width: 44px;
+}
+
+.lgn-step-circle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background-color: #DCE5DF;
+  color: #717972;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.lgn-step.is-done .lgn-step-circle {
+  background-color: #0D4226;
+  color: var(--white);
+}
+
+.lgn-step-label {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  color: #717972;
+}
+
+.lgn-step.is-done .lgn-step-label {
+  font-weight: 700;
+  color: var(--black);
+}
+
+.lgn-contact-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.lgn-btn-contact {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 22px;
+  border-radius: 12px;
+  background-color: var(--white);
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.lgn-btn-contact:hover {
+  background-color: #F8FAF8;
+  color: var(--forest-green);
+}
+
+.lgn-btn-contact:active {
+  transform: scale(0.98);
+}
+
+/* --------------------------------------------------------------------------
+   2. Detail Pemesanan & Kalender Harian
+   -------------------------------------------------------------------------- */
+.lgn-detail-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  margin-bottom: 14px;
+}
+
+.lgn-detail-header .lgn-section-title {
+  margin-bottom: 0;
+}
+
+.lgn-see-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--black);
+  text-decoration: none;
+}
+
+.lgn-see-all:hover {
+  color: var(--forest-green);
+  text-decoration: underline;
+}
+
+/* Strip Kalender 6 Hari */
+.lgn-calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+}
+
+.lgn-day-card {
+  border: 1.5px solid transparent;
+  border-radius: 8px;
+  padding: 8px 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.15s ease;
+}
+
+.lgn-day-card:active {
+  transform: scale(0.96);
+}
+
+.lgn-day-num {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 14px;
+  line-height: 1.2;
+  color: var(--black);
+}
+
+.lgn-day-name {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12.5px;
+  line-height: 1.2;
+  color: var(--black);
+}
+
+/* Warna Status Kalender */
+.lgn-day-card.is-missed {
+  background-color: #DDA5A5;
+  border-color: #B84A4A;
+  border-style: dashed;
+}
+
+.lgn-day-card.is-completed {
+  background-color: #8EBA9D;
+}
+
+.lgn-day-card.is-holiday {
+  background-color: #C7EBD8;
+}
+
+.lgn-day-card.is-upcoming {
+  background-color: #C4C5C7;
+}
+
+.lgn-day-card.is-selected {
+  border-color: #16442B;
+  border-style: dashed;
+  box-shadow: 0 3px 10px rgba(22, 68, 43, 0.16);
+}
+
+/* Empty State Text di Bawah Kalender */
+.lgn-empty-state {
+  min-height: 220px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 16px;
+}
+
+.lgn-empty-state p {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--gray);
+  margin: 0;
+}
+
+/* Kartu Menu Untuk Hari Ini */
+.lgn-menu-showcase {
+  position: relative;
+  width: 100%;
+  height: 200px;
+  margin-top: 16px;
+  border-radius: 20px;
+  overflow: hidden;
+  background-color: #2E3B32;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.lgn-showcase-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.lgn-showcase-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.04) 35%, rgba(0, 0, 0, 0.8) 100%);
+}
+
+.lgn-menu-top-badge {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  z-index: 2;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background-color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  color: var(--black);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.lgn-showcase-bottom {
+  position: absolute;
+  bottom: 14px;
+  left: 14px;
+  right: 14px;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.lgn-showcase-text {
+  min-width: 0;
+}
+
+.lgn-showcase-mitra {
+  font-family: var(--font-inter);
+  font-weight: 500;
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.9);
+  margin: 0 0 2px;
+}
+
+.lgn-showcase-title {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 18px;
+  line-height: 1.25;
+  color: var(--white);
+  margin: 0;
+}
+
+.lgn-eco-pill {
+  padding: 5px 11px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 10.5px;
+  color: var(--white);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Layar Mobile Sangat Kecil (<= 360px) */
+@media (max-width: 360px) {
+  .lgn-calendar-grid {
+    gap: 5px;
+  }
+
+  .lgn-day-num {
+    font-size: 13px;
+  }
+
+  .lgn-day-name {
+    font-size: 11px;
+  }
+
+  .lgn-dish-title {
+    font-size: 15.5px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Responsif Desktop Web (>= 768px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 768px) {
+  .lgn-page {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+
+  .lgn-section-title {
+    font-size: 20px;
+  }
+
+  .lgn-status-card {
+    padding: 24px;
+  }
+
+  .lgn-product-thumb {
+    width: 90px;
+    height: 90px;
+  }
+
+  .lgn-dish-title {
+    font-size: 19px;
+  }
+
+  .lgn-detail-header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .lgn-calendar-grid {
+    gap: 10px;
+  }
+
+  .lgn-day-card {
+    padding: 11px 6px;
+    border-radius: 10px;
+  }
+
+  .lgn-menu-showcase {
+    height: 245px;
+  }
+
+  .lgn-empty-state {
+    min-height: 245px;
+    margin-top: 16px;
+    background-color: var(--white);
+    border-radius: 20px;
+    border: 1px dashed #DCD7C5;
+  }
+}
