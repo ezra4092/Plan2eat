@@ -17,7 +17,7 @@
 
     Pratinjau tanpa controller: buka  /umkm/pesanan?step=1  |  ?step=2  |  ?step=3
 --}}
-@extends('main')
+@extends('layouts.main')
 
 @section('title', 'Manajemen Pesanan - Plan2Eat')
 @section('nav_active', 'pesanan')
@@ -32,28 +32,12 @@
     $urlStatus  = $safe('umkm.pesanan-status', '__ID__');
 
     $stages = [
-        'persiapan' => ['step' => 1, 'tab' => 'Masuk',      'badge' => 'is-red'],
-        'masak'     => ['step' => 2, 'tab' => 'Dimasak',    'badge' => 'is-dark'],
-        'diambil'   => ['step' => 3, 'tab' => 'Siap Ambil', 'badge' => 'is-mint'],
+        'persiapan'    => ['step' => 1, 'tab' => 'Masuk',      'badge' => 'is-red'],
+        'masak'        => ['step' => 2, 'tab' => 'Dimasak',    'badge' => 'is-dark'],
+        'siap diambil' => ['step' => 3, 'tab' => 'Siap Ambil', 'badge' => 'is-mint'],
     ];
-    $stepStatus = [1 => 'persiapan', 2 => 'masak', 3 => 'diambil'];
 
-    // Data contoh (otomatis dipakai bila $pesanan tidak dikirim dari controller)
-    if (!isset($pesanan)) {
-        $demo = $stepStatus[(int) request('step', 1)] ?? 'persiapan';
-        $pesanan = [
-            ['id_pesanan' => 909, 'status_pesanan' => $demo, 'nama_pelanggan' => 'Sekarwangi', 'lokasi' => 'Kos Oren',
-             'items' => [['kuantitas' => 1, 'nama' => 'Ayam Geprek Sambel Ijo'], ['kuantitas' => 1, 'nama' => 'Capcay']]],
-            ['id_pesanan' => 910, 'status_pesanan' => $demo, 'nama_pelanggan' => 'Apriliana', 'lokasi' => 'Kos Sancang 1',
-             'items' => [['kuantitas' => 1, 'nama' => 'Ikan Tongkol Goreng'], ['kuantitas' => 1, 'nama' => 'Ayam Goreng']]],
-            ['id_pesanan' => 911, 'status_pesanan' => $demo, 'nama_pelanggan' => 'Rafli Fakhrullah', 'lokasi' => 'Jl. Tunjang',
-             'items' => [['kuantitas' => 1, 'nama' => 'Ayam Goreng'], ['kuantitas' => 1, 'nama' => 'Capcay']]],
-            ['id_pesanan' => 912, 'status_pesanan' => $demo, 'nama_pelanggan' => 'Faira Azzahra', 'lokasi' => 'Jl. Lodaya',
-             'items' => [['kuantitas' => 1, 'nama' => 'Ayam Goreng'], ['kuantitas' => 1, 'nama' => 'Tumis Kangkung']]],
-        ];
-    }
-
-    $orders = collect($pesanan)->map(fn ($p) => (object) $p)
+    $orders = collect($pesanan ?? [])->map(fn ($p) => (object) $p)
         ->filter(fn ($p) => isset($stages[$p->status_pesanan]))->values();
 
     $count = [];
@@ -159,13 +143,13 @@
             </div>
 
             <div class="po-actions {{ $step === 2 ? '' : 'is-hidden' }}" data-actions="2">
-                <button type="button" class="po-btn is-amber" id="btnKurir">
+                <!-- <button type="button" class="po-btn is-amber" id="btnKurir">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>
                     Panggil Kurir
-                </button>
+                </button> -->
                 <button type="button" class="po-btn is-dark" data-advance="2">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></svg>
-                    Tandai Siap Kirim
+                    Siap Diambil
                 </button>
             </div>
 
@@ -186,7 +170,11 @@
     const root = document.querySelector('.po-page');
     const urlTpl = root.dataset.urlStatus;
     const csrf = (document.querySelector('meta[name="csrf-token"]') || {}).content;
-    const stages = { persiapan: { step: 1, next: 'masak' }, masak: { step: 2, next: 'diambil' }, diambil: { step: 3, next: 'selesai' } };
+    const stages = {
+        persiapan: { step: 1, next: 'masak' },
+        masak: { step: 2, next: 'siap diambil' },
+        'siap diambil': { step: 3, next: 'selesai' }
+    };
     const keys = Object.keys(stages);
     let active = root.dataset.active;
 
@@ -267,7 +255,8 @@
 
     $$('.po-tab').forEach((t) => t.addEventListener('click', () => { active = t.dataset.tab; render(); }));
     $$('[data-advance]').forEach((b) => b.addEventListener('click', () => advance(b)));
-    $('#btnKurir').addEventListener('click', () => toast('Permintaan kurir dikirim (fitur kurir belum terhubung).'));
+    const btnKurir = $('#btnKurir');
+    if (btnKurir) btnKurir.addEventListener('click', () => toast('Permintaan kurir dikirim (fitur kurir belum terhubung).'));
 })();
 </script>
 @endpush

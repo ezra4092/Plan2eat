@@ -5,27 +5,39 @@
 @section('body_class', 'page-mitra-profil')
 
 @section('content')
-@php
-    $storeName = old('nama_warung', $store->nama_warung ?? 'Warteg Sifren');
-    $ownerName = old('nama_pemilik', $store->nama_pemilik ?? 'Pak Sifren');
-    $ownerEmail = old('email_pemilik', $store->email_pemilik ?? 'pak.sifren@gmail.com');
-    $storeAddress = old('alamat_toko', $store->alamat_toko ?? 'Jl. Kumbang No. 12, Sekitar Kampus IPB Cilibende');
-    $storeEmail = old('email_toko', $store->email_toko ?? 'wartegsifren@plan2eat.id');
-    $isOpen = (bool) old('is_open', $store->is_open ?? true);
-    $activePayment = old('metode_pembayaran', $store->metode_pembayaran ?? 'qris');
-@endphp
-
 <div class="mp-page-container">
-    <form id="mitraProfileMainForm" action="{{ url('/mitra/profil') }}" method="POST" enctype="multipart/form-data" class="mp-main-form">
+    {{-- Notifikasi Flash & Error Validasi --}}
+    @if (session('success'))
+        <div style="background: #ECFDF5; border-left: 4px solid #10B981; color: #065F46; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 13.5px; font-weight: 600;">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div style="background: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 13.5px; font-weight: 600;">
+            {{ session('error') }}
+        </div>
+    @endif
+    @if ($errors->any())
+        <div style="background: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 13.5px;">
+            <ul style="margin: 0; padding-left: 20px;">
+                @foreach ($errors->all() as $err)
+                    <li>{{ $err }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form id="mitraProfileMainForm" action="{{ route('umkm.profil-update', $umkm->id_umkm) }}" method="POST" enctype="multipart/form-data" class="mp-main-form">
         @csrf
         @method('PUT')
 
         {{-- Hidden inputs yang disinkronkan dari Modal Edit Profil Warung --}}
-        <input type="hidden" id="hiddenOwnerName" name="nama_pemilik" value="{{ $ownerName }}">
-        <input type="hidden" id="hiddenOwnerEmail" name="email_pemilik" value="{{ $ownerEmail }}">
-        <input type="hidden" id="hiddenStoreAddress" name="alamat_toko" value="{{ $storeAddress }}">
-        <input type="hidden" id="hiddenStoreEmail" name="email_toko" value="{{ $storeEmail }}">
-        <input type="file" id="modalAvatarFileInput" name="foto_warung" accept="image/*" hidden>
+        <input type="hidden" id="hiddenStoreName" name="nama_vendor" value="{{ old('nama_vendor', $umkm->nama_vendor) }}">
+        <input type="hidden" id="hiddenOwnerName" name="nama_lengkap" value="{{ old('nama_lengkap', $user->nama_lengkap) }}">
+        <input type="hidden" id="hiddenOwnerEmail" name="email" value="{{ old('email', $user->email) }}">
+        <input type="hidden" id="hiddenStoreAddress" name="alamat_lengkap" value="{{ old('alamat_lengkap', $umkm->alamat_lengkap) }}">
+        <input type="hidden" id="hiddenStoreDesc" name="deskripsi_toko" value="{{ old('deskripsi_toko', $umkm->deskripsi_toko) }}">
+        <input type="file" id="modalAvatarFileInput" name="foto_toko" accept="image/*" hidden>
 
         {{-- 1. KARTU IDENTITAS WARUNG --}}
         <section class="mp-card mp-identity-card">
@@ -33,35 +45,48 @@
                 <div class="mp-avatar-box">
                     <img
                         id="mainStoreAvatarImg"
-                        src="{{ $store->foto_url ?? 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=240&q=80' }}"
-                        alt="Foto {{ $storeName }}"
+                        src="{{ $umkm->foto_toko ? asset('storage/' . $umkm->foto_toko) : 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=240&q=80' }}"
+                        alt="Foto {{ $umkm->nama_vendor }}"
                         class="mp-avatar-img"
                     >
-                    <span class="mp-avatar-verified" title="Mitra Terverifikasi">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"/>
-                        </svg>
-                    </span>
+                    @if ($umkm->status_verifikasi)
+                        <span class="mp-avatar-verified" title="Mitra Terverifikasi">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"/>
+                            </svg>
+                        </span>
+                    @endif
                 </div>
 
                 <div class="mp-identity-info">
                     <div class="mp-title-row">
-                        <h1 class="mp-store-title">{{ $storeName }}</h1>
-                        <span class="mp-pill-verified">Mitra Terverifikasi</span>
+                        <h1 id="displayStoreName" class="mp-store-title">{{ old('nama_vendor', $umkm->nama_vendor) }}</h1>
+                        <span class="mp-pill-verified">
+                            {{ $umkm->status_verifikasi ? 'Mitra Terverifikasi' : 'Menunggu Verifikasi' }}
+                        </span>
                     </div>
 
                     <p class="mp-owner-subtitle">
-                        <span id="displayOwnerName">{{ $ownerName }}</span> (Pemilik)
+                        <span id="displayOwnerName">{{ old('nama_lengkap', $user->nama_lengkap) }}</span> (Pemilik) &bull;
+                        <span id="displayOwnerEmail">{{ old('email', $user->email) }}</span>
                     </p>
+
+                    @if (old('deskripsi_toko', $umkm->deskripsi_toko))
+                        <p id="displayStoreDesc" style="font-size: 12.5px; color: #4B5563; margin: 4px 0 8px;">
+                            {{ old('deskripsi_toko', $umkm->deskripsi_toko) }}
+                        </p>
+                    @else
+                        <p id="displayStoreDesc" style="font-size: 12.5px; color: #9CA3AF; margin: 4px 0 8px; display: none;"></p>
+                    @endif
 
                     <div class="mp-rating-row">
                         <span class="mp-pill-rating">
                             <svg width="11" height="11" viewBox="0 0 24 24" fill="currentColor">
                                 <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                             </svg>
-                            <span>4.8 / 5.0</span>
+                            <span>{{ number_format((float) ($umkm->rating ?? 0), 1) }} / 5.0</span>
                         </span>
-                        <span class="mp-review-count">142 Ulasan Mahasiswa</span>
+                        <span class="mp-review-count">Saldo: Rp {{ number_format($umkm->saldo ?? 0, 0, ',', '.') }}</span>
                     </div>
                 </div>
             </div>
@@ -79,10 +104,10 @@
                         <path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843"/>
                         <path d="m13.378 9.633 4.096 1.098 1.097-4.096"/>
                     </svg>
-                    <span>Mitra Berkelanjutan sejak Feb 2023</span>
+                    <span>Mitra Berkelanjutan Plan2Eat</span>
                 </div>
 
-                <span class="mp-partner-id-pill">ID: {{ $store->kode_mitra ?? '#WF-889' }}</span>
+                <span class="mp-partner-id-pill">ID: #UMKM-{{ str_pad((string) $umkm->id_umkm, 3, '0', STR_PAD_LEFT) }}</span>
             </div>
 
             {{-- Kotak Alamat Toko --}}
@@ -93,7 +118,7 @@
                         <circle cx="12" cy="10" r="3"/>
                     </svg>
                 </span>
-                <p id="displayStoreAddress" class="mp-address-text">{{ $storeAddress }}</p>
+                <p id="displayStoreAddress" class="mp-address-text">{{ old('alamat_lengkap', $umkm->alamat_lengkap) }}</p>
             </div>
 
             {{-- Tombol Buka Dialog Box Edit Profil Warung --}}
@@ -123,6 +148,13 @@
                     </div>
 
                     <div class="mp-subcard-list">
+                        @php
+                            $currentStatus = old('status_operasional', $umkm->status_operasional ?? 'Buka');
+                            $isStoreOpen = strtolower($currentStatus) === 'buka';
+                            $jamBukaVal = old('jam_buka', \Carbon\Carbon::parse($umkm->jam_buka ?? '07:00')->format('H:i'));
+                            $jamTutupVal = old('jam_tutup', \Carbon\Carbon::parse($umkm->jam_tutup ?? '21:00')->format('H:i'));
+                        @endphp
+
                         {{-- Row 1: Status Buka Toko (Toggle ON / OFF) --}}
                         <div class="mp-white-row-card">
                             <div class="mp-row-left">
@@ -135,21 +167,21 @@
                                 <div class="mp-row-text">
                                     <span class="mp-row-title">Status Buka Toko</span>
                                     <span id="storeStatusSubtext" class="mp-row-sub">
-                                        {{ $isOpen ? 'Menerima Pesanan Katering' : 'Toko Sedang Tutup' }}
+                                        {{ $isStoreOpen ? 'Menerima Pesanan Katering' : 'Toko Sedang Tutup' }}
                                     </span>
                                 </div>
                             </div>
 
                             {{-- Toggle Switch ON/OFF --}}
-                            <input type="checkbox" id="storeOpenCheckbox" name="is_open" value="1" {{ $isOpen ? 'checked' : '' }} hidden>
+                            <input type="hidden" id="hiddenStatusOperasional" name="status_operasional" value="{{ $isStoreOpen ? 'Buka' : 'Tutup' }}">
                             <button
                                 type="button"
                                 id="btnToggleStoreOpen"
                                 role="switch"
-                                aria-checked="{{ $isOpen ? 'true' : 'false' }}"
-                                class="mp-status-switch {{ $isOpen ? 'is-on' : 'is-off' }}"
+                                aria-checked="{{ $isStoreOpen ? 'true' : 'false' }}"
+                                class="mp-status-switch {{ $isStoreOpen ? 'is-on' : 'is-off' }}"
                             >
-                                <span id="storeSwitchLabel" class="mp-switch-text">{{ $isOpen ? 'BUKA' : 'TUTUP' }}</span>
+                                <span id="storeSwitchLabel" class="mp-switch-text">{{ $isStoreOpen ? 'BUKA' : 'TUTUP' }}</span>
                                 <span class="mp-switch-knob"></span>
                             </button>
                         </div>
@@ -169,7 +201,7 @@
                                     <div class="mp-row-text">
                                         <span class="mp-row-caption">Jam Buka Warung</span>
                                         <span class="mp-hours-value">
-                                            <strong id="displayHoursRange">{{ old('jam_buka', '06.00') }} - {{ old('jam_tutup', '20.00') }}</strong>
+                                            <strong id="displayHoursRange">{{ $jamBukaVal }} - {{ $jamTutupVal }}</strong>
                                             <small>WIB</small>
                                         </span>
                                     </div>
@@ -178,12 +210,12 @@
                                 <button type="button" id="btnToggleHoursEditor" class="mp-pill-action-btn">Ubah</button>
                             </div>
 
-                            {{-- Drawer Ubah Jam Buka (Opsional saat klik Ubah) --}}
+                            {{-- Drawer Ubah Jam Buka --}}
                             <div id="hoursEditorDrawer" class="mp-hours-drawer is-hidden">
                                 <div class="mp-time-inputs">
-                                    <input type="text" id="inputJamBuka" name="jam_buka" value="{{ old('jam_buka', '06.00') }}" class="mp-mini-time-input" placeholder="06.00">
+                                    <input type="time" id="inputJamBuka" name="jam_buka" value="{{ $jamBukaVal }}" class="mp-mini-time-input" required>
                                     <span>s/d</span>
-                                    <input type="text" id="inputJamTutup" name="jam_tutup" value="{{ old('jam_tutup', '20.00') }}" class="mp-mini-time-input" placeholder="20.00">
+                                    <input type="time" id="inputJamTutup" name="jam_tutup" value="{{ $jamTutupVal }}" class="mp-mini-time-input" required>
                                     <span>WIB</span>
                                 </div>
                             </div>
@@ -198,7 +230,7 @@
                                 </svg>
                             </span>
                             <p class="mp-note-text">
-                                Aktif otomatis mulai pukul <strong>19.00 WIB</strong> untuk porsi berlebih dengan diskon hemat mahasiswa.
+                                Flash Sale aktif otomatis setiap hari pukul <strong>20.00 - 22.00 WIB</strong> untuk porsi berlebih dengan diskon hemat mahasiswa.
                             </p>
                         </div>
                     </div>
@@ -218,7 +250,7 @@
                     </div>
 
                     <div class="mp-subcard-list">
-                        <a href="{{ url('/mitra/manajemen/menu') }}" class="mp-white-row-card is-clickable">
+                        <a href="{{ route('umkm.menu') }}" class="mp-white-row-card is-clickable">
                             <div class="mp-row-left">
                                 <span class="mp-cream-icon-box">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
@@ -240,7 +272,7 @@
                             </span>
                         </a>
 
-                        <a href="{{ url('/mitra/manajemen/pesanan') }}" class="mp-white-row-card is-clickable">
+                        <a href="{{ route('umkm.pesanan') }}" class="mp-white-row-card is-clickable">
                             <div class="mp-row-left">
                                 <span class="mp-cream-icon-box">
                                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
@@ -266,6 +298,17 @@
             {{-- KOLOM KANAN: METODE PEMBAYARAN + TOMBOL SIMPAN & KELUAR --}}
             <div class="mp-col-stack">
                 {{-- 3. METODE PEMBAYARAN --}}
+                @php
+                    $rawPayments = old('metode_pembayaran', $umkm->metode_pembayaran ?? ['QRIS']);
+                    if (is_string($rawPayments)) {
+                        $decoded = json_decode($rawPayments, true);
+                        $activePayments = is_array($decoded) ? $decoded : [$rawPayments];
+                    } else {
+                        $activePayments = (array) $rawPayments;
+                    }
+                    $activeCount = count($activePayments);
+                @endphp
+
                 <section class="mp-section-block">
                     <div class="mp-section-header-between">
                         <div class="mp-section-header">
@@ -278,9 +321,9 @@
                             <h2 class="mp-section-title">Metode Pembayaran</h2>
                         </div>
 
-                        <span class="mp-pill-3-aktif">
+                        <span class="mp-pill-3-aktif" id="paymentActiveCountBadge">
                             <span class="dot"></span>
-                            3 Aktif
+                            <span id="paymentActiveCountText">{{ $activeCount }} Aktif</span>
                         </span>
                     </div>
 
@@ -291,10 +334,10 @@
                                 <span class="mp-qris-logo-box">QRIS</span>
                                 <div class="mp-payment-head-text">
                                     <div class="mp-payment-head-title">
-                                        <span>QRIS Merchant</span>
+                                        <span>Metode Pembayaran Dapur</span>
                                         <span class="mp-pill-utama">Utama</span>
                                     </div>
-                                    <span class="mp-payment-head-sub">{{ $storeName }} &bull; Statis &amp; Dinamis</span>
+                                    <span class="mp-payment-head-sub">{{ $umkm->nama_vendor }} &bull; Multi-Metode</span>
                                 </div>
                             </div>
                             <svg id="paymentChevronIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -302,67 +345,59 @@
                             </svg>
                         </button>
 
-                        {{-- Body Pilihan Metode Pembayaran --}}
+                        {{-- Body Pilihan Metode Pembayaran (Multi-Pilih Checkbox JSON) --}}
                         <div id="paymentAccordionBody" class="mp-payment-body">
-                            <span class="mp-payment-caps">PILIH METODE PEMBAYARAN AKTIF</span>
+                            <span class="mp-payment-caps">PILIH METODE PEMBAYARAN AKTIF (BISA LEBIH DARI SATU)</span>
 
                             <div class="mp-payment-options-list">
                                 {{-- Opsi 1: QRIS --}}
-                                <label class="mp-payment-option {{ $activePayment === 'qris' ? 'is-selected' : '' }}">
+                                @php $hasQris = in_array('QRIS', $activePayments) || in_array('qris', $activePayments); @endphp
+                                <label class="mp-payment-option {{ $hasQris ? 'is-selected' : '' }}">
                                     <div class="mp-option-left">
-                                        <input type="radio" name="metode_pembayaran" value="qris" class="mp-payment-radio" {{ $activePayment === 'qris' ? 'checked' : '' }}>
+                                        <input type="checkbox" name="metode_pembayaran[]" value="QRIS" class="mp-payment-checkbox" {{ $hasQris ? 'checked' : '' }} hidden>
                                         <span class="mp-custom-radio"></span>
                                         <div class="mp-option-info">
                                             <div class="mp-option-title-row">
                                                 <strong>QRIS</strong>
-                                                <span class="mp-pill-aktif-mini">Aktif</span>
+                                                <span class="mp-pill-aktif-mini">{{ $hasQris ? 'Aktif' : 'Nonaktif' }}</span>
                                             </div>
-                                            <span class="mp-option-sub">QRIS Statis &amp; Dinamis ({{ $storeName }})</span>
+                                            <span class="mp-option-sub">QRIS Statis &amp; Dinamis ({{ $umkm->nama_vendor }})</span>
                                         </div>
                                     </div>
-                                    <button type="button" class="mp-btn-mini-outline">Detail</button>
                                 </label>
 
-                                {{-- Opsi 2: BCA --}}
-                                <label class="mp-payment-option {{ $activePayment === 'bca' ? 'is-selected' : '' }}">
+                                {{-- Opsi 2: Transfer Bank --}}
+                                @php $hasTransfer = in_array('Transfer Bank', $activePayments) || in_array('bca', $activePayments); @endphp
+                                <label class="mp-payment-option {{ $hasTransfer ? 'is-selected' : '' }}">
                                     <div class="mp-option-left">
-                                        <input type="radio" name="metode_pembayaran" value="bca" class="mp-payment-radio" {{ $activePayment === 'bca' ? 'checked' : '' }}>
+                                        <input type="checkbox" name="metode_pembayaran[]" value="Transfer Bank" class="mp-payment-checkbox" {{ $hasTransfer ? 'checked' : '' }} hidden>
                                         <span class="mp-custom-radio"></span>
                                         <div class="mp-option-info">
                                             <div class="mp-option-title-row">
-                                                <strong>BCA</strong>
-                                                <span class="mp-account-num">8415293812</span>
+                                                <strong>Transfer Bank</strong>
+                                                <span class="mp-account-num">BCA / Mandiri</span>
                                             </div>
-                                            <span class="mp-option-sub">a/n {{ $storeName }}</span>
+                                            <span class="mp-option-sub">a/n {{ $umkm->nama_vendor }}</span>
                                         </div>
                                     </div>
-                                    <button type="button" class="mp-btn-mini-outline">Ubah</button>
                                 </label>
 
-                                {{-- Opsi 3: GoPay --}}
-                                <label class="mp-payment-option {{ $activePayment === 'gopay' ? 'is-selected' : '' }}">
+                                {{-- Opsi 3: Tunai --}}
+                                @php $hasTunai = in_array('Tunai', $activePayments) || in_array('gopay', $activePayments); @endphp
+                                <label class="mp-payment-option {{ $hasTunai ? 'is-selected' : '' }}">
                                     <div class="mp-option-left">
-                                        <input type="radio" name="metode_pembayaran" value="gopay" class="mp-payment-radio" {{ $activePayment === 'gopay' ? 'checked' : '' }}>
+                                        <input type="checkbox" name="metode_pembayaran[]" value="Tunai" class="mp-payment-checkbox" {{ $hasTunai ? 'checked' : '' }} hidden>
                                         <span class="mp-custom-radio"></span>
                                         <div class="mp-option-info">
                                             <div class="mp-option-title-row">
-                                                <strong>GoPay</strong>
-                                                <span class="mp-account-num">0813-8821-4498</span>
+                                                <strong>Tunai / COD</strong>
+                                                <span class="mp-account-num">Bayar di Tempat</span>
                                             </div>
-                                            <span class="mp-option-sub">a/n <span class="sync-owner-name">{{ $ownerName }}</span></span>
+                                            <span class="mp-option-sub">a/n <span class="sync-owner-name">{{ $user->nama_lengkap }}</span></span>
                                         </div>
                                     </div>
-                                    <button type="button" class="mp-btn-mini-outline">Ubah</button>
                                 </label>
                             </div>
-
-                            <button type="button" class="mp-btn-add-payment">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-                                    <line x1="12" y1="5" x2="12" y2="19"/>
-                                    <line x1="5" y1="12" x2="19" y2="12"/>
-                                </svg>
-                                <span>Tambah Rekening / E-Wallet Baru</span>
-                            </button>
                         </div>
                     </div>
 
@@ -410,7 +445,7 @@
     </form>
 
     {{-- Form Logout Terpisah --}}
-    <form id="mitraLogoutForm" action="{{ url('/logout') }}" method="POST" hidden>
+    <form id="mitraLogoutForm" action="{{ route('umkm.logout') }}" method="POST" hidden>
         @csrf
     </form>
 </div>
@@ -431,7 +466,7 @@
                 </span>
                 <div>
                     <h3 id="editWarungModalTitle" class="mp-modal-title">Edit Profil Warung</h3>
-                    <p class="mp-modal-subtitle">Perbarui informasi pemilik dan kontak resmi dapur mitra</p>
+                    <p class="mp-modal-subtitle">Perbarui informasi warung, pemilik, dan kontak resmi dapur mitra</p>
                 </div>
             </div>
 
@@ -451,7 +486,7 @@
             <div class="mp-modal-photo-row">
                 <img
                     id="modalAvatarPreview"
-                    src="{{ $store->foto_url ?? 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=240&q=80' }}"
+                    src="{{ $umkm->foto_toko ? asset('storage/' . $umkm->foto_toko) : 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=240&q=80' }}"
                     alt="Preview Foto Warung"
                     class="mp-modal-avatar-thumb"
                 >
@@ -463,7 +498,18 @@
                 </div>
             </div>
 
-            {{-- 1. Nama Pemilik --}}
+            {{-- 1. Nama Warung / Vendor --}}
+            <div class="mp-modal-field">
+                <label for="modalNamaVendor" class="mp-modal-label">Nama Warung / Dapur</label>
+                <div class="mp-modal-input-wrap">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    </svg>
+                    <input type="text" id="modalNamaVendor" class="mp-modal-input" placeholder="Masukkan nama warung" required>
+                </div>
+            </div>
+
+            {{-- 2. Nama Pemilik --}}
             <div class="mp-modal-field">
                 <label for="modalNamaPemilik" class="mp-modal-label">Nama Pemilik</label>
                 <div class="mp-modal-input-wrap">
@@ -475,9 +521,9 @@
                 </div>
             </div>
 
-            {{-- 2. Email Pemilik --}}
+            {{-- 3. Email Pemilik --}}
             <div class="mp-modal-field">
-                <label for="modalEmailPemilik" class="mp-modal-label">Email</label>
+                <label for="modalEmailPemilik" class="mp-modal-label">Email Akun</label>
                 <div class="mp-modal-input-wrap">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
@@ -487,9 +533,9 @@
                 </div>
             </div>
 
-            {{-- 3. Alamat Toko --}}
+            {{-- 4. Alamat Toko --}}
             <div class="mp-modal-field">
-                <label for="modalAlamatToko" class="mp-modal-label">Alamat Toko</label>
+                <label for="modalAlamatToko" class="mp-modal-label">Alamat Lengkap Toko</label>
                 <div class="mp-modal-textarea-wrap">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
@@ -499,23 +545,19 @@
                 </div>
             </div>
 
-            {{-- 4. Email Toko --}}
+            {{-- 5. Deskripsi Toko --}}
             <div class="mp-modal-field">
-                <label for="modalEmailToko" class="mp-modal-label">Email Toko</label>
-                <div class="mp-modal-input-wrap">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="2" y="4" width="20" height="16" rx="2"/>
-                        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
-                    </svg>
-                    <input type="email" id="modalEmailToko" class="mp-modal-input" placeholder="toko@plan2eat.id" required>
+                <label for="modalDeskripsiToko" class="mp-modal-label">Deskripsi Singkat Toko (Opsional)</label>
+                <div class="mp-modal-textarea-wrap">
+                    <textarea id="modalDeskripsiToko" rows="2" class="mp-modal-textarea" placeholder="Ceritakan keunggulan dapur Anda"></textarea>
                 </div>
             </div>
         </div>
 
-        {{-- Footer Paling Bawah Dialog Box: Batal & Konfirmasi Perubahan --}}
+        {{-- Footer Paling Bawah Dialog Box: Batal & Simpan ke Database --}}
         <div class="mp-modal-footer">
             <button type="button" id="btnCancelEditWarung" class="mp-modal-btn-cancel">Batal</button>
-            <button type="button" id="btnConfirmEditWarung" class="mp-modal-btn-confirm">Konfirmasi Perubahan</button>
+            <button type="button" id="btnConfirmEditWarung" class="mp-modal-btn-confirm">Simpan Perubahan</button>
         </div>
     </div>
 </div>
@@ -524,30 +566,66 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
+    const mainForm = document.getElementById('mitraProfileMainForm');
+
     // =========================================================================
-    // 1. TOGGLE ON / OFF STATUS BUKA TOKO
+    // 1. TOGGLE ON / OFF STATUS BUKA TOKO (LANGSUNG SIMPAN KE DATABASE)
     // =========================================================================
     const btnToggleStoreOpen = document.getElementById('btnToggleStoreOpen');
-    const storeOpenCheckbox = document.getElementById('storeOpenCheckbox');
+    const hiddenStatusOperasional = document.getElementById('hiddenStatusOperasional');
     const storeSwitchLabel = document.getElementById('storeSwitchLabel');
     const storeStatusSubtext = document.getElementById('storeStatusSubtext');
+    const statusToggleUrl = @json(route('umkm.profil-status', $umkm->id_umkm));
+    const csrfToken = (document.querySelector('meta[name="csrf-token"]') || {}).content || @json(csrf_token());
 
-    if (btnToggleStoreOpen && storeOpenCheckbox) {
-        btnToggleStoreOpen.addEventListener('click', function () {
-            storeOpenCheckbox.checked = !storeOpenCheckbox.checked;
-            const isOpen = storeOpenCheckbox.checked;
+    function applyStoreStatusUI(isOpen) {
+        hiddenStatusOperasional.value = isOpen ? 'Buka' : 'Tutup';
+        btnToggleStoreOpen.classList.toggle('is-on', isOpen);
+        btnToggleStoreOpen.classList.toggle('is-off', !isOpen);
+        btnToggleStoreOpen.setAttribute('aria-checked', isOpen ? 'true' : 'false');
 
-            btnToggleStoreOpen.classList.toggle('is-on', isOpen);
-            btnToggleStoreOpen.classList.toggle('is-off', !isOpen);
-            btnToggleStoreOpen.setAttribute('aria-checked', isOpen ? 'true' : 'false');
+        if (storeSwitchLabel) {
+            storeSwitchLabel.textContent = isOpen ? 'BUKA' : 'TUTUP';
+        }
+        if (storeStatusSubtext) {
+            storeStatusSubtext.textContent = isOpen
+                ? 'Menerima Pesanan Katering'
+                : 'Toko Sedang Tutup';
+        }
+    }
 
-            if (storeSwitchLabel) {
-                storeSwitchLabel.textContent = isOpen ? 'BUKA' : 'TUTUP';
-            }
-            if (storeStatusSubtext) {
-                storeStatusSubtext.textContent = isOpen
-                    ? 'Menerima Pesanan Katering'
-                    : 'Toko Sedang Tutup';
+    if (btnToggleStoreOpen && hiddenStatusOperasional) {
+        btnToggleStoreOpen.addEventListener('click', async function () {
+            const isCurrentlyOpen = hiddenStatusOperasional.value.toLowerCase() === 'buka';
+            const nextIsOpen = !isCurrentlyOpen;
+            const targetStatus = nextIsOpen ? 'Buka' : 'Tutup';
+
+            applyStoreStatusUI(nextIsOpen);
+            btnToggleStoreOpen.disabled = true;
+
+            try {
+                const res = await fetch(statusToggleUrl, {
+                    method: 'POST',
+                    credentials: 'same-origin',
+                    headers: {
+                        'X-CSRF-TOKEN': csrfToken,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        _method: 'PATCH',
+                        status_operasional: targetStatus,
+                    }),
+                });
+
+                if (!res.ok) {
+                    throw new Error('Gagal memperbarui status');
+                }
+            } catch (err) {
+                applyStoreStatusUI(isCurrentlyOpen);
+                alert('Gagal menyimpan status buka toko ke database.');
+            } finally {
+                btnToggleStoreOpen.disabled = false;
             }
         });
     }
@@ -562,32 +640,30 @@ document.addEventListener('DOMContentLoaded', function () {
     const btnConfirmModal = document.getElementById('btnConfirmEditWarung');
 
     // Hidden inputs pada form utama
+    const hiddenStoreName = document.getElementById('hiddenStoreName');
     const hiddenOwnerName = document.getElementById('hiddenOwnerName');
     const hiddenOwnerEmail = document.getElementById('hiddenOwnerEmail');
     const hiddenStoreAddress = document.getElementById('hiddenStoreAddress');
-    const hiddenStoreEmail = document.getElementById('hiddenStoreEmail');
+    const hiddenStoreDesc = document.getElementById('hiddenStoreDesc');
 
     // Input fields di dalam dialog box
+    const modalNamaVendor = document.getElementById('modalNamaVendor');
     const modalNamaPemilik = document.getElementById('modalNamaPemilik');
     const modalEmailPemilik = document.getElementById('modalEmailPemilik');
     const modalAlamatToko = document.getElementById('modalAlamatToko');
-    const modalEmailToko = document.getElementById('modalEmailToko');
-
-    // Elemen tampilan pada halaman utama
-    const displayOwnerName = document.getElementById('displayOwnerName');
-    const displayStoreAddress = document.getElementById('displayStoreAddress');
-    const syncOwnerNames = document.querySelectorAll('.sync-owner-name');
+    const modalDeskripsiToko = document.getElementById('modalDeskripsiToko');
 
     function openEditWarungModal() {
         if (!modal) return;
+        modalNamaVendor.value = hiddenStoreName.value;
         modalNamaPemilik.value = hiddenOwnerName.value;
         modalEmailPemilik.value = hiddenOwnerEmail.value;
         modalAlamatToko.value = hiddenStoreAddress.value;
-        modalEmailToko.value = hiddenStoreEmail.value;
+        modalDeskripsiToko.value = hiddenStoreDesc.value;
 
         modal.classList.remove('is-hidden');
         document.body.style.overflow = 'hidden';
-        modalNamaPemilik.focus();
+        modalNamaVendor.focus();
     }
 
     function closeEditWarungModal() {
@@ -600,7 +676,6 @@ document.addEventListener('DOMContentLoaded', function () {
     if (btnCloseModalX) btnCloseModalX.addEventListener('click', closeEditWarungModal);
     if (btnCancelModal) btnCancelModal.addEventListener('click', closeEditWarungModal);
 
-    // Tutup modal saat klik area backdrop di luar kartu
     if (modal) {
         modal.addEventListener('click', function (e) {
             if (e.target === modal) {
@@ -609,40 +684,36 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Tutup modal dengan tombol Escape
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape' && modal && !modal.classList.contains('is-hidden')) {
             closeEditWarungModal();
         }
     });
 
-    // Konfirmasi Perubahan dari Dialog Box
+    // Konfirmasi & Langsung Simpan Perubahan ke Database
     if (btnConfirmModal) {
         btnConfirmModal.addEventListener('click', function () {
+            const newVendor = modalNamaVendor.value.trim();
             const newOwner = modalNamaPemilik.value.trim();
             const newEmail = modalEmailPemilik.value.trim();
             const newAddress = modalAlamatToko.value.trim();
-            const newStoreEmail = modalEmailToko.value.trim();
+            const newDesc = modalDeskripsiToko.value.trim();
 
-            if (!newOwner || !newEmail || !newAddress || !newStoreEmail) {
-                alert('Mohon lengkapi seluruh field pada form Edit Profil Warung.');
+            if (!newVendor || !newOwner || !newEmail || !newAddress) {
+                alert('Mohon lengkapi Nama Warung, Nama Pemilik, Email, dan Alamat Lengkap.');
                 return;
             }
 
-            // Simpan ke hidden inputs form utama
+            hiddenStoreName.value = newVendor;
             hiddenOwnerName.value = newOwner;
             hiddenOwnerEmail.value = newEmail;
             hiddenStoreAddress.value = newAddress;
-            hiddenStoreEmail.value = newStoreEmail;
+            hiddenStoreDesc.value = newDesc;
 
-            // Perbarui tampilan di halaman profil secara langsung
-            if (displayOwnerName) displayOwnerName.textContent = newOwner;
-            if (displayStoreAddress) displayStoreAddress.textContent = newAddress;
-            syncOwnerNames.forEach(function (el) {
-                el.textContent = newOwner;
-            });
-
-            closeEditWarungModal();
+            // Langsung submit form utama agar perubahan tersimpan ke database
+            if (mainForm) {
+                mainForm.submit();
+            }
         });
     }
 
@@ -650,7 +721,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const modalAvatarFileInput = document.getElementById('modalAvatarFileInput');
     const modalAvatarPreview = document.getElementById('modalAvatarPreview');
     const mainStoreAvatarImg = document.getElementById('mainStoreAvatarImg');
-    const topbarStoreAvatar = document.getElementById('topbarStoreAvatar');
 
     if (modalAvatarFileInput) {
         modalAvatarFileInput.addEventListener('change', function (e) {
@@ -659,13 +729,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 const previewUrl = URL.createObjectURL(file);
                 if (modalAvatarPreview) modalAvatarPreview.src = previewUrl;
                 if (mainStoreAvatarImg) mainStoreAvatarImg.src = previewUrl;
-                if (topbarStoreAvatar) topbarStoreAvatar.style.backgroundImage = "url('" + previewUrl + "')";
             }
         });
     }
 
     // =========================================================================
-    // 3. INTERAKSI TAMBAHAN: UBAH JAM BUKA & PILIHAN METODE PEMBAYARAN
+    // 3. UBAH JAM BUKA & MULTI-PILIHAN METODE PEMBAYARAN
     // =========================================================================
     const btnToggleHoursEditor = document.getElementById('btnToggleHoursEditor');
     const hoursEditorDrawer = document.getElementById('hoursEditorDrawer');
@@ -681,7 +750,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     function syncHoursDisplay() {
         if (displayHoursRange && inputJamBuka && inputJamTutup) {
-            displayHoursRange.textContent = (inputJamBuka.value || '06.00') + ' - ' + (inputJamTutup.value || '20.00');
+            displayHoursRange.textContent = (inputJamBuka.value || '07:00') + ' - ' + (inputJamTutup.value || '21:00');
         }
     }
     if (inputJamBuka) inputJamBuka.addEventListener('input', syncHoursDisplay);
@@ -702,16 +771,35 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
-    // Highlight Radio Metode Pembayaran Aktif
-    const paymentRadios = document.querySelectorAll('.mp-payment-radio');
-    paymentRadios.forEach(function (radio) {
-        radio.addEventListener('change', function () {
-            document.querySelectorAll('.mp-payment-option').forEach(function (opt) {
-                opt.classList.remove('is-selected');
-            });
-            if (radio.checked) {
-                radio.closest('.mp-payment-option').classList.add('is-selected');
+    // Highlight & Count Checkbox Metode Pembayaran Aktif
+    const paymentCheckboxes = document.querySelectorAll('.mp-payment-checkbox');
+    const paymentActiveCountText = document.getElementById('paymentActiveCountText');
+
+    function updatePaymentUI() {
+        let count = 0;
+        paymentCheckboxes.forEach(function (cb) {
+            const opt = cb.closest('.mp-payment-option');
+            if (cb.checked) {
+                count++;
+                if (opt) opt.classList.add('is-selected');
+            } else {
+                if (opt) opt.classList.remove('is-selected');
             }
+        });
+        if (paymentActiveCountText) {
+            paymentActiveCountText.textContent = count + ' Aktif';
+        }
+    }
+
+    paymentCheckboxes.forEach(function (cb) {
+        cb.addEventListener('change', function () {
+            // Pastikan minimal 1 metode pembayaran tetap terpilih
+            const anyChecked = Array.from(paymentCheckboxes).some(item => item.checked);
+            if (!anyChecked) {
+                cb.checked = true;
+                alert('Minimal harus ada 1 metode pembayaran yang aktif.');
+            }
+            updatePaymentUI();
         });
     });
 });

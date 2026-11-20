@@ -24,39 +24,49 @@ class FlashSaleController extends Controller
         $startTime = '20:00:00';
         $endTime = '22:00:00';
         $currentTime = $now->format('H:i:s');
-        $isPromoTime = ($currentTime >= $startTime && $currentTime <= $endTime);
-
-        // Ambil data flash sale dengan relasi menu dan umkm
-        $query = Flashsale::with(['menu.umkm', 'menu.jenisMenu'])
-            ->where('stok_sisa', '>', 0);
-
-        // Filter berdasarkan mitra yang dipilih pelanggan
+        $isPromoActive = ($currentTime >= $startTime && $currentTime <= $endTime);
         $selectedMitra = $request->query('mitra', 'all');
-        if ($selectedMitra && $selectedMitra !== 'all') {
-            $query->whereHas('menu.umkm', function ($q) use ($selectedMitra): void {
-                if (is_numeric($selectedMitra)) {
-                    $q->where('id_umkm', (int) $selectedMitra);
-                } else {
-                    $q->where('nama_vendor', $selectedMitra);
-                }
-            });
+
+        if ($isPromoActive) {
+            // Ambil data flash sale dengan relasi menu dan umkm hanya saat jam promo aktif (20:00 - 22:00)
+            $query = Flashsale::with(['menu.umkm', 'menu.jenisMenu'])
+                ->whereDate('tgl_flash_sale', $now->toDateString())
+                ->where('stok_sisa', '>', 0)
+                ->whereHas('menu', function ($q): void {
+                    $q->where('status', true);
+                });
+
+            // Filter berdasarkan mitra yang dipilih pelanggan
+            if ($selectedMitra && $selectedMitra !== 'all') {
+                $query->whereHas('menu.umkm', function ($q) use ($selectedMitra): void {
+                    if (is_numeric($selectedMitra)) {
+                        $q->where('id_umkm', (int) $selectedMitra);
+                    } else {
+                        $q->where('nama_vendor', $selectedMitra);
+                    }
+                });
+            }
+
+            $flashSales = $query->orderBy('id_flash_sale', 'desc')->get();
+
+            // Ambil daftar mitra unik yang memiliki menu flash sale untuk tombol filter mitra
+            $allFlashSales = Flashsale::with('menu.umkm')
+                ->whereDate('tgl_flash_sale', $now->toDateString())
+                ->where('stok_sisa', '>', 0)
+                ->get();
+
+            $mitraList = $allFlashSales->map(function ($fs) {
+                return $fs->menu?->umkm;
+            })->filter()->unique('id_umkm')->values();
+        } else {
+            $flashSales = collect();
+            $mitraList = collect();
         }
-
-        $flashSales = $query->orderBy('id_flash_sale', 'desc')->get();
-
-        // Ambil daftar mitra unik yang memiliki menu flash sale untuk tombol filter mitra
-        $allFlashSales = Flashsale::with('menu.umkm')
-            ->where('stok_sisa', '>', 0)
-            ->get();
-
-        $mitraList = $allFlashSales->map(function ($fs) {
-            return $fs->menu?->umkm;
-        })->filter()->unique('id_umkm')->values();
 
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
-                'is_promo_time' => $isPromoTime,
+                'is_promo_time' => $isPromoActive,
                 'waktu_mulai' => $startTime,
                 'waktu_selesai' => $endTime,
                 'total' => $flashSales->count(),
@@ -68,7 +78,7 @@ class FlashSaleController extends Controller
             'flashSales',
             'mitraList',
             'selectedMitra',
-            'isPromoTime',
+            'isPromoActive',
             'startTime',
             'endTime'
         ));

@@ -1,4 +1,4 @@
-@extends('layouts.main')
+@extends('layouts.main', ['activeMenu' => 'profil'])
 
 @section('title', 'Profil Kesehatan Pelanggan - Plan2Eat')
 @section('page_badge', 'Profil Kesehatan')
@@ -10,7 +10,7 @@
     <div class="customer-profile-hero">
         {{-- Baris Atas: Tombol Kembali & USR ID --}}
         <div class="profile-hero-topbar">
-            <a href="{{ url('/beranda') }}" class="btn-hero-back">
+            <a href="{{ route('pelanggan.beranda') }}" class="btn-hero-back">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="19" y1="12" x2="5" y2="12"/>
                     <polyline points="12 19 5 12 12 5"/>
@@ -18,16 +18,16 @@
                 <span>Kembali ke Beranda</span>
             </a>
 
-            <span class="usr-id-pill">USR ID: {{ $user->usr_code ?? '#US-102' }}</span>
+            <span class="usr-id-pill">USR ID: #US-{{ str_pad((string) $user->id_user, 3, '0', STR_PAD_LEFT) }}</span>
         </div>
 
-        {{-- Bagian Tengah: Avatar, Tombol Ubah Username & Nama Pengguna --}}
+        {{-- Bagian Tengah: Avatar, Tombol Ubah Nama & Nama Pengguna --}}
         <div class="profile-hero-identity">
             <div class="hero-avatar-wrapper">
                 <img
                     id="avatarPreviewImg"
-                    src="{{ $user->avatar_url ?? asset('assets/images/avatar-default.png') }}"
-                    alt="Foto Profil"
+                    src="{{ $user->foto ? asset('storage/' . $user->foto) : 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=240&q=80' }}"
+                    alt="Foto Profil {{ $user->nama_lengkap }}"
                     class="hero-avatar-photo"
                     onerror="this.src='https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=240&q=80';"
                 >
@@ -45,11 +45,11 @@
                         <path d="M12 20h9"/>
                         <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
                     </svg>
-                    <span>Ubah Username</span>
+                    <span>Ubah Nama</span>
                 </button>
 
                 <h1 id="heroUsernameDisplay" class="hero-username-title">
-                    {{ old('username', $user->username ?? 'KudaJemping123') }}
+                    {{ old('nama_lengkap', $user->nama_lengkap) }}
                 </h1>
             </div>
         </div>
@@ -59,7 +59,10 @@
 
 @section('content')
 @php
-    $selectedPreferences = old('preferences', $user->preferences ?? ['no_seafood', 'nut_free', 'halal_only']);
+    $selectedPrefs = old('preferences', $selectedPreferences ?? []);
+    if (!is_array($selectedPrefs)) {
+        $selectedPrefs = [];
+    }
 
     $preferenceItems = [
         [
@@ -99,15 +102,42 @@
             'icon' => 'wheat',
         ],
     ];
+
+    $formAction = $profil
+        ? route('pelanggan.profil_kesehatan-update', $profil->id_profil)
+        : route('pelanggan.profil_kesehatan-create');
 @endphp
 
 <div class="customer-profile-container">
-    <form id="healthProfileForm" action="{{ url('/profil/kesehatan') }}" method="POST" enctype="multipart/form-data" class="customer-profile-form">
+    {{-- Notifikasi Flash & Error Validasi --}}
+    @if (session('success'))
+        <div style="background: #ECFDF5; border-left: 4px solid #10B981; color: #065F46; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 13.5px; font-weight: 600;">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if (session('error'))
+        <div style="background: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 13.5px; font-weight: 600;">
+            {{ session('error') }}
+        </div>
+    @endif
+    @if ($errors->any())
+        <div style="background: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 13.5px;">
+            <ul style="margin: 0; padding-left: 20px;">
+                @foreach ($errors->all() as $err)
+                    <li>{{ $err }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form id="healthProfileForm" action="{{ $formAction }}" method="POST" enctype="multipart/form-data" class="customer-profile-form">
         @csrf
-        @method('PUT')
+        @if ($profil)
+            @method('PUT')
+        @endif
 
         {{-- Input File Foto Tersembunyi (Terhubung ke ikon kamera di Hero) --}}
-        <input type="file" id="avatarFileInput" name="avatar" accept="image/*" hidden>
+        <input type="file" id="avatarFileInput" name="foto" accept="image/*" hidden>
 
         <div class="customer-profile-grid">
             {{-- KOLOM KIRI (Desktop) / BAGIAN ATAS (Mobile) --}}
@@ -125,24 +155,24 @@
                         </div>
                     </div>
 
-                    {{-- Field Username --}}
+                    {{-- Field Nama Lengkap --}}
                     <div class="profile-field-block">
                         <div class="profile-label-row">
-                            <label for="usernameInput" class="profile-field-label">Username</label>
-                            <span id="usernameCounter" class="char-counter-text">14/30</span>
+                            <label for="usernameInput" class="profile-field-label">Nama Lengkap</label>
+                            <span id="usernameCounter" class="char-counter-text">0/60</span>
                         </div>
 
                         <div class="cream-input-box">
                             <input
                                 type="text"
                                 id="usernameInput"
-                                name="username"
-                                maxlength="30"
-                                value="{{ old('username', $user->username ?? 'KudaJemping123') }}"
+                                name="nama_lengkap"
+                                maxlength="60"
+                                value="{{ old('nama_lengkap', $user->nama_lengkap) }}"
                                 class="cream-text-input"
                                 required
                             >
-                            <button type="button" class="btn-inline-edit" onclick="document.getElementById('usernameInput').focus();" aria-label="Edit Username">
+                            <button type="button" class="btn-inline-edit" onclick="document.getElementById('usernameInput').focus();" aria-label="Edit Nama Lengkap">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 20h9"/>
                                     <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
@@ -151,32 +181,28 @@
                         </div>
                     </div>
 
-                    {{-- Field Alamat --}}
+                    {{-- Field No. WhatsApp --}}
                     <div class="profile-field-block">
                         <div class="profile-label-row">
-                            <label for="addressInput" class="profile-field-label">Alamat</label>
-                            <button type="button" class="btn-map-pin-link">
-                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                    <circle cx="12" cy="10" r="3"/>
-                                </svg>
-                                <span>Atur Titik Peta</span>
-                            </button>
+                            <label for="phoneInput" class="profile-field-label">No. WhatsApp</label>
                         </div>
 
-                        <div class="cream-address-box">
-                            <span class="address-pin-prefix">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                                    <circle cx="12" cy="10" r="3"/>
+                        <div class="cream-input-box">
+                            <input
+                                type="tel"
+                                id="phoneInput"
+                                name="no_hp"
+                                maxlength="20"
+                                placeholder="Contoh: 081234567890"
+                                value="{{ old('no_hp', $user->no_hp) }}"
+                                class="cream-text-input"
+                            >
+                            <button type="button" class="btn-inline-edit" onclick="document.getElementById('phoneInput').focus();" aria-label="Edit Nomor WhatsApp">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M12 20h9"/>
+                                    <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
                                 </svg>
-                            </span>
-                            <textarea
-                                id="addressInput"
-                                name="alamat"
-                                rows="2"
-                                class="cream-address-textarea"
-                            >{{ old('alamat', $user->alamat ?? 'Jl. Katulistiwa Barat no. 13 (Samping kanan Fotocopy)') }}</textarea>
+                            </button>
                         </div>
                     </div>
                 </section>
@@ -213,7 +239,7 @@
                                 </span>
                                 <div class="account-row-text">
                                     <span class="account-mini-label">NAMA PEMILIK</span>
-                                    <span class="account-main-value">{{ $user->name ?? 'Ahmad Anzay' }}</span>
+                                    <span class="account-main-value">{{ $user->nama_lengkap }}</span>
                                 </div>
                             </div>
                             <span class="account-lock-icon" title="Data Terverifikasi">
@@ -234,10 +260,10 @@
                                 </span>
                                 <div class="account-row-text">
                                     <span class="account-mini-label">NO. WHATSAPP</span>
-                                    <span class="account-main-value">{{ $user->phone ?? '+62 812-2222-2222' }}</span>
+                                    <span class="account-main-value">{{ $user->no_hp ?: 'Belum diatur' }}</span>
                                 </div>
                             </div>
-                            <span class="badge-wa-connected">Terhubung</span>
+                            <span class="badge-wa-connected">{{ $user->no_hp ? 'Terhubung' : 'Kosong' }}</span>
                         </div>
 
                         {{-- Email Terdaftar --}}
@@ -251,7 +277,7 @@
                                 </span>
                                 <div class="account-row-text">
                                     <span class="account-mini-label">EMAIL TERDAFTAR</span>
-                                    <span class="account-main-value">{{ $user->email ?? 'bakedatkedut@gmail.com' }}</span>
+                                    <span class="account-main-value">{{ $user->email }}</span>
                                 </div>
                             </div>
                             <span class="email-verified-check" title="Email Terverifikasi">
@@ -265,6 +291,9 @@
                 </section>
 
                 {{-- 4. Kartu Batas Budget Harian (Ditampilkan di Kolom Kiri pada Desktop) --}}
+                @php
+                    $budgetValue = old('batas_budget', $profil?->batas_budget);
+                @endphp
                 <section class="profile-white-card desktop-budget-slot">
                     <div class="budget-card-top">
                         <div class="budget-left-group">
@@ -279,9 +308,11 @@
                                 <span class="budget-mini-label">BATAS BUDGET HARIAN</span>
                                 <div class="budget-amount-row">
                                     <span id="budgetDisplayValue" class="budget-amount-text">
-                                        Rp {{ number_format((int) old('daily_budget', $user->daily_budget ?? 35000), 0, ',', '.') }}
+                                        {{ $budgetValue ? 'Rp ' . number_format((int) $budgetValue, 0, ',', '.') : 'Belum diatur' }}
                                     </span>
-                                    <span class="budget-unit-text">/ hari</span>
+                                    @if ($budgetValue)
+                                        <span class="budget-unit-text">/ hari</span>
+                                    @endif
                                 </div>
                             </div>
                         </div>
@@ -302,10 +333,11 @@
                             <input
                                 type="number"
                                 id="dailyBudgetInput"
-                                name="daily_budget"
-                                min="10000"
+                                name="batas_budget"
+                                min="0"
                                 step="1000"
-                                value="{{ old('daily_budget', $user->daily_budget ?? 35000) }}"
+                                placeholder="Contoh: 35000"
+                                value="{{ $budgetValue }}"
                                 class="cream-text-input"
                             >
                         </div>
@@ -321,7 +353,7 @@
                             <circle cx="12" cy="12" r="3"/>
                             <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
                         </svg>
-                        <span>Membantu sistem merekomendasikan bahan masakan sesuai kantong.</span>
+                        <span>Membantu sistem merekomendasikan menu makanan sesuai budget harianmu.</span>
                     </div>
                 </section>
             </div>
@@ -346,14 +378,14 @@
 
                     <div class="pref-selection-bar">
                         <span class="pref-section-caps">PILIHAN POLA MAKAN &amp; ALERGI</span>
-                        <span id="selectedPrefCounter" class="pill-selected-count">{{ count($selectedPreferences) }} Dipilih</span>
+                        <span id="selectedPrefCounter" class="pill-selected-count">{{ count($selectedPrefs) }} Dipilih</span>
                     </div>
 
                     {{-- Grid 6 Kartu Pola Makan & Alergi --}}
                     <div class="profile-pref-grid">
                         @foreach($preferenceItems as $item)
                             @php
-                                $isChecked = in_array($item['key'], $selectedPreferences);
+                                $isChecked = in_array($item['key'], $selectedPrefs, true);
                             @endphp
                             <label class="profile-pref-card {{ $isChecked ? 'is-selected' : '' }}">
                                 <input
@@ -422,9 +454,9 @@
                             <input
                                 type="text"
                                 id="dietProgramInput"
-                                name="diet_program"
-                                value="{{ old('diet_program', $user->diet_program ?? '') }}"
-                                placeholder="- - -"
+                                name="jenis_diet"
+                                value="{{ old('jenis_diet', $customDietProgram ?? '') }}"
+                                placeholder="Contoh: Keto, Intermittent Fasting, Tinggi Protein"
                                 class="cream-text-input"
                             >
                         </div>
@@ -437,11 +469,11 @@
                         <div class="cream-textarea-box">
                             <textarea
                                 id="tasteNotesInput"
-                                name="taste_notes"
+                                name="catatan_khusus"
                                 rows="3"
                                 placeholder="Contoh: Suka pedas, kurangi minyak goreng"
                                 class="cream-notes-textarea"
-                            >{{ old('taste_notes', $user->taste_notes ?? 'Suka pedas, kurangi minyak goreng') }}</textarea>
+                            >{{ old('catatan_khusus', $profil?->catatan_khusus) }}</textarea>
                         </div>
                     </div>
                 </section>
@@ -477,8 +509,16 @@
         </div>
     </form>
 
+    {{-- Form Reset Profil Kesehatan (DELETE) --}}
+    @if ($profil)
+        <form id="resetHealthProfileForm" action="{{ route('pelanggan.profil_kesehatan-delete', $profil->id_profil) }}" method="POST" hidden>
+            @csrf
+            @method('DELETE')
+        </form>
+    @endif
+
     {{-- Form Logout Terpisah --}}
-    <form id="logoutForm" action="{{ url('/logout') }}" method="POST" hidden>
+    <form id="logoutForm" action="{{ route('logout') }}" method="POST" hidden>
         @csrf
     </form>
 </div>
@@ -487,7 +527,7 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    // 1. Live Counter & Sync Username
+    // 1. Live Counter & Sync Nama Lengkap
     const usernameInput = document.getElementById('usernameInput');
     const usernameCounter = document.getElementById('usernameCounter');
     const heroUsernameDisplay = document.getElementById('heroUsernameDisplay');
@@ -496,7 +536,7 @@ document.addEventListener('DOMContentLoaded', function () {
     function syncUsername() {
         if (!usernameInput) return;
         const len = usernameInput.value.length;
-        if (usernameCounter) usernameCounter.textContent = len + '/30';
+        if (usernameCounter) usernameCounter.textContent = len + '/60';
         if (heroUsernameDisplay) {
             heroUsernameDisplay.textContent = usernameInput.value.trim() || 'Pengguna';
         }
@@ -560,7 +600,8 @@ document.addEventListener('DOMContentLoaded', function () {
     const presetButtons = document.querySelectorAll('.btn-budget-preset');
 
     function formatRupiah(num) {
-        const val = parseInt(num, 10) || 0;
+        const val = parseInt(num, 10);
+        if (!val || val <= 0) return 'Belum diatur';
         return 'Rp ' + val.toLocaleString('id-ID');
     }
 
@@ -591,8 +632,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // 5. Reset Seluruh Profil Kesehatan
     const btnResetHealthProfile = document.getElementById('btnResetHealthProfile');
+    const resetForm = document.getElementById('resetHealthProfileForm');
     if (btnResetHealthProfile) {
         btnResetHealthProfile.addEventListener('click', function () {
+            if (resetForm) {
+                if (confirm('Apakah Anda yakin ingin mereset seluruh data profil kesehatan Anda?')) {
+                    resetForm.submit();
+                }
+                return;
+            }
+
             prefCheckboxes.forEach(function (cb) {
                 cb.checked = false;
             });
@@ -602,6 +651,10 @@ document.addEventListener('DOMContentLoaded', function () {
             const notesInput = document.getElementById('tasteNotesInput');
             if (dietInput) dietInput.value = '';
             if (notesInput) notesInput.value = '';
+            if (dailyBudgetInput && budgetDisplayValue) {
+                dailyBudgetInput.value = '';
+                budgetDisplayValue.textContent = 'Belum diatur';
+            }
         });
     }
 });

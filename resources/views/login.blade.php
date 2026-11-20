@@ -22,7 +22,7 @@
             
             <!-- Brand Header / Logo -->
             <div class="brand-header">
-                <img src="{{ asset('..\images\Logo 1.png') }}" alt="Plan2Eat - Plan It, Order It, Irit" class="horizontal-terang">
+                <img src="{{ asset('images/Logo 1.png') }}" alt="Plan2Eat - Plan It, Order It, Irit" class="horizontal-terang">
             </div>
 
             <!-- Title & Subtitle -->
@@ -30,6 +30,22 @@
                 <h1 class="text-wrapper">Selamat Datang Kembali!</h1>
                 <p class="subtitle">Silakan masukkan detail Anda untuk masuk</p>
             </div>
+
+            @if (session('success'))
+                <div style="background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; padding: 12px 14px; border-radius: 12px; font-size: 13px; margin-bottom: 14px;">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if ($errors->any())
+                <div class="auth-alert-error" role="alert" style="margin-bottom: 14px;">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
 
             <!-- Form Login -->
             <form class="auth-form" action="{{ route('login') }}" method="POST">
@@ -106,7 +122,7 @@
             <!-- Footer Register Link -->
             <div class="container-wrapper">
                 <p class="belum-punya-akun">
-                    Belum Punya akun? <a href="{{ route('register') }}" class="text-wrapper-5">Registrasi</a>
+                    Belum Punya akun? <a href="{{ route('register.pilihan') }}" class="text-wrapper-5">Registrasi</a>
                 </p>
             </div>
 

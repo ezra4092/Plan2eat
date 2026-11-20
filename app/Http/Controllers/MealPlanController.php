@@ -17,8 +17,8 @@ class MealPlanController extends Controller
             ->where('id_user', Auth::id())
             ->get();
             
-        // Ambil semua daftar menu untuk dropdown pilihan makanan
-        $daftarMenu = Menu::all(); 
+        // Ambil semua daftar menu aktif untuk dropdown pilihan makanan
+        $daftarMenu = Menu::where('status', true)->get();
 
         return view('pelanggan.meal_plan', compact('mealPlans', 'daftarMenu'));
     }
@@ -38,7 +38,7 @@ class MealPlanController extends Controller
             'tanggal_selesai' => $request->tanggal_selesai,
         ]);
 
-        return redirect()->route('pelanggan.meal_plan.index')->with('success', 'Meal Plan berhasil dibuat.');
+        return redirect()->route('pelanggan.meal_plan')->with('success', 'Meal Plan berhasil dibuat.');
     }
 
     public function update(Request $request, $id_plan)
@@ -52,7 +52,7 @@ class MealPlanController extends Controller
         $mealPlan = MealPlan::where('id_user', Auth::id())->findOrFail($id_plan);
         $mealPlan->update($request->only(['judul_plan', 'tanggal_mulai', 'tanggal_selesai']));
 
-        return redirect()->route('pelanggan.meal_plan.index')->with('success', 'Informasi Meal Plan berhasil diperbarui.');
+        return redirect()->route('pelanggan.meal_plan')->with('success', 'Informasi Meal Plan berhasil diperbarui.');
     }
 
     public function destroy($id_plan)
@@ -61,7 +61,7 @@ class MealPlanController extends Controller
         // Pastikan relasi onDelete cascade diaktifkan di tabel database
         $mealPlan->delete(); 
 
-        return redirect()->route('pelanggan.meal_plan.index')->with('success', 'Meal Plan berhasil dihapus.');
+        return redirect()->route('pelanggan.meal_plan')->with('success', 'Meal Plan berhasil dihapus.');
     }
 
     // --- FUNGSI DETAIL ---
@@ -89,7 +89,7 @@ class MealPlanController extends Controller
             'waktu_makan'  => $request->waktu_makan,
         ]);
 
-        return redirect()->route('pelanggan.meal_plan.index')->with('success', 'Menu berhasil ditambahkan ke jadwal.');
+        return redirect()->route('pelanggan.meal_plan')->with('success', 'Menu berhasil ditambahkan ke jadwal.');
     }
 
     public function destroyDetail($id_detail_plan)
@@ -100,7 +100,7 @@ class MealPlanController extends Controller
         
         $detail->delete();
 
-        return redirect()->route('pelanggan.meal_plan.index')->with('success', 'Menu berhasil dihapus dari jadwal.');
+        return redirect()->route('pelanggan.meal_plan')->with('success', 'Menu berhasil dihapus dari jadwal.');
     }
 
     public function updateDetail(Request $request, $id_detail_plan)
@@ -120,6 +120,6 @@ class MealPlanController extends Controller
             'waktu_makan' => $request->waktu_makan,
         ]);
 
-        return redirect()->route('pelanggan.meal_plan.index')->with('success', 'Menu pada jadwal berhasil diperbarui.');
+        return redirect()->route('pelanggan.meal_plan')->with('success', 'Menu pada jadwal berhasil diperbarui.');
     }
 }

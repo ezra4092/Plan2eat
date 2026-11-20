@@ -11,37 +11,33 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
     {{-- Stylesheets --}}
-        <link href="{{ asset('template/css/globals.css') }}" rel="stylesheet">
-        <link href="{{ asset('template/css/style.css') }}" rel="stylesheet">
-    </head>
+    <link href="{{ asset('template/css/globals.css') }}" rel="stylesheet">
+    <link href="{{ asset('template/css/style.css') }}" rel="stylesheet">
+</head>
 
-<body>
+<body class="login-page-body">
+    @php
+        $selectedRole = old('role', $role ?? session('register_role', 'pelanggan'));
+        if (!in_array($selectedRole, ['pelanggan', 'umkm'], true)) {
+            $selectedRole = 'pelanggan';
+        }
+    @endphp
+
     <main class="login-page-user">
         <section class="authentication" aria-labelledby="register-heading">
-            {{-- Brand Header Lockup --}}
+            {{-- Brand Header --}}
             <div class="brand-header">
-                <div class="plan2eat-brand-lockup">
-                    <svg width="46" height="46" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <rect x="4" y="8" width="40" height="36" rx="10" fill="#165B33"/>
-                        <rect x="13" y="4" width="4.5" height="9" rx="2.25" fill="#165B33" stroke="#F7F3EA" stroke-width="1.5"/>
-                        <rect x="30.5" y="4" width="4.5" height="9" rx="2.25" fill="#165B33" stroke="#F7F3EA" stroke-width="1.5"/>
-                        <circle cx="24" cy="27" r="11" fill="#FFFFFF"/>
-                        <circle cx="24" cy="27" r="6.5" fill="#E8702A"/>
-                    </svg>
-
-                    <div class="brand-wordmark-col">
-                        <div class="brand-wordmark">
-                            <span class="word-dark">Plan</span><span class="word-orange">2</span><span class="word-dark">Eat</span>
-                        </div>
-                        <span class="brand-tagline">PLAN IT, ORDER IT, IRIT</span>
-                    </div>
-                </div>
+                <img src="{{ asset('images/Logo 1.png') }}" alt="Plan2Eat - Plan It, Order It, Irit" class="horizontal-terang">
             </div>
 
             {{-- Heading & Subtitle --}}
             <div class="auth-heading">
                 <h1 id="register-heading" class="text-wrapper">Daftar Akun Baru</h1>
-                <p class="subtitle">Silakan masukkan detail akun Anda di bawah ini</p>
+                <p class="subtitle">
+                    Mendaftar sebagai
+                    <strong style="color: #16442B;">{{ $selectedRole === 'umkm' ? 'Mitra UMKM' : 'Pelanggan' }}</strong>
+                    &bull; <a href="{{ route('register.pilihan') }}" style="color: #E8702A; text-decoration: none; font-weight: 600;">Ubah</a>
+                </p>
             </div>
 
             {{-- Notifikasi Error Validasi --}}
@@ -55,15 +51,10 @@
                 </div>
             @endif
 
-            {{-- Form Registrasi Pelanggan --}}
-            @php
-                $registerAction = Route::has('register-post')
-                    ? route('register-post')
-                    : (Route::has('register.submit') ? route('register.submit') : url('/register'));
-            @endphp
-
-            <form action="{{ $registerAction }}" method="POST" class="auth-form" novalidate>
+            {{-- Form Registrasi --}}
+            <form action="{{ route('register') }}" method="POST" class="auth-form">
                 @csrf
+                <input type="hidden" name="role" value="{{ $selectedRole }}">
 
                 {{-- Nama Lengkap --}}
                 <div class="form-group-custom">
@@ -187,12 +178,12 @@
         </section>
 
         {{-- Footer Link Login --}}
-        <footer class="container-wrapper">
+        <!-- <footer class="container-wrapper">
             <p class="belum-punya-akun">
                 Sudah Punya Akun?
-                <a href="{{ Route::has('login_page') ? route('login_page') : url('/') }}" class="text-wrapper-5">Login</a>
+                <a href="{{ route('login_page') }}" class="text-wrapper-5">Login</a>
             </p>
-        </footer>
+        </footer> -->
     </main>
 
     <script>

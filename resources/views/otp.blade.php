@@ -1,15 +1,27 @@
-@extends('layouts.main')
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title>Verifikasi Kode OTP — Plan2Eat</title>
 
-@section('title', 'Verifikasi Kode OTP — Plan2Eat')
-@section('hide_nav', true)
-@section('body_class', 'auth-shell')
+  <!-- Google Fonts: Plus Jakarta Sans & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
 
-@section('content')
+  <!-- Stylesheets -->
+  <link href="{{ asset('template/css/globals.css') }}" rel="stylesheet">
+  <link href="{{ asset('template/css/style.css') }}" rel="stylesheet">
+</head>
+<body class="auth-shell">
+
 <main class="otp-page-wrapper">
   <div class="otp-card-shell">
 
     <header class="otp-topbar">
-      <a href="{{ route('register.form') }}" class="otp-back-btn" aria-label="Kembali">
+      <a href="{{ route('register.form', ['role' => $role ?? session('register_role', 'pelanggan')]) }}" class="otp-back-btn" aria-label="Kembali">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1C1C11" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"/>
           <polyline points="12 19 5 12 12 5"/>
@@ -17,13 +29,7 @@
       </a>
 
       <div class="otp-topbar-brand">
-        <svg width="26" height="26" viewBox="0 0 46 46" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="3" y="6" width="40" height="37" rx="10" fill="#05371F"/>
-          <rect x="13" y="2" width="4" height="8" rx="2" fill="#FFFFFF"/>
-          <rect x="29" y="2" width="4" height="8" rx="2" fill="#FFFFFF"/>
-          <circle cx="23" cy="25" r="11" fill="#FFFFFF"/>
-          <circle cx="23" cy="25" r="6.5" fill="#E8702A"/>
-        </svg>
+        <img src="{{ asset('images/Logo 1.png') }}" alt="Plan2Eat" style="height: 26px; width: auto;">
         <span class="otp-topbar-title">Verify Code</span>
       </div>
     </header>
@@ -52,7 +58,7 @@
 
       <p class="otp-subtext">
         Kode dikirim ke <strong>{{ $email }}</strong>
-        <a href="{{ route('register.form') }}" class="otp-edit-link">
+        <a href="{{ route('register.form', ['role' => $role ?? session('register_role', 'pelanggan')]) }}" class="otp-edit-link">
           Ubah
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
@@ -93,12 +99,9 @@
             Kirim ulang (<span id="otpTimer">0:45</span>)
           </span>
 
-          <form id="otpResendForm" action="{{ route('resend-otp') }}" method="POST" style="display: none;">
-            @csrf
-            <button type="submit" class="otp-resend-btn">
-              Kirim ulang kode
-            </button>
-          </form>
+          <button type="submit" form="otpResendForm" id="otpResendBtn" class="otp-resend-btn" style="display: none;">
+            Kirim ulang kode
+          </button>
         </div>
 
         <button type="submit" id="otpSubmitBtn" class="btn-verify-otp" disabled>
@@ -108,6 +111,11 @@
           </svg>
           <span>Verifikasi</span>
         </button>
+      </form>
+
+      {{-- Form terpisah (tidak nested) untuk Kirim Ulang OTP --}}
+      <form id="otpResendForm" action="{{ route('resend-otp') }}" method="POST" hidden>
+        @csrf
       </form>
     </section>
 
@@ -136,9 +144,7 @@
 
   </div>
 </main>
-@endsection
 
-@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', () => {
     const boxes = Array.from(document.querySelectorAll('#otpBoxesGroup .otp-box'));
@@ -146,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const hiddenInput = document.getElementById('otpHiddenInput');
     const keypadButtons = document.querySelectorAll('.keypad-btn');
     const resendWrapper = document.getElementById('otpResendWrapper');
-    const resendForm = document.getElementById('otpResendForm');
+    const resendBtn = document.getElementById('otpResendBtn');
 
     function syncOtpState(activeIndex = null) {
         const code = boxes.map(box => box.value).join('');
@@ -287,8 +293,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 resendWrapper.style.display = 'none';
             }
 
-            if (resendForm) {
-                resendForm.style.display = 'block';
+            if (resendBtn) {
+                resendBtn.style.display = 'inline-block';
             }
         }
     }, 1000);
@@ -296,4 +302,5 @@ document.addEventListener('DOMContentLoaded', () => {
     syncOtpState(0);
 });
 </script>
-@endpush
+</body>
+</html>

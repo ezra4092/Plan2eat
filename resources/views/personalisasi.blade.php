@@ -28,7 +28,7 @@
 @endsection
 
 @section('content')
-<form action="{{ url('/personalisasi') }}" method="POST" class="personalization-container" id="personalizationForm">
+<form action="{{ route('pelanggan.personalisasi-store') }}" method="POST" class="personalization-container" id="personalizationForm">
     @csrf
 
     {{-- 1. Hero Card: Pilih Preferensi Makan --}}

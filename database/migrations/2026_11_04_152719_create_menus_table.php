@@ -21,6 +21,7 @@ return new class extends Migration
             $table->integer('stok_harian')->default(0);
             $table->decimal('harga_normal', 12, 2);
             $table->string('foto_menu')->nullable();
+            $table->boolean('status')->default(true);
         });
     }
 

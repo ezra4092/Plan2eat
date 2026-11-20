@@ -62,7 +62,7 @@ class MenuController extends Controller
 
         // 5. Statistik ringkasan
         $total = $menus->count();
-        $tersedia = $menus->where('stok_harian', '>', 0)->count();
+        $tersedia = $menus->filter(fn ($m): bool => (bool) ($m->status ?? true) && ($m->stok_harian ?? 0) > 0)->count();
         $habis = $total - $tersedia;
 
         // 6. Data Jenis Menu untuk opsi filter dan dropdown modal
@@ -122,6 +122,7 @@ class MenuController extends Controller
             'stok_harian' => 'required|integer|min:0',
             'kandungan_kalori' => 'nullable|integer|min:0',
             'jenis_menu' => 'nullable|exists:jenis_menu,id',
+            'status' => 'nullable|boolean',
             'foto_menu' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
@@ -130,6 +131,7 @@ class MenuController extends Controller
         }
 
         $validated['id_umkm'] = $umkm->id_umkm;
+        $validated['status'] = $request->has('status') ? $request->boolean('status') : true;
 
         Menu::create($validated);
 
@@ -158,6 +160,7 @@ class MenuController extends Controller
             'stok_harian' => 'required|integer|min:0',
             'kandungan_kalori' => 'nullable|integer|min:0',
             'jenis_menu' => 'nullable|exists:jenis_menu,id',
+            'status' => 'nullable|boolean',
             'foto_menu' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
@@ -166,6 +169,10 @@ class MenuController extends Controller
                 Storage::disk('public')->delete($menu->foto_menu);
             }
             $validated['foto_menu'] = $request->file('foto_menu')->store('menu_images', 'public');
+        }
+
+        if ($request->has('status')) {
+            $validated['status'] = $request->boolean('status');
         }
 
         $menu->update($validated);
@@ -212,13 +219,21 @@ class MenuController extends Controller
 
         $menu = $query->firstOrFail();
 
-        // 1. Dukungan toggle ketersediaan switch (tersedia = 1/0)
-        if ($request->has('tersedia')) {
+        // 1. Dukungan toggle aktif/nonaktif status menu (status = 1/0)
+        if ($request->has('status')) {
+            $newStatus = filter_var($request->input('status'), FILTER_VALIDATE_BOOLEAN);
+            $menu->update(['status' => $newStatus]);
+        }
+        // 2. Dukungan toggle ketersediaan switch (tersedia = 1/0)
+        elseif ($request->has('tersedia')) {
             $tersedia = filter_var($request->input('tersedia'), FILTER_VALIDATE_BOOLEAN);
             $newStok = $tersedia ? ($menu->stok_harian > 0 ? $menu->stok_harian : 10) : 0;
-            $menu->update(['stok_harian' => $newStok]);
+            $menu->update([
+                'stok_harian' => $newStok,
+                'status' => $tersedia,
+            ]);
         }
-        // 2. Dukungan input angka stok langsung
+        // 3. Dukungan input angka stok langsung
         elseif ($request->has('stok_harian')) {
             $request->validate([
                 'stok_harian' => 'required|integer|min:0',
@@ -229,12 +244,13 @@ class MenuController extends Controller
         if ($request->expectsJson() || $request->ajax()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Stok menu berhasil diperbarui!',
+                'message' => 'Status & stok menu berhasil diperbarui!',
+                'status' => (bool) $menu->status,
                 'stok_harian' => $menu->stok_harian,
             ]);
         }
 
-        return redirect()->route('umkm.menu')->with('success', 'Stok makanan berhasil diperbarui!');
+        return redirect()->route('umkm.menu')->with('success', 'Status menu berhasil diperbarui!');
     }
 
     public function berandaPelanggan(): View
@@ -246,12 +262,12 @@ class MenuController extends Controller
             ? ProfilKesehatan::where('id_user', $idUser)->first()
             : null;
 
-        // 2. Query menu yang stoknya tersedia & UMKM-nya berstatus Buka + Terverifikasi
+        // 2. Query menu yang aktif, stoknya tersedia & UMKM-nya berstatus Buka + Terverifikasi
         $query = Menu::with(['umkm', 'jenisMenu'])
+            ->where('status', true)
             ->where('stok_harian', '>', 0)
             ->whereHas('umkm', function ($q): void {
-                $q->where('status_operasional', 'Buka')
-                    ->where('status_verifikasi', true);
+                $q->terverifikasi()->buka();
             });
 
         // 3. Filter berdasarkan Profil Kesehatan (Alergi & Batas Budget)
@@ -286,6 +302,7 @@ class MenuController extends Controller
             $existingIds = $rekomendasiMenu->pluck('id_menu')->toArray();
 
             $tambahanMenu = Menu::with(['umkm', 'jenisMenu'])
+                ->where('status', true)
                 ->where('stok_harian', '>', 0)
                 ->whereNotIn('id_menu', $existingIds)
                 ->orderByRaw('CASE WHEN jenis_menu IS NOT NULL THEN 0 ELSE 1 END')
@@ -296,18 +313,26 @@ class MenuController extends Controller
             $rekomendasiMenu = $rekomendasiMenu->merge($tambahanMenu);
         }
 
-        // 5. Data flash sale aktif hari ini (opsional jika beranda punya section flash sale)
+        // 5. Data flash sale hanya tampil saat jam promo (20:00 - 22:00 WIB)
         $currentTime = now()->format('H:i:s');
         $isPromoActive = ($currentTime >= '20:00:00' && $currentTime <= '22:00:00');
 
-        $flashSales = FlashSale::with(['menu.umkm', 'menu.jenisMenu'])
-            ->whereDate('tgl_flash_sale', now()->toDateString())
-            ->where('stok_sisa', '>', 0)
-            ->get();
+        if ($isPromoActive) {
+            $flashSales = Flashsale::with(['menu.umkm', 'menu.jenisMenu'])
+                ->whereDate('tgl_flash_sale', now()->toDateString())
+                ->where('stok_sisa', '>', 0)
+                ->whereHas('menu', function ($q): void {
+                    $q->where('status', true);
+                })
+                ->get();
 
-        $mitraList = $flashSales->map(function ($item) {
-            return $item->menu?->umkm;
-        })->filter()->unique('id_umkm')->values();
+            $mitraList = $flashSales->map(function ($item) {
+                return $item->menu?->umkm;
+            })->filter()->unique('id_umkm')->values();
+        } else {
+            $flashSales = collect();
+            $mitraList = collect();
+        }
 
         return view('pelanggan.beranda', compact(
             'rekomendasiMenu',
@@ -316,6 +341,63 @@ class MenuController extends Controller
             'mitraList',
             'isPromoActive'
         ));
+    }
+
+    /**
+     * Menampilkan daftar menu milik UMKM yang dipilih oleh pelanggan.
+     */
+    public function pelangganMenu(Request $request): View|RedirectResponse
+    {
+        $idUmkm = $request->query('id_umkm') ?? session('selected_umkm');
+
+        if ($idUmkm) {
+            $mitra = Umkm::where('id_umkm', $idUmkm)
+                ->terverifikasi()
+                ->first();
+        } else {
+            $mitra = null;
+        }
+
+        if (! $mitra) {
+            return redirect()
+                ->route('pelanggan.mitra')
+                ->with('error', 'Silakan pilih mitra catering terlebih dahulu.');
+        }
+
+        session(['selected_umkm' => $mitra->id_umkm]);
+
+        $menus = Menu::with('jenisMenu')
+            ->where('id_umkm', $mitra->id_umkm)
+            ->where('status', true)
+            ->where('stok_harian', '>', 0)
+            ->orderBy('id_menu', 'desc')
+            ->get();
+
+        $cart = session('cart', []);
+        $cartQuantities = [];
+        $totalPorsi = 0;
+        $subtotal = 0;
+
+        if (! empty($cart['items']) && (int) ($cart['id_umkm'] ?? 0) === (int) $mitra->id_umkm) {
+            foreach ($cart['items'] as $cartItem) {
+                $menuId = (int) ($cartItem['id_menu'] ?? 0);
+                $qty = (int) ($cartItem['kuantitas'] ?? 0);
+                $harga = (float) ($cartItem['harga_satuan'] ?? 0);
+
+                if ($menuId > 0 && $qty > 0) {
+                    $cartQuantities[$menuId] = ($cartQuantities[$menuId] ?? 0) + $qty;
+                    $totalPorsi += $qty;
+                    $subtotal += $qty * $harga;
+                }
+            }
+        }
+
+        $cartSummary = (object) [
+            'total_porsi' => $totalPorsi,
+            'subtotal' => (int) $subtotal,
+        ];
+
+        return view('pelanggan.menu', compact('mitra', 'menus', 'cartQuantities', 'cartSummary'));
     }
 
     public function show(int|string $id_menu): View

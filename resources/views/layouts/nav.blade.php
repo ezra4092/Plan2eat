@@ -30,7 +30,7 @@
         </button>
       </form>
 
-      <form action="" method="GET" style="margin: 0;">
+      <form action="{{ route('pelanggan.langganan')}}" method="GET" style="margin: 0;">
         <button type="submit" class="nav-item {{ $activeMenu === 'langganan' || $activeMenu === 'meal_plan' ? 'active' : '' }}" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
           <div class="nav-icon-box">
             <img src="{{ asset('img/icon-7.svg') }}" alt="Langganan">
@@ -39,7 +39,7 @@
         </button>
       </form>
 
-      <form action="{{ route('pelanggan.profil_kesehatan') }}" method="POST" style="margin: 0;">
+      <form action="{{ route('pelanggan.profil_kesehatan') }}" method="GET" style="margin: 0;">
         <button type="submit" class="nav-item {{ $activeMenu === 'profil' ? 'active' : '' }}" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
           <div class="nav-icon-box">
             <img src="{{ asset('img/icon-5.svg') }}" alt="Profil">
@@ -51,7 +51,7 @@
 
     <hr class="sidebar-divider">
 
-    <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+    <!-- <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
       @csrf
       <button type="submit" class="nav-item" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
         <div class="nav-icon-box">
@@ -59,7 +59,7 @@
         </div>
         <span class="nav-label">Logout</span>
       </button>
-    </form>
+    </form> -->
 
     <!-- Info Card Bawah Sidebar (Hanya muncul di Desktop seperti SB Admin 2) -->
     <div class="sidebar-promo-card">
@@ -93,6 +93,15 @@
         </button>
       </form>
 
+      <form action="{{ route('umkm.pesanan')}}" method="GET" style="margin: 0;">
+        <button type="submit" class="nav-item {{ $activeMenu === 'manajemen' || $activeMenu === 'menu' ? 'active' : '' }}" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
+          <div class="nav-icon-box">
+            <img src="{{ asset('img/icon-4.svg') }}" alt="Manajemen Menu">
+          </div>
+          <span class="nav-label">Manajemen Pesanan</span>
+        </button>
+      </form>
+
       <form action="{{ route('umkm.laporan_keuangan') }}" method="GET" style="margin: 0;">
         <button type="submit" class="nav-item {{ $activeMenu === 'saldo' || $activeMenu === 'laporan' ? 'active' : '' }}" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
           <div class="nav-icon-box">
@@ -114,7 +123,7 @@
 
     <hr class="sidebar-divider">
 
-    <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+    <!-- <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
       @csrf
       <button type="submit" class="nav-item" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
         <div class="nav-icon-box">
@@ -122,7 +131,7 @@
         </div>
         <span class="nav-label">Logout</span>
       </button>
-    </form>
+    </form> -->
 
     <!-- Info Card Bawah Sidebar (Hanya muncul di Desktop) -->
     <div class="sidebar-promo-card">

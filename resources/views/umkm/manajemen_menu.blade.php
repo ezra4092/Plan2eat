@@ -16,59 +16,20 @@
     $urlStok    = $safe('umkm.menu-stok', '__ID__');
     $urlFlash   = $safe('umkm.flashsale-create');
 
-    // Jika controller belum mengirimkan $menus, ambil dari database atau fallback ke sample
-    if (!isset($menus)) {
-        try {
-            $dbMenus = \App\Models\Menu::all();
-            $menus = $dbMenus->isNotEmpty() ? $dbMenus : null;
-        } catch (\Throwable $e) {
-            $menus = null;
-        }
-
-        if (!$menus) {
-            $sample = [
-                ['id_menu' => 1, 'kategori' => 'Paket Katering', 'label' => 'PAKET KATERING MAHASISWA', 'nama_makanan' => 'Nasi Box Ayam Rica-Rica',
-                 'deskripsi_makanan' => '', 'kandungan_kalori' => 520, 'stok_harian' => 25, 'harga_normal' => 20000, 'foto_menu' => null,
-                 'badge' => 'Best Seller', 'tags' => [['Tanpa Kacang', 'amber', true], ['Pedas Sedang', 'green', false]]],
-                ['id_menu' => 2, 'kategori' => 'Meal Plan', 'label' => 'MEAL PLAN CLEAN EATING', 'nama_makanan' => 'Paket Diet Sehat Ayam Panggang',
-                 'deskripsi_makanan' => '', 'kandungan_kalori' => 380, 'stok_harian' => 12, 'harga_normal' => 28000, 'foto_menu' => null,
-                 'badge' => 'Low Cal', 'tags' => [['Rendah Kalori', 'green', false], ['Bebas Gluten', 'amber', false]]],
-                ['id_menu' => 3, 'kategori' => 'Menu Harian', 'label' => 'MENU HARIAN ALACARTE', 'nama_makanan' => 'Tumis Kangkung & Tempe Orek',
-                 'deskripsi_makanan' => '', 'kandungan_kalori' => 290, 'stok_harian' => 0, 'harga_normal' => 12000, 'foto_menu' => null,
-                 'badge' => null, 'tags' => [['Tinggi Serat', 'neutral', false], ['Vegetarian', 'neutral', false]]],
-            ];
-            $menus = collect($sample);
-        }
-    }
-
-    $menus    = collect($menus)->map(fn ($m) => is_array($m) ? (object) $m : $m);
+    $menus    = collect($menus ?? [])->map(fn ($m) => is_array($m) ? (object) $m : $m);
     $total    = $menus->count();
-    $tersedia = $menus->where('stok_harian', '>', 0)->count();
+    $tersedia = $menus->filter(fn ($m) => (bool) ($m->status ?? true) && ($m->stok_harian ?? 0) > 0)->count();
     $habis    = $total - $tersedia;
 
-    if (!isset($jenisMenuList)) {
-        try {
-            $jenisMenuList = \App\Models\JenisMenu::all();
-        } catch (\Throwable $e) {
-            $jenisMenuList = collect();
-        }
-    }
-
+    $jenisMenuList = $jenisMenuList ?? collect();
     if (!isset($kategoriList)) {
-        if ($jenisMenuList->isNotEmpty()) {
-            $kategoriList = $jenisMenuList->pluck('nama')->values();
-            $kategoriCount = [];
-            foreach ($jenisMenuList as $jm) {
-                $kategoriCount[$jm->nama] = $menus->where('jenis_menu', $jm->id)->count();
-            }
-        } else {
-            $kategoriList = $menus->pluck('kategori')->filter()->unique()->values();
-            if ($kategoriList->isEmpty()) {
-                $kategoriList = collect(['Paket Katering', 'Menu Harian', 'Meal Plan']);
-            }
-            $kategoriCount = $menus->groupBy('kategori')->map->count()->all();
+        $kategoriList = $jenisMenuList->pluck('nama')->values();
+        $kategoriCount = [];
+        foreach ($jenisMenuList as $jm) {
+            $kategoriCount[$jm->nama] = $menus->where('jenis_menu', $jm->id)->count();
         }
     }
+    $kategoriCount = $kategoriCount ?? [];
 
     $foto = function ($path) {
         if (!$path) return null;
@@ -155,7 +116,9 @@
     <div class="mm-list" id="mmList">
         @forelse ($menus as $m)
             @php
+                $isActive = (bool) ($m->status ?? true);
                 $soldout = ($m->stok_harian ?? 0) <= 0;
+                $isUnavailable = !$isActive || $soldout;
                 $img = $foto($m->foto_menu ?? null);
                 $kategoriNama = $m->jenisMenu->nama ?? ($m->kategori ?? 'Umum');
                 $payload = [
@@ -167,9 +130,10 @@
                     'harga' => (int) $m->harga_normal,
                     'foto' => $img,
                     'jenis_menu' => $m->jenis_menu ?? '',
+                    'status' => $isActive,
                 ];
             @endphp
-            <article class="mm-card {{ $soldout ? 'is-soldout' : '' }}"
+            <article class="mm-card {{ $isUnavailable ? 'is-soldout' : '' }}"
                      data-kategori="{{ $kategoriNama }}"
                      data-search="{{ strtolower(($m->nama_makanan ?? '') . ' ' . $kategoriNama) }}"
                      data-menu='@json($payload)'>
@@ -184,7 +148,9 @@
                             </span>
                         @endif
 
-                        @if ($soldout)
+                        @if (!$isActive)
+                            <span class="mm-soldout-badge">NONAKTIF</span>
+                        @elseif ($soldout)
                             <span class="mm-soldout-badge">HABIS</span>
                         @elseif (!empty($m->badge))
                             <span class="mm-thumb-badge">{{ $m->badge }}</span>
@@ -219,17 +185,25 @@
 
                 <div class="mm-card-foot">
                     <div class="mm-status">
-                        <span class="mm-dot {{ $soldout ? 'is-red' : 'is-green' }}"></span>
-                        <span>Status: {{ $soldout ? 'Habis' : 'Tersedia' }}</span>
+                        <span class="mm-dot {{ $isActive && !$soldout ? 'is-green' : 'is-red' }}"></span>
+                        <span>
+                            @if (!$isActive)
+                                Status: Nonaktif
+                            @elseif ($soldout)
+                                Status: Habis
+                            @else
+                                Status: Aktif (Stok {{ $m->stok_harian }})
+                            @endif
+                        </span>
                     </div>
 
-                    {{-- Toggle ketersediaan (PATCH stok) --}}
+                    {{-- Toggle aktif / nonaktif menu (PATCH status) --}}
                     <form method="POST" action="{{ str_replace('__ID__', $m->id_menu, $urlStok) }}" class="mm-switch-form">
                         @csrf @method('PATCH')
-                        <input type="hidden" name="tersedia" value="{{ $soldout ? 1 : 0 }}">
-                        <button type="submit" class="mm-switch {{ $soldout ? 'is-off' : '' }}"
-                                role="switch" aria-checked="{{ $soldout ? 'false' : 'true' }}"
-                                aria-label="Ubah ketersediaan {{ $m->nama_makanan }}">
+                        <input type="hidden" name="status" value="{{ $isActive ? 0 : 1 }}">
+                        <button type="submit" class="mm-switch {{ $isActive ? '' : 'is-off' }}"
+                                role="switch" aria-checked="{{ $isActive ? 'true' : 'false' }}"
+                                aria-label="{{ $isActive ? 'Nonaktifkan' : 'Aktifkan' }} {{ $m->nama_makanan }}">
                             <span class="mm-switch-thumb"></span>
                         </button>
                     </form>
@@ -314,10 +288,21 @@
                 </div>
             </div>
 
-            <div class="mp-modal-field">
-                <label class="mp-modal-label" for="fKalori">Kandungan Kalori (kkal)</label>
-                <div class="mp-modal-input-wrap">
-                    <input class="mp-modal-input" type="number" id="fKalori" name="kandungan_kalori" min="0" placeholder="cth. 450">
+            <div class="mm-modal-grid-2">
+                <div class="mp-modal-field">
+                    <label class="mp-modal-label" for="fKalori">Kandungan Kalori (kkal)</label>
+                    <div class="mp-modal-input-wrap">
+                        <input class="mp-modal-input" type="number" id="fKalori" name="kandungan_kalori" min="0" placeholder="cth. 450">
+                    </div>
+                </div>
+                <div class="mp-modal-field">
+                    <label class="mp-modal-label" for="fStatus">Status Menu</label>
+                    <div class="mp-modal-input-wrap">
+                        <select class="mp-modal-input" id="fStatus" name="status" style="cursor: pointer;">
+                            <option value="1">Aktif (Tersedia)</option>
+                            <option value="0">Nonaktif</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -497,6 +482,7 @@
         $('menuModalTitle').textContent = 'Tambah Menu';
         $('menuModalSub').textContent = 'Isi detail menu yang akan dijual';
         $('fJenisMenu').value = '';
+        $('fStatus').value = '1';
         $('menuExtra').classList.add('is-hidden');
         setFoto(null);
         open('menuModal');
@@ -515,6 +501,7 @@
         $('fHarga').value = data.harga;
         $('fStok').value = data.stok;
         $('fKalori').value = data.kalori || '';
+        $('fStatus').value = (data.status === false || data.status === 0 || data.status === '0') ? '0' : '1';
         $('menuExtra').classList.remove('is-hidden');
         setFoto(data.foto);
         open('menuModal');

@@ -1,105 +1,249 @@
-@extends('layouts.main')
+@extends('layouts.main', ['activeMenu' => 'langganan'])
 
 @section('title', 'Langganan - Plan2Eat')
-@section('page_pill', 'Beranda')
+@section('page_badge', 'Langganan')
+
+@push('styles')
+<style>
+  /* Override 7 kolom kalender sesuai rentang 7 hari */
+  .lgn-calendar-grid.is-7days {
+    grid-template-columns: repeat(7, 1fr);
+    gap: 6px;
+  }
+
+  @media (min-width: 768px) {
+    .lgn-calendar-grid.is-7days {
+      gap: 8px;
+    }
+  }
+
+  /* List card jadwal harian saat tanggal diklik */
+  .lgn-day-schedule-wrap {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .lgn-day-schedule-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    font-weight: 700;
+    color: #16442B;
+    padding: 0 4px;
+  }
+
+  .lgn-day-item-card {
+    background: #FFFFFF;
+    border: 1px solid #E5E7EB;
+    border-left: 4px solid #16442B;
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.04);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .lgn-day-item-main {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 14.5px;
+    color: #1F2937;
+    margin: 0 0 4px;
+  }
+
+  .lgn-day-item-sub {
+    font-size: 12px;
+    color: #6B7280;
+    margin: 0;
+  }
+
+  .lgn-source-badge {
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+    background: #E8F5E9;
+    color: #16442B;
+  }
+
+  .lgn-source-badge.is-plan {
+    background: #FEF3C7;
+    color: #92400E;
+  }
+
+  .lgn-no-plan-card {
+    background: #FFFFFF;
+    border: 1.5px dashed #C7D3C9;
+    border-radius: 18px;
+    padding: 28px 18px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .lgn-no-plan-card p {
+    margin: 0;
+    font-size: 14px;
+    color: #6B7280;
+    font-weight: 500;
+  }
+
+  .lgn-btn-meal-plan {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: #16442B;
+    color: #FFFFFF;
+    padding: 10px 22px;
+    border-radius: 999px;
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    font-weight: 700;
+    text-decoration: none;
+    box-shadow: 0 4px 12px rgba(22, 68, 43, 0.2);
+    transition: background-color 0.2s, transform 0.12s;
+  }
+
+  .lgn-btn-meal-plan:hover {
+    background: #0F301E;
+    color: #FFFFFF;
+    transform: translateY(-1px);
+  }
+
+  /* Riwayat Pesanan Table Card */
+  .lgn-history-section {
+    grid-column: 1 / -1;
+    margin-top: 8px;
+  }
+
+  .lgn-history-card {
+    background: #FFFFFF;
+    border-radius: 22px;
+    padding: 20px;
+    box-shadow: 0 6px 24px rgba(0, 0, 0, 0.05);
+    border: 1px solid #ECECEC;
+  }
+
+  .lgn-table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    margin-top: 14px;
+  }
+
+  .lgn-history-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px;
+    font-family: var(--font-inter);
+  }
+
+  .lgn-history-table th {
+    background: #F4F7F4;
+    color: #16442B;
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 700;
+    text-align: left;
+    padding: 12px 14px;
+    border-bottom: 1.5px solid #E5E7EB;
+  }
+
+  .lgn-history-table th:first-child {
+    border-top-left-radius: 10px;
+  }
+
+  .lgn-history-table th:last-child {
+    border-top-right-radius: 10px;
+    text-align: center;
+  }
+
+  .lgn-history-table td {
+    padding: 13px 14px;
+    font-size: 13.5px;
+    color: #374151;
+    border-bottom: 1px solid #F3F4F6;
+    vertical-align: middle;
+  }
+
+  .lgn-history-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .lgn-history-table td:last-child {
+    text-align: center;
+  }
+
+  .lgn-btn-reorder {
+    background: #16442B;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 999px;
+    padding: 7px 16px;
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s, transform 0.1s;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .lgn-btn-reorder:hover {
+    background: #0F301E;
+    transform: translateY(-1px);
+  }
+</style>
+@endpush
 
 @section('content')
 @php
-    /**
-     * Variabel kondisional dari Controller:
-     * $subscriptionStatus : 'active' | 'holiday' | 'empty'
-     * Bisa juga diuji via query string ?status=holiday atau ?status=empty
-     */
-    $status = $subscriptionStatus ?? request('status', 'active');
-    //DATA DUMMY HEHEHEHEHEHHEHEHEH
-    $order = $activeOrder ?? [
-        'schedule_label' => 'Makan Pagi Terjadwal • Tiba 09:00 WIB',
-        'mitra_name'     => 'Dapur Sifren',
-        'menu_name'      => 'Nasi Rames Gembus',
-        'portion_detail' => '& Tempe Goreng 2x • Porsi Personal',
-        'badge_text'     => 'Pesanan Hari Ini',
-        'image'          => 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80',
-        'progress_step'  => 3, // 1 = Prep, 2 = Masak, 3 = Siap
-        'progress_label' => 'Pesanan Selesai',
-        'chat_url'       => '#hubungi-mitra',
-    ];
-
-    $scheduleDays = $days ?? [
-        [
-            'date'        => '9',
-            'day'         => 'Sun',
-            'state'       => 'missed', // 'missed' | 'completed' | 'holiday' | 'upcoming'
-            'selected'    => false,
-            'mitra_label' => 'Dapur Hijau Organik • 0.8 km',
-            'menu_name'   => 'Paket Sayur Lodeh & Tahu Bacem',
-            'image'       => 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800&q=80',
-        ],
-        [
-            'date'        => '10',
-            'day'         => 'Mon',
-            'state'       => 'completed',
-            'selected'    => true,
-            'mitra_label' => 'Dapur Hijau Organik • 0.8 km',
-            'menu_name'   => 'Nasi Rames Gembus',
-            'image'       => 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80',
-        ],
-        [
-            'date'        => '11',
-            'day'         => 'Tue',
-            'state'       => 'holiday',
-            'selected'    => false,
-            'mitra_label' => 'Dapur Sifren • 0.8 km',
-            'menu_name'   => 'Libur Operasional Mitra',
-            'image'       => 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=900&q=80',
-        ],
-        [
-            'date'        => '12',
-            'day'         => 'Wed',
-            'state'       => 'upcoming',
-            'selected'    => false,
-            'mitra_label' => 'Dapur Hijau Organik • 0.8 km',
-            'menu_name'   => 'Nasi Merah Ayam Panggang Madu',
-            'image'       => 'https://images.unsplash.com/photo-1598515214211-89d3c73ae83b?auto=format&fit=crop&w=800&q=80',
-        ],
-        [
-            'date'        => '13',
-            'day'         => 'Thu',
-            'state'       => 'upcoming',
-            'selected'    => false,
-            'mitra_label' => 'Dapur Hijau Organik • 0.8 km',
-            'menu_name'   => 'Nasi Daun Jeruk Ikan Bakar',
-            'image'       => 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80',
-        ],
-        [
-            'date'        => '14',
-            'day'         => 'Fri',
-            'state'       => 'upcoming',
-            'selected'    => false,
-            'mitra_label' => 'Dapur Hijau Organik • 0.8 km',
-            'menu_name'   => 'Pepes Ayam Kemangi & Urap',
-            'image'       => 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=800&q=80',
-        ],
-    ];
-
-    $selectedDay = collect($scheduleDays)->firstWhere('selected', true) ?? $scheduleDays[1];
-    $step = (int) ($order['progress_step'] ?? 3);
+    $status = $subscriptionStatus ?? 'empty';
+    $order = $activeOrder ?? null;
+    $scheduleDays = $days ?? [];
+    $selectedDay = collect($scheduleDays)->firstWhere('selected', true) ?? ($scheduleDays[0] ?? null);
+    $step = (int) ($order['progress_step'] ?? 1);
     $progressPercent = $step <= 1 ? 0 : ($step === 2 ? 50 : 100);
 @endphp
 
-<div class="lgn-page {{ $status === 'empty' ? 'is-empty-layout' : '' }}">
+<div class="lgn-page">
+    {{-- Notifikasi Flash --}}
+    @if (session('success') || session('error'))
+        <div style="grid-column: 1 / -1;">
+            @if (session('success'))
+                <div style="background: #ECFDF5; border-left: 4px solid #10B981; color: #065F46; padding: 12px 16px; border-radius: 10px; margin-bottom: 12px; font-size: 13.5px; font-weight: 600;">
+                    {{ session('success') }}
+                </div>
+            @endif
+            @if (session('error'))
+                <div style="background: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 10px; margin-bottom: 12px; font-size: 13.5px; font-weight: 600;">
+                    {{ session('error') }}
+                </div>
+            @endif
+        </div>
+    @endif
+
     {{-- =====================================================================
-         BAGIAN 1: STATUS PESANAN
+         BAGIAN 1: STATUS PESANAN HARI INI
          ===================================================================== --}}
     <section class="lgn-section lgn-status-section">
         <h2 class="lgn-section-title">Status Pesanan</h2>
 
-        @if ($status === 'empty')
-            {{-- KONDISI 3: Belum memesan makanan apapun --}}
+        @if ($status === 'empty' || !$order)
+            {{-- KONDISI 1: Belum memesan makanan apapun --}}
             <div class="lgn-status-card is-empty">
                 <div class="lgn-mint-banner">
                     Anda belum memesan makanan apapun saat ini
                 </div>
-                <a href="{{ url('/mitra') }}" class="lgn-btn-add-order">
+                <a href="{{ route('pelanggan.mitra') }}" class="lgn-btn-add-order">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round">
                         <line x1="12" y1="5" x2="12" y2="19"/>
                         <line x1="5" y1="12" x2="19" y2="12"/>
@@ -109,15 +253,15 @@
             </div>
 
         @elseif ($status === 'holiday')
-            {{-- KONDISI 2: Mitra sedang libur --}}
+            {{-- KONDISI 2: Toko / Mitra sedang tutup --}}
             <div class="lgn-status-card is-holiday">
                 <div class="lgn-holiday-pill">
-                    Mitranya sedang libur fren
+                    Mitra tutup
                 </div>
             </div>
 
         @else
-            {{-- KONDISI 1: Pesanan aktif & terjadwal --}}
+            {{-- KONDISI 3: Pesanan hari ini aktif --}}
             <div class="lgn-status-card is-active">
                 {{-- Pill Jadwal Pengantaran --}}
                 <div class="lgn-schedule-pill">
@@ -131,6 +275,7 @@
                         src="{{ $order['image'] }}"
                         alt="{{ $order['menu_name'] }}"
                         class="lgn-product-thumb"
+                        onerror="this.src='https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80';"
                     >
                     <div class="lgn-product-info">
                         <div class="lgn-vendor-row">
@@ -188,13 +333,16 @@
                     </div>
                 </div>
 
-                {{-- Tombol Hubungi Mitra --}}
+                {{-- Tombol Detail Pesanan --}}
                 <div class="lgn-contact-wrap">
-                    <a href="{{ $order['chat_url'] }}" class="lgn-btn-contact">
+                    <a href="{{ $order['detail_url'] }}" class="lgn-btn-contact">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                            <line x1="16" y1="13" x2="8" y2="13"/>
+                            <line x1="16" y1="17" x2="8" y2="17"/>
                         </svg>
-                        <span>Hubungi Mitra</span>
+                        <span>Lihat Detail Pesanan</span>
                     </a>
                 </div>
             </div>
@@ -202,66 +350,133 @@
     </section>
 
     {{-- =====================================================================
-         BAGIAN 2: DETAIL PEMESANAN & JADWAL HARIAN
+         BAGIAN 2: DETAIL PEMESANAN & KALENDER 7 HARI
          ===================================================================== --}}
     <section class="lgn-section lgn-detail-section">
         <div class="lgn-detail-header">
             <h2 class="lgn-section-title">Detail Pemesanan</h2>
-            <a href="{{ url('/langganan/riwayat') }}" class="lgn-see-all">
-                <span>Lihat Semua</span>
+            <a href="#riwayatPesananSection" class="lgn-see-all">
+                <span>Lihat Riwayat</span>
                 <span aria-hidden="true">&gt;</span>
             </a>
         </div>
 
-        @if ($status === 'empty')
-            {{-- KONDISI 3: Pesanan masih kosong --}}
-            <div class="lgn-empty-state">
-                <p>Yahhh pesanan masih kosong...</p>
-            </div>
-
-        @else
-            {{-- Strip Kalender 6 Hari (9 Sun - 14 Fri) --}}
-            <div class="lgn-calendar-grid" id="lgnCalendarGrid">
-                @foreach ($scheduleDays as $item)
-                    <button
-                        type="button"
-                        class="lgn-day-card is-{{ $item['state'] }} {{ !empty($item['selected']) && $status !== 'holiday' ? 'is-selected' : '' }}"
-                        data-state="{{ $item['state'] }}"
-                        data-mitra="{{ $item['mitra_label'] }}"
-                        data-menu="{{ $item['menu_name'] }}"
-                        data-image="{{ $item['image'] }}"
-                    >
-                        <span class="lgn-day-num">{{ $item['date'] }}</span>
-                        <span class="lgn-day-name">{{ $item['day'] }}</span>
-                    </button>
-                @endforeach
-            </div>
-
-            {{-- Konten Bawah Kalender (Berubah sesuai kondisi libur vs menu aktif) --}}
-            <div id="lgnHolidayEmptyBox" class="lgn-empty-state {{ $status === 'holiday' ? '' : 'is-hidden' }}">
-                <p>Mitra nya lagi libur fren :DD</p>
-            </div>
-
-            <div id="lgnMenuShowcaseBox" class="lgn-menu-showcase {{ $status === 'holiday' ? 'is-hidden' : '' }}">
-                <img
-                    id="lgnShowcaseImg"
-                    src="{{ $selectedDay['image'] }}"
-                    alt="{{ $selectedDay['menu_name'] }}"
-                    class="lgn-showcase-img"
+        {{-- Strip Kalender 7 Hari (Hari Ini + 6 Hari Ke Depan) --}}
+        <div class="lgn-calendar-grid is-7days" id="lgnCalendarGrid">
+            @foreach ($scheduleDays as $item)
+                <button
+                    type="button"
+                    class="lgn-day-card is-{{ $item['state'] }} {{ !empty($item['selected']) ? 'is-selected' : '' }}"
+                    data-full-date="{{ $item['full_date'] }}"
+                    data-label-date="{{ $item['label_date'] }}"
+                    data-is-holiday="{{ !empty($item['is_holiday']) ? '1' : '0' }}"
+                    data-items='@json($item['items'])'
                 >
-                <div class="lgn-showcase-gradient"></div>
+                    <span class="lgn-day-num">{{ $item['date'] }}</span>
+                    <span class="lgn-day-name">{{ $item['day'] }}</span>
+                </button>
+            @endforeach
+        </div>
 
-                <span class="lgn-menu-top-badge">Menu Untuk Hari Ini</span>
-
-                <div class="lgn-showcase-bottom">
-                    <div class="lgn-showcase-text">
-                        <p id="lgnShowcaseMitra" class="lgn-showcase-mitra">{{ $selectedDay['mitra_label'] }}</p>
-                        <h3 id="lgnShowcaseTitle" class="lgn-showcase-title">{{ $selectedDay['menu_name'] }}</h3>
-                    </div>
-                    <span class="lgn-eco-pill">Eco Packaging</span>
-                </div>
+        {{-- Card Jadwal / Meal Plan untuk Tanggal yang Dipilih --}}
+        <div id="lgnDayScheduleWrap" class="lgn-day-schedule-wrap">
+            <div class="lgn-day-schedule-header">
+                <span id="lgnSelectedDateLabel">
+                    Jadwal Tanggal {{ $selectedDay['label_date'] ?? now()->format('d M Y') }}
+                </span>
+                <a href="{{ route('pelanggan.meal_plan') }}" style="font-size: 12px; color: #16442B; text-decoration: none; font-weight: 700;">
+                    Kelola Meal Plan &rarr;
+                </a>
             </div>
-        @endif
+
+            <div id="lgnDayCardsContainer" style="display: flex; flex-direction: column; gap: 10px;">
+                @if (!empty($selectedDay['items']))
+                    @foreach ($selectedDay['items'] as $dItem)
+                        <div class="lgn-day-item-card">
+                            <div>
+                                <p class="lgn-day-item-main">{{ $dItem['menu_nama'] }} - {{ $dItem['waktu'] }}</p>
+                                <p class="lgn-day-item-sub">{{ $dItem['mitra'] }} &bull; {{ $dItem['kuantitas'] }}x Porsi</p>
+                            </div>
+                            <span class="lgn-source-badge {{ $dItem['source'] === 'Meal Plan' ? 'is-plan' : '' }}">
+                                {{ $dItem['source'] }}
+                            </span>
+                        </div>
+                    @endforeach
+                @else
+                    <div class="lgn-no-plan-card">
+                        <p>Belum ada pesanan atau meal plan di tanggal ini.</p>
+                        <a href="{{ route('pelanggan.meal_plan', ['tanggal' => $selectedDay['full_date'] ?? now()->toDateString()]) }}" class="lgn-btn-meal-plan">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            <span>Buat Meal Plan</span>
+                        </a>
+                    </div>
+                @endif
+            </div>
+        </div>
+    </section>
+
+    {{-- =====================================================================
+         BAGIAN 3: RIWAYAT PESANAN PELANGGAN (TABEL + PESAN LAGI)
+         ===================================================================== --}}
+    <section class="lgn-section lgn-history-section" id="riwayatPesananSection">
+        <div class="lgn-history-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                <h2 class="lgn-section-title" style="margin: 0;">Riwayat Pesanan</h2>
+                <span style="font-size: 12.5px; color: #6B7280;">Total: {{ count($riwayatPesanan ?? []) }} pesanan</span>
+            </div>
+
+            <div class="lgn-table-responsive">
+                <table class="lgn-history-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Nama Menu</th>
+                            <th>Nama Mitra</th>
+                            <th>Tanggal</th>
+                            <th>Total Belanja</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($riwayatPesanan ?? [] as $idx => $ord)
+                            @php
+                                $menuNames = $ord->detailPesanan
+                                    ->map(fn ($d) => ($d->menu->nama_makanan ?? 'Menu') . ' (' . $d->kuantitas . 'x)')
+                                    ->implode(', ');
+                            @endphp
+                            <tr>
+                                <td><strong>{{ $idx + 1 }}</strong></td>
+                                <td>{{ $menuNames ?: '-' }}</td>
+                                <td>{{ $ord->umkm->nama_vendor ?? 'Mitra Plan2Eat' }}</td>
+                                <td>{{ $ord->tgl_mulai ? \Carbon\Carbon::parse($ord->tgl_mulai)->format('d M Y') : '-' }}</td>
+                                <td><strong>Rp {{ number_format((float) $ord->total_pembayaran, 0, ',', '.') }}</strong></td>
+                                <td>
+                                    <form action="{{ route('pelanggan.pesanan-reorder', $ord->id_pesanan) }}" method="POST" style="margin: 0; display: inline-block;">
+                                        @csrf
+                                        <button type="submit" class="lgn-btn-reorder">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                                                <polyline points="23 4 23 10 17 10"/>
+                                                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                                            </svg>
+                                            <span>Pesan lagi</span>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="6" style="text-align: center; color: #6B7280; padding: 28px 16px;">
+                                    Belum ada riwayat pesanan.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </section>
 </div>
 @endsection
@@ -270,29 +485,69 @@
 <script>
 document.addEventListener('DOMContentLoaded', function () {
     const dayCards = document.querySelectorAll('#lgnCalendarGrid .lgn-day-card');
-    const holidayBox = document.getElementById('lgnHolidayEmptyBox');
-    const showcaseBox = document.getElementById('lgnMenuShowcaseBox');
-    const showcaseImg = document.getElementById('lgnShowcaseImg');
-    const showcaseMitra = document.getElementById('lgnShowcaseMitra');
-    const showcaseTitle = document.getElementById('lgnShowcaseTitle');
+    const selectedDateLabel = document.getElementById('lgnSelectedDateLabel');
+    const cardsContainer = document.getElementById('lgnDayCardsContainer');
+    const mealPlanBaseUrl = @json(route('pelanggan.meal_plan'));
 
-    if (!dayCards.length) return;
+    if (!dayCards.length || !cardsContainer) return;
+
+    function escapeHtml(str) {
+        const div = document.createElement('div');
+        div.textContent = str ?? '';
+        return div.innerHTML;
+    }
 
     dayCards.forEach(function (card) {
         card.addEventListener('click', function () {
             dayCards.forEach(c => c.classList.remove('is-selected'));
             card.classList.add('is-selected');
 
-            const state = card.dataset.state;
-            if (state === 'holiday') {
-                if (showcaseBox) showcaseBox.classList.add('is-hidden');
-                if (holidayBox) holidayBox.classList.remove('is-hidden');
+            const fullDate = card.dataset.fullDate;
+            const labelDate = card.dataset.labelDate;
+            const isHoliday = card.dataset.isHoliday === '1';
+            let items = [];
+            try {
+                items = JSON.parse(card.dataset.items || '[]');
+            } catch (e) {
+                items = [];
+            }
+
+            if (selectedDateLabel) {
+                selectedDateLabel.textContent = 'Jadwal Tanggal ' + labelDate;
+            }
+
+            if (items.length > 0) {
+                let html = '';
+                if (isHoliday) {
+                    html += '<div style="background: #FEF3C7; color: #92400E; padding: 10px 14px; border-radius: 10px; font-size: 12.5px; font-weight: 700;">Mitra tutup pada tanggal ini</div>';
+                }
+                items.forEach(function (it) {
+                    const isPlan = it.source === 'Meal Plan';
+                    html += `
+                        <div class="lgn-day-item-card">
+                            <div>
+                                <p class="lgn-day-item-main">${escapeHtml(it.menu_nama)} - ${escapeHtml(it.waktu)}</p>
+                                <p class="lgn-day-item-sub">${escapeHtml(it.mitra)} &bull; ${escapeHtml(String(it.kuantitas || 1))}x Porsi</p>
+                            </div>
+                            <span class="lgn-source-badge ${isPlan ? 'is-plan' : ''}">${escapeHtml(it.source)}</span>
+                        </div>
+                    `;
+                });
+                cardsContainer.innerHTML = html;
             } else {
-                if (holidayBox) holidayBox.classList.add('is-hidden');
-                if (showcaseBox) showcaseBox.classList.remove('is-hidden');
-                if (showcaseImg && card.dataset.image) showcaseImg.src = card.dataset.image;
-                if (showcaseMitra && card.dataset.mitra) showcaseMitra.textContent = card.dataset.mitra;
-                if (showcaseTitle && card.dataset.menu) showcaseTitle.textContent = card.dataset.menu;
+                const targetUrl = mealPlanBaseUrl + '?tanggal=' + encodeURIComponent(fullDate);
+                cardsContainer.innerHTML = `
+                    <div class="lgn-no-plan-card">
+                        <p>Belum ada pesanan atau meal plan di tanggal ini.</p>
+                        <a href="${targetUrl}" class="lgn-btn-meal-plan">
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            <span>Buat Meal Plan</span>
+                        </a>
+                    </div>
+                `;
             }
         });
     });

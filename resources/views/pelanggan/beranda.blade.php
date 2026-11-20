@@ -93,107 +93,114 @@
       </div>
     </div>
 
-    <!-- Filter Tab Mitra Pilihan Pelanggan -->
-    <div class="fs-mitra-filter-row">
-      <div class="fs-mitra-filter-label">
-        <i class="fa-solid fa-store" style="color: #16442B;"></i>
-        <span>Pilih Mitra:</span>
-      </div>
-      <div class="fs-mitra-chips" role="tablist">
-        <button type="button" class="fs-mitra-chip active" data-mitra="all">
-          Semua Mitra ({{ $flashSales->count() }})
-        </button>
-        @foreach ($mitraList as $mitra)
-          @php
-            $mCount = $flashSales->where('menu.id_umkm', $mitra->id_umkm)->count();
-          @endphp
-          <button type="button" class="fs-mitra-chip" data-mitra="{{ $mitra->id_umkm }}">
-            {{ $mitra->nama_vendor }} ({{ $mCount }})
-          </button>
-        @endforeach
-      </div>
-    </div>
-
-    <!-- Grid Card Flash Sale (Responsif Web Desktop & Mobile) -->
-    <div class="fs-cards-grid" id="fsCardsGrid">
-      @forelse ($flashSales as $fs)
-        @php
-          $nama = $fs->menu->nama_makanan ?? 'Menu Flash Sale';
-          $vendor = $fs->menu->umkm->nama_vendor ?? 'Mitra Pilihan';
-          $idUmkm = $fs->menu->id_umkm ?? 0;
-          $hargaNormal = (float) ($fs->menu->harga_normal ?? 0);
-          $hargaDiskon = (float) $fs->harga_diskon;
-          $stokSisa = (int) $fs->stok_sisa;
-          $kuantitas = max(1, (int) $fs->kuantitas);
-          $terjual = max(0, $kuantitas - $stokSisa);
-          $persenDiskon = $hargaNormal > 0 ? round((($hargaNormal - $hargaDiskon) / $hargaNormal) * 100) : 0;
-          $persenTerjual = min(100, round(($terjual / $kuantitas) * 100));
-          $fotoMenu = $fs->menu->foto_menu ?? null;
-          $fotoUrl = $fotoMenu
-              ? (str_starts_with($fotoMenu, 'http') ? $fotoMenu : asset('storage/' . $fotoMenu))
-              : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80';
-          $isHabis = ($stokSisa <= 0);
-        @endphp
-
-        <article class="fs-card" data-mitra="{{ $idUmkm }}">
-          <!-- Visual Media & Badges -->
-          <div class="fs-card-media">
-            <img src="{{ $fotoUrl }}" alt="{{ $nama }}" class="fs-card-img" loading="lazy">
-            
-            <!-- Badge Mitra di Kiri Atas -->
-            <div class="fs-card-vendor-badge" title="{{ $vendor }}">
-              <i class="fa-solid fa-store"></i>
-              <span>{{ $vendor }}</span>
-            </div>
-
-            <!-- Pita Diskon di Kanan Atas -->
-            @if ($persenDiskon > 0)
-              <div class="fs-card-ribbon">
-                {{ $persenDiskon }}%
-                <span>OFF</span>
-              </div>
-            @endif
-
-            <!-- Tag Ekstra di Bawah Foto -->
-            <div class="fs-card-tag-special">
-              <i class="fa-solid fa-tag"></i>
-              <span>Zero-Waste Promo</span>
-            </div>
-          </div>
-
-          <!-- Card Body Detail Informasi Promo -->
-          <div class="fs-card-body">
-            <h3 class="fs-card-title" title="{{ $nama }}">{{ $nama }}</h3>
-            
-            <div class="fs-pricing-group">
-              <div class="fs-price-strike">Rp {{ number_format($hargaNormal, 0, ',', '.') }}</div>
-              <div class="fs-price-discount">Rp {{ number_format($hargaDiskon, 0, ',', '.') }}</div>
-            </div>
-
-            <!-- Progress Bar Stok / Terjual -->
-            <div class="fs-stock-capsule">
-              <div class="fs-stock-fill {{ $stokSisa <= 5 ? 'is-low' : '' }}" style="width: {{ max(18, $persenTerjual) }}%;"></div>
-              <span class="fs-stock-text">
-                {{ $stokSisa <= 5 ? 'STOK TERBATAS • SISA ' . $stokSisa : $terjual . ' TERJUAL' }}
-              </span>
-            </div>
-
-            <!-- Tombol Pesan -->
-            <a href="{{ $isHabis ? '#' : route('pelanggan.keranjang', ['menu' => $fs->id_menu, 'fs' => $fs->id_flash_sale]) }}" class="fs-btn-order {{ $isHabis ? 'disabled' : '' }}">
-              {{ $isHabis ? 'Stok Habis' : 'Pesan Sekarang' }}
-            </a>
-          </div>
-        </article>
-      @empty
-        <div class="fs-empty-message">
-          Belum ada menu Flash Sale aktif saat ini.
+    @if ($isPromoActive ?? false)
+      <!-- Filter Tab Mitra Pilihan Pelanggan -->
+      <div class="fs-mitra-filter-row">
+        <div class="fs-mitra-filter-label">
+          <i class="fa-solid fa-store" style="color: #16442B;"></i>
+          <span>Pilih Mitra:</span>
         </div>
-      @endforelse
-
-      <div class="fs-empty-message" id="fsNoFilterResult" style="display: none;">
-        Tidak ada menu Flash Sale dari mitra ini saat ini.
+        <div class="fs-mitra-chips" role="tablist">
+          <button type="button" class="fs-mitra-chip active" data-mitra="all">
+            Semua Mitra ({{ $flashSales->count() }})
+          </button>
+          @foreach ($mitraList as $mitra)
+            @php
+              $mCount = $flashSales->where('menu.id_umkm', $mitra->id_umkm)->count();
+            @endphp
+            <button type="button" class="fs-mitra-chip" data-mitra="{{ $mitra->id_umkm }}">
+              {{ $mitra->nama_vendor }} ({{ $mCount }})
+            </button>
+          @endforeach
+        </div>
       </div>
-    </div>
+
+      <!-- Grid Card Flash Sale (Responsif Web Desktop & Mobile) -->
+      <div class="fs-cards-grid" id="fsCardsGrid">
+        @forelse ($flashSales as $fs)
+          @php
+            $nama = $fs->menu->nama_makanan ?? 'Menu Flash Sale';
+            $vendor = $fs->menu->umkm->nama_vendor ?? 'Mitra Pilihan';
+            $idUmkm = $fs->menu->id_umkm ?? 0;
+            $hargaNormal = (float) ($fs->menu->harga_normal ?? 0);
+            $hargaDiskon = (float) $fs->harga_diskon;
+            $stokSisa = (int) $fs->stok_sisa;
+            $kuantitas = max(1, (int) $fs->kuantitas);
+            $terjual = max(0, $kuantitas - $stokSisa);
+            $persenDiskon = $hargaNormal > 0 ? round((($hargaNormal - $hargaDiskon) / $hargaNormal) * 100) : 0;
+            $persenTerjual = min(100, round(($terjual / $kuantitas) * 100));
+            $fotoMenu = $fs->menu->foto_menu ?? null;
+            $fotoUrl = $fotoMenu
+                ? (str_starts_with($fotoMenu, 'http') ? $fotoMenu : asset('storage/' . $fotoMenu))
+                : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80';
+            $isHabis = ($stokSisa <= 0);
+          @endphp
+
+          <article class="fs-card" data-mitra="{{ $idUmkm }}">
+            <!-- Visual Media & Badges -->
+            <div class="fs-card-media">
+              <img src="{{ $fotoUrl }}" alt="{{ $nama }}" class="fs-card-img" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80';">
+              
+              <!-- Badge Mitra di Kiri Atas -->
+              <div class="fs-card-vendor-badge" title="{{ $vendor }}">
+                <i class="fa-solid fa-store"></i>
+                <span>{{ $vendor }}</span>
+              </div>
+
+              <!-- Pita Diskon di Kanan Atas -->
+              @if ($persenDiskon > 0)
+                <div class="fs-card-ribbon">
+                  {{ $persenDiskon }}%
+                  <span>OFF</span>
+                </div>
+              @endif
+
+              <!-- Tag Ekstra di Bawah Foto -->
+              <div class="fs-card-tag-special">
+                <i class="fa-solid fa-tag"></i>
+                <span>Zero-Waste Promo</span>
+              </div>
+            </div>
+
+            <!-- Card Body Detail Informasi Promo -->
+            <div class="fs-card-body">
+              <h3 class="fs-card-title" title="{{ $nama }}">{{ $nama }}</h3>
+              
+              <div class="fs-pricing-group">
+                <div class="fs-price-strike">Rp {{ number_format($hargaNormal, 0, ',', '.') }}</div>
+                <div class="fs-price-discount">Rp {{ number_format($hargaDiskon, 0, ',', '.') }}</div>
+              </div>
+
+              <!-- Progress Bar Stok / Terjual -->
+              <div class="fs-stock-capsule">
+                <div class="fs-stock-fill {{ $stokSisa <= 5 ? 'is-low' : '' }}" style="width: {{ max(18, $persenTerjual) }}%;"></div>
+                <span class="fs-stock-text">
+                  {{ $stokSisa <= 5 ? 'STOK TERBATAS • SISA ' . $stokSisa : $terjual . ' TERJUAL' }}
+                </span>
+              </div>
+
+              <!-- Tombol Pesan -->
+              <a href="{{ $isHabis ? '#' : route('pelanggan.keranjang', ['menu' => $fs->id_menu, 'fs' => $fs->id_flash_sale]) }}" class="fs-btn-order {{ $isHabis ? 'disabled' : '' }}">
+                {{ $isHabis ? 'Stok Habis' : 'Pesan Sekarang' }}
+              </a>
+            </div>
+          </article>
+        @empty
+          <div class="fs-empty-message">
+            Belum ada menu Flash Sale aktif saat ini.
+          </div>
+        @endforelse
+
+        <div class="fs-empty-message" id="fsNoFilterResult" style="display: none;">
+          Tidak ada menu Flash Sale dari mitra ini saat ini.
+        </div>
+      </div>
+    @else
+      <div class="fs-empty-message">
+        <i class="fa-regular fa-clock" style="color: #16442B; margin-right: 6px;"></i>
+        Menu Flash Sale hanya muncul pada pukul <strong>20:00 - 22:00 WIB</strong>. Nantikan promo hemat malam ini!
+      </div>
+    @endif
   </section>
 
   <!-- 3. Section Rekomendasi Paket Sehat -->

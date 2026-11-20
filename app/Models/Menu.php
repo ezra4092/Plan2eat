@@ -25,6 +25,7 @@ class Menu extends Model
         'kandungan_kalori',
         'stok_harian',
         'harga_normal',
+        'status',
     ];
 
     protected function casts(): array
@@ -33,6 +34,7 @@ class Menu extends Model
             'kandungan_kalori' => 'integer',
             'stok_harian' => 'integer',
             'harga_normal' => 'decimal:2',
+            'status' => 'boolean',
         ];
     }
 

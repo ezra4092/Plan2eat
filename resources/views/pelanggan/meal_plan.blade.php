@@ -1,169 +1,550 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Manajemen Meal Plan</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; }
-        .plan-card { border: 1px solid #ddd; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
-        .detail-section { background-color: #f4f6f8; padding: 15px; margin-top: 15px; border-radius: 5px; }
-        .success-msg { color: green; font-weight: bold; background: #e6ffed; padding: 10px; border: 1px solid #b3ffc2;}
-        input, select, button { padding: 6px; margin-right: 5px; }
-    </style>
-</head>
-<body>
-    <h2>Manajemen Meal Plan</h2>
-    
-    @if(session('success'))
-        <div class="success-msg">{{ session('success') }}</div><br>
+@extends('layouts.main', ['activeMenu' => 'langganan'])
+
+@section('title', 'Manajemen Meal Plan - Plan2Eat')
+@section('page_badge', 'Meal Plan')
+
+@push('styles')
+<style>
+  .mpl-page-wrap {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
+  }
+
+  /* Hero Banner */
+  .mpl-hero-banner {
+    background: linear-gradient(135deg, #05371F 0%, #16442B 100%);
+    border-radius: 22px;
+    padding: 24px 26px;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    box-shadow: 0 8px 24px rgba(5, 55, 31, 0.16);
+  }
+
+  .mpl-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #A7F3D0;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    letter-spacing: 0.4px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .mpl-hero-title {
+    font-family: var(--font-sans);
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0 0 4px;
+    color: #FFFFFF;
+  }
+
+  .mpl-hero-sub {
+    font-family: var(--font-inter);
+    font-size: 13.5px;
+    color: #D1FAE5;
+    margin: 0;
+  }
+
+  /* Common White Card */
+  .mpl-card {
+    background: #FFFFFF;
+    border-radius: 22px;
+    border: 1px solid #ECECEC;
+    padding: 22px;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.04);
+  }
+
+  .mpl-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .mpl-card-title {
+    font-family: var(--font-sans);
+    font-size: 16.5px;
+    font-weight: 800;
+    color: #16442B;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Form Grid Buat Meal Plan */
+  .mpl-create-grid {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr 1fr auto;
+    gap: 12px;
+    align-items: end;
+  }
+
+  @media (max-width: 768px) {
+    .mpl-create-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .mpl-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .mpl-label {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
+    color: #374151;
+  }
+
+  .mpl-input,
+  .mpl-select {
+    width: 100%;
+    padding: 10px 13px;
+    border: 1.5px solid #E5E7EB;
+    border-radius: 12px;
+    font-family: var(--font-inter);
+    font-size: 13.5px;
+    font-weight: 500;
+    color: #1F2937;
+    background: #FAFBF9;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .mpl-input:focus,
+  .mpl-select:focus {
+    border-color: #16442B;
+    background: #FFFFFF;
+    box-shadow: 0 0 0 3px rgba(22, 68, 43, 0.12);
+  }
+
+  .mpl-btn-primary {
+    background: #16442B;
+    color: #FFFFFF;
+    border: none;
+    border-radius: 12px;
+    padding: 11px 20px;
+    font-family: var(--font-sans);
+    font-size: 13.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background-color 0.2s, transform 0.1s;
+    white-space: nowrap;
+  }
+
+  .mpl-btn-primary:hover {
+    background: #05371F;
+    transform: translateY(-1px);
+  }
+
+  .mpl-btn-soft {
+    background: #E8F5E9;
+    color: #16442B;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+
+  .mpl-btn-soft:hover {
+    background: #C8E6C9;
+  }
+
+  .mpl-btn-danger {
+    background: #FEE2E2;
+    color: #DC2626;
+    border: none;
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+
+  .mpl-btn-danger:hover {
+    background: #FECACA;
+  }
+
+  /* Header Edit Plan */
+  .mpl-plan-head-form {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr auto auto;
+    gap: 10px;
+    align-items: center;
+    padding-bottom: 16px;
+    border-bottom: 1.5px solid #F3F4F6;
+  }
+
+  @media (max-width: 768px) {
+    .mpl-plan-head-form {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Add Menu Box inside Plan */
+  .mpl-detail-panel {
+    margin-top: 16px;
+    background: #F6F8F5;
+    border-radius: 16px;
+    padding: 18px;
+    border: 1px solid #E5EAE3;
+  }
+
+  .mpl-add-detail-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr auto;
+    gap: 10px;
+    align-items: end;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 768px) {
+    .mpl-add-detail-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* Table Schedule */
+  .mpl-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    background: #FFFFFF;
+    border-radius: 14px;
+    border: 1px solid #E5E7EB;
+  }
+
+  .mpl-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 580px;
+    font-family: var(--font-inter);
+  }
+
+  .mpl-table th {
+    background: #EFECE0;
+    color: #16442B;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
+    text-align: left;
+    padding: 11px 14px;
+  }
+
+  .mpl-table td {
+    padding: 12px 14px;
+    font-size: 13px;
+    color: #374151;
+    border-top: 1px solid #F3F4F6;
+    vertical-align: middle;
+  }
+
+  .mpl-waktu-pill {
+    display: inline-block;
+    padding: 4px 10px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    background: #E8F5E9;
+    color: #16442B;
+  }
+
+  .mpl-empty-card {
+    text-align: center;
+    padding: 40px 20px;
+    background: #FFFFFF;
+    border-radius: 22px;
+    border: 1.5px dashed #D1D5DB;
+    color: #6B7280;
+    font-size: 14px;
+  }
+</style>
+@endpush
+
+@section('content')
+@php
+    $urlLangganan = Route::has('pelanggan.langganan') ? route('pelanggan.langganan') : url('/pesanan/langganan');
+    $prefillDate = request('tanggal', now()->toDateString());
+@endphp
+
+<div class="mpl-page-wrap">
+    {{-- Kembali ke Langganan --}}
+    <a href="{{ $urlLangganan }}" class="po-back">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
+        <span>Kembali ke Langganan</span>
+    </a>
+
+    {{-- Hero Banner --}}
+    <section class="mpl-hero-banner">
+        <div>
+            <div class="mpl-hero-badge">
+                <i class="fa-solid fa-calendar-check"></i>
+                <span>Rencana Makan Sehat</span>
+            </div>
+            <h1 class="mpl-hero-title">Manajemen Meal Plan</h1>
+            <p class="mpl-hero-sub">Susun jadwal makan harianmu dengan mudah untuk porsi tepat tanpa limbah makanan.</p>
+        </div>
+        <a href="{{ route('pelanggan.langganan') }}" style="background: rgba(255,255,255,0.16); color: #FFFFFF; padding: 10px 18px; border-radius: 999px; font-size: 13px; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+            <i class="fa-regular fa-calendar"></i>
+            <span>Lihat Kalender Langganan</span>
+        </a>
+    </section>
+
+    {{-- Notifikasi Flash & Error --}}
+    @if (session('success'))
+        <div style="background: #ECFDF5; border-left: 4px solid #10B981; color: #065F46; padding: 12px 16px; border-radius: 12px; font-size: 13.5px; font-weight: 600;">
+            {{ session('success') }}
+        </div>
+    @endif
+    @if ($errors->any())
+        <div style="background: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 12px; font-size: 13.5px;">
+            <ul style="margin: 0; padding-left: 20px;">
+                @foreach ($errors->all() as $err)
+                    <li>{{ $err }}</li>
+                @endforeach
+            </ul>
+        </div>
     @endif
 
-    <!-- Form Tambah Meal Plan Baru -->
-    <div style="border: 2px dashed #999; padding: 15px; margin-bottom: 30px; border-radius: 8px;">
-        <h3>+ Buat Meal Plan Baru</h3>
-        <form action="{{ route('pelanggan.meal_plan.store') }}" method="POST">
-            @csrf
-            <label>Judul:</label>
-            <input type="text" name="judul_plan" placeholder="Contoh: Diet Keto" required>
-            <label>Mulai:</label>
-            <input type="date" name="tanggal_mulai" required>
-            <label>Selesai:</label>
-            <input type="date" name="tanggal_selesai" required>
-            <button type="submit" style="background: blue; color: white;">Simpan Plan</button>
-        </form>
-    </div>
-
-    <!-- Daftar Meal Plan Anda -->
-    <h3>Daftar Meal Plan Anda</h3>
-    @forelse($mealPlans as $plan)
-    <div class="plan-card">
-        
-        <!-- Baris Edit & Hapus Meal Plan Utama -->
-        <form action="{{ route('pelanggan.meal_plan.update', $plan->id_plan) }}" method="POST" style="display:inline-block;">
-            @csrf
-            @method('PUT')
-            <input type="text" name="judul_plan" value="{{ $plan->judul_plan }}" required>
-            <input type="date" name="tanggal_mulai" value="{{ $plan->tanggal_mulai }}" required>
-            <input type="date" name="tanggal_selesai" value="{{ $plan->tanggal_selesai }}" required>
-            <button type="submit">Update Utama</button>
-        </form>
-
-        <form action="{{ route('pelanggan.meal_plan.destroy', $plan->id_plan) }}" method="POST" style="display:inline-block;">
-            @csrf
-            @method('DELETE')
-            <button type="submit" onclick="return confirm('Hapus seluruh plan ini?')" style="color:red;">Hapus Plan</button>
-        </form>
-
-        <!-- Bagian Kelola Menu Harian -->
-        <div class="detail-section">
-            <h4>Jadwal & Menu Makanan</h4>
-            
-            <!-- Tambah Menu ke Plan ini -->
-            <form action="{{ route('pelanggan.meal_plan.detail.store', $plan->id_plan) }}" method="POST" style="margin-bottom: 10px;">
-                @csrf
-                <label>Menu:</label>
-                <select name="id_menu" required>
-                    <option value="" disabled selected>Pilih Makanan...</option>
-                    @foreach($daftarMenu as $menu)
-                        <option value="{{ $menu->id_menu }}">{{ $menu->nama_makanan }}</option>
-                    @endforeach
-                </select>
-
-                <label>Jadwal:</label>
-                <input type="date" name="jadwal_makan" min="{{ $plan->tanggal_mulai }}" max="{{ $plan->tanggal_selesai }}" required>
-                
-                <label>Waktu:</label>
-                <select name="waktu_makan" required>
-                    <option value="Sarapan">Sarapan</option>
-                    <option value="Makan Siang">Makan Siang</option>
-                    <option value="Makan Malam">Makan Malam</option>
-                    <option value="Cemilan">Cemilan</option>
-                </select>
-                <button type="submit">+ Tambah ke Jadwal</button>
-            </form>
-
-            <!-- Tabel Daftar Menu di Plan ini -->
-            <table border="1" cellpadding="8" cellspacing="0" width="100%">
-                <thead style="background: #ddd;">
-                    <tr>
-                        <th>Jadwal</th>
-                        <th>Waktu</th>
-                        <th>Menu Makanan</th>
-                        <th>Kalori</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @forelse($plan->detailMealPlan as $detail)
-                    <tr>
-                        <!-- Format Tanggal menjadi dd-mm-yyyy (Permintaan 1 & 3) -->
-                        <td>{{ \Carbon\Carbon::parse($detail->jadwal_makan)->format('d-m-Y') }}</td>
-                        
-                        <!-- Baris Tampilan Normal -->
-                        <td class="view-mode-{{ $detail->id_detail_plan }}">{{ $detail->waktu_makan }}</td>
-                        <td class="view-mode-{{ $detail->id_detail_plan }}">{{ $detail->menu->nama_makanan ?? 'Menu tidak ditemukan' }}</td>
-                        <td class="view-mode-{{ $detail->id_detail_plan }}">{{ $detail->menu->kandungan_kalori ?? '-' }} kkal</td>
-                        <td class="view-mode-{{ $detail->id_detail_plan }}">
-                            <button type="button" onclick="toggleEdit({{ $detail->id_detail_plan }})" style="color: blue;">Edit</button>
-                            <form action="{{ route('pelanggan.meal_plan.detail.destroy', $detail->id_detail_plan) }}" method="POST" style="display:inline-block;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" onclick="return confirm('Hapus menu dari jadwal ini?')" style="color:red;">Hapus</button>
-                            </form>
-                        </td>
-
-                        <!-- Baris Mode Edit (Awalnya Disembunyikan) -->
-                        <td colspan="4" class="edit-mode-{{ $detail->id_detail_plan }}" style="display: none; background: #fffde7;">
-                            <form action="{{ route('pelanggan.meal_plan.detail.update', $detail->id_detail_plan) }}" method="POST" style="display: flex; gap: 10px; align-items: center; margin: 0;">
-                                @csrf
-                                @method('PUT')
-                                
-                                <select name="waktu_makan" required>
-                                    <option value="Sarapan" {{ $detail->waktu_makan == 'Sarapan' ? 'selected' : '' }}>Sarapan</option>
-                                    <option value="Makan Siang" {{ $detail->waktu_makan == 'Makan Siang' ? 'selected' : '' }}>Makan Siang</option>
-                                    <option value="Makan Malam" {{ $detail->waktu_makan == 'Makan Malam' ? 'selected' : '' }}>Makan Malam</option>
-                                    <option value="Cemilan" {{ $detail->waktu_makan == 'Cemilan' ? 'selected' : '' }}>Cemilan</option>
-                                </select>
-
-                                <select name="id_menu" required>
-                                    @foreach($daftarMenu as $menu)
-                                        <option value="{{ $menu->id_menu }}" {{ $detail->id_menu == $menu->id_menu ? 'selected' : '' }}>
-                                            {{ $menu->nama_makanan }}
-                                        </option>
-                                    @endforeach
-                                </select>
-
-                                <button type="submit" style="color: green;">Simpan</button>
-                                <button type="button" onclick="toggleEdit({{ $detail->id_detail_plan }})">Batal</button>
-                            </form>
-                        </td>
-                    </tr>
-                    @empty
-                    <tr>
-                        <td colspan="5" style="text-align: center;">Belum ada menu di jadwal ini.</td>
-                    </tr>
-                    @endforelse
-                </tbody>
-            </table>
+    {{-- Card 1: Form Buat Meal Plan Baru --}}
+    <section class="mpl-card">
+        <div class="mpl-card-header">
+            <h2 class="mpl-card-title">
+                <i class="fa-solid fa-circle-plus" style="color: #10B981;"></i>
+                <span>Buat Meal Plan Baru</span>
+            </h2>
         </div>
 
+        <form action="{{ route('pelanggan.meal_plan-create') }}" method="POST" class="mpl-create-grid">
+            @csrf
+            <div class="mpl-field-group">
+                <label class="mpl-label" for="judul_plan_new">Judul Rencana Makan</label>
+                <input type="text" id="judul_plan_new" name="judul_plan" class="mpl-input" placeholder="Contoh: Diet Sehat Minggu Ini" value="{{ old('judul_plan') }}" required>
+            </div>
+            <div class="mpl-field-group">
+                <label class="mpl-label" for="tanggal_mulai_new">Tanggal Mulai</label>
+                <input type="date" id="tanggal_mulai_new" name="tanggal_mulai" class="mpl-input" value="{{ old('tanggal_mulai', $prefillDate) }}" required>
+            </div>
+            <div class="mpl-field-group">
+                <label class="mpl-label" for="tanggal_selesai_new">Tanggal Selesai</label>
+                <input type="date" id="tanggal_selesai_new" name="tanggal_selesai" class="mpl-input" value="{{ old('tanggal_selesai', \Carbon\Carbon::parse($prefillDate)->addDays(6)->toDateString()) }}" required>
+            </div>
+            <button type="submit" class="mpl-btn-primary">
+                <i class="fa-solid fa-floppy-disk"></i>
+                <span>Simpan Plan</span>
+            </button>
+        </form>
+    </section>
+
+    {{-- Daftar Meal Plan Anda --}}
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h2 style="font-family: var(--font-sans); font-size: 18px; font-weight: 800; color: #1F2937; margin: 0;">
+            Daftar Meal Plan Anda
+        </h2>
+        <span style="font-size: 12.5px; color: #6B7280;">{{ $mealPlans->count() }} Rencana Tersimpan</span>
     </div>
+
+    @forelse ($mealPlans as $plan)
+        <section class="mpl-card">
+            {{-- Baris Edit & Hapus Meal Plan Utama --}}
+            <form action="{{ route('pelanggan.meal_plan-update', $plan->id_plan) }}" method="POST" class="mpl-plan-head-form">
+                @csrf
+                @method('PUT')
+                <div class="mpl-field-group">
+                    <label class="mpl-label">Judul Plan</label>
+                    <input type="text" name="judul_plan" class="mpl-input" value="{{ $plan->judul_plan }}" required>
+                </div>
+                <div class="mpl-field-group">
+                    <label class="mpl-label">Mulai</label>
+                    <input type="date" name="tanggal_mulai" class="mpl-input" value="{{ \Carbon\Carbon::parse($plan->tanggal_mulai)->format('Y-m-d') }}" required>
+                </div>
+                <div class="mpl-field-group">
+                    <label class="mpl-label">Selesai</label>
+                    <input type="date" name="tanggal_selesai" class="mpl-input" value="{{ \Carbon\Carbon::parse($plan->tanggal_selesai)->format('Y-m-d') }}" required>
+                </div>
+                <button type="submit" class="mpl-btn-soft" style="align-self: end; height: 41px;">Update Plan</button>
+                <button type="button" class="mpl-btn-danger" style="align-self: end; height: 41px;"
+                    onclick="if(confirm('Hapus seluruh Meal Plan ini beserta jadwalnya?')) document.getElementById('delete-plan-{{ $plan->id_plan }}').submit();">
+                    Hapus
+                </button>
+            </form>
+
+            <form id="delete-plan-{{ $plan->id_plan }}" action="{{ route('pelanggan.meal_plan-delete', $plan->id_plan) }}" method="POST" hidden>
+                @csrf
+                @method('DELETE')
+            </form>
+
+            {{-- Bagian Kelola Menu Harian --}}
+            <div class="mpl-detail-panel">
+                <h3 style="font-family: var(--font-sans); font-size: 14.5px; font-weight: 800; color: #16442B; margin: 0 0 12px;">
+                    Jadwal &amp; Menu Makanan
+                </h3>
+
+                {{-- Tambah Menu ke Plan ini --}}
+                <form action="{{ route('pelanggan.meal_plan_detail-create', $plan->id_plan) }}" method="POST" class="mpl-add-detail-grid">
+                    @csrf
+                    <div class="mpl-field-group">
+                        <label class="mpl-label">Pilih Menu</label>
+                        <select name="id_menu" class="mpl-select" required>
+                            <option value="" disabled selected>Pilih Makanan...</option>
+                            @foreach ($daftarMenu as $menu)
+                                <option value="{{ $menu->id_menu }}">{{ $menu->nama_makanan }} ({{ $menu->kandungan_kalori ?? '-' }} kkal)</option>
+                            @endforeach
+                        </select>
+                    </div>
+
+                    <div class="mpl-field-group">
+                        <label class="mpl-label">Tanggal Makan</label>
+                        <input type="date" name="jadwal_makan" class="mpl-input"
+                            min="{{ \Carbon\Carbon::parse($plan->tanggal_mulai)->format('Y-m-d') }}"
+                            max="{{ \Carbon\Carbon::parse($plan->tanggal_selesai)->format('Y-m-d') }}"
+                            value="{{ $prefillDate >= \Carbon\Carbon::parse($plan->tanggal_mulai)->format('Y-m-d') && $prefillDate <= \Carbon\Carbon::parse($plan->tanggal_selesai)->format('Y-m-d') ? $prefillDate : \Carbon\Carbon::parse($plan->tanggal_mulai)->format('Y-m-d') }}"
+                            required>
+                    </div>
+
+                    <div class="mpl-field-group">
+                        <label class="mpl-label">Waktu Makan</label>
+                        <select name="waktu_makan" class="mpl-select" required>
+                            <option value="Sarapan">Sarapan (08:00)</option>
+                            <option value="Makan Siang">Makan Siang (12:00)</option>
+                            <option value="Makan Malam">Makan Malam (18:00)</option>
+                            <option value="Cemilan">Cemilan</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="mpl-btn-primary" style="height: 41px;">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>Tambah Menu</span>
+                    </button>
+                </form>
+
+                {{-- Tabel Daftar Menu di Plan ini --}}
+                <div class="mpl-table-wrap">
+                    <table class="mpl-table">
+                        <thead>
+                            <tr>
+                                <th>Tanggal</th>
+                                <th>Waktu</th>
+                                <th>Menu Makanan</th>
+                                <th>Kalori</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($plan->detailMealPlan as $detail)
+                                <tr>
+                                    <td><strong>{{ \Carbon\Carbon::parse($detail->jadwal_makan)->format('d M Y') }}</strong></td>
+
+                                    <td class="view-mode-{{ $detail->id_detail_plan }}">
+                                        <span class="mpl-waktu-pill">{{ $detail->waktu_makan }}</span>
+                                    </td>
+                                    <td class="view-mode-{{ $detail->id_detail_plan }}">
+                                        <strong>{{ $detail->menu->nama_makanan ?? 'Menu tidak ditemukan' }}</strong>
+                                    </td>
+                                    <td class="view-mode-{{ $detail->id_detail_plan }}">
+                                        {{ $detail->menu->kandungan_kalori ?? '-' }} kkal
+                                    </td>
+                                    <td class="view-mode-{{ $detail->id_detail_plan }}">
+                                        <div style="display: flex; gap: 6px; align-items: center;">
+                                            <button type="button" onclick="toggleEdit({{ $detail->id_detail_plan }})" class="mpl-btn-soft" style="padding: 5px 10px; font-size: 12px;">
+                                                Edit
+                                            </button>
+                                            <form action="{{ route('pelanggan.meal_plan_detail-delete', $detail->id_detail_plan) }}" method="POST" style="margin: 0;">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" onclick="return confirm('Hapus menu dari jadwal ini?')" class="mpl-btn-danger" style="padding: 5px 10px; font-size: 12px;">
+                                                    Hapus
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </td>
+
+                                    {{-- Mode Edit Inline --}}
+                                    <td colspan="4" class="edit-mode-{{ $detail->id_detail_plan }}" style="display: none; background: #FFFBEB;">
+                                        <form action="{{ route('pelanggan.meal_plan_detail-update', $detail->id_detail_plan) }}" method="POST" style="display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 0;">
+                                            @csrf
+                                            @method('PUT')
+
+                                            <select name="waktu_makan" class="mpl-select" style="width: auto; min-width: 130px;" required>
+                                                <option value="Sarapan" {{ $detail->waktu_makan == 'Sarapan' ? 'selected' : '' }}>Sarapan</option>
+                                                <option value="Makan Siang" {{ $detail->waktu_makan == 'Makan Siang' ? 'selected' : '' }}>Makan Siang</option>
+                                                <option value="Makan Malam" {{ $detail->waktu_makan == 'Makan Malam' ? 'selected' : '' }}>Makan Malam</option>
+                                                <option value="Cemilan" {{ $detail->waktu_makan == 'Cemilan' ? 'selected' : '' }}>Cemilan</option>
+                                            </select>
+
+                                            <select name="id_menu" class="mpl-select" style="flex: 1; min-width: 180px;" required>
+                                                @foreach ($daftarMenu as $menu)
+                                                    <option value="{{ $menu->id_menu }}" {{ $detail->id_menu == $menu->id_menu ? 'selected' : '' }}>
+                                                        {{ $menu->nama_makanan }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+
+                                            <button type="submit" class="mpl-btn-primary" style="padding: 7px 14px; font-size: 12px;">Simpan</button>
+                                            <button type="button" onclick="toggleEdit({{ $detail->id_detail_plan }})" class="mpl-btn-soft" style="padding: 7px 12px; font-size: 12px; background: #E5E7EB; color: #374151;">Batal</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="5" style="text-align: center; color: #6B7280; padding: 20px;">
+                                        Belum ada menu di jadwal ini. Silakan tambahkan menu di atas.
+                                    </td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
     @empty
-        <p>Anda belum memiliki Meal Plan.</p>
+        <div class="mpl-empty-card">
+            <p style="margin: 0;">Anda belum memiliki Meal Plan. Gunakan form di atas untuk membuat jadwal makan pertamamu!</p>
+        </div>
     @endforelse
+</div>
+@endsection
 
-    <script>
-        function toggleEdit(id) {
-            const viewElements = document.querySelectorAll('.view-mode-' + id);
-            const editElement = document.querySelector('.edit-mode-' + id);
+@push('scripts')
+<script>
+    function toggleEdit(id) {
+        const viewElements = document.querySelectorAll('.view-mode-' + id);
+        const editElement = document.querySelector('.edit-mode-' + id);
 
-            if (editElement.style.display === 'none') {
-                viewElements.forEach(el => el.style.display = 'none');
-                editElement.style.display = 'table-cell';
-            } else {
-                viewElements.forEach(el => el.style.display = 'table-cell');
-                editElement.style.display = 'none';
-            }
+        if (editElement.style.display === 'none') {
+            viewElements.forEach(el => el.style.display = 'none');
+            editElement.style.display = 'table-cell';
+        } else {
+            viewElements.forEach(el => el.style.display = 'table-cell');
+            editElement.style.display = 'none';
         }
-    </script>
-</body>
-</html>
+    }
+</script>
+@endpush
