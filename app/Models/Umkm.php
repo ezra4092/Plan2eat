@@ -28,11 +28,7 @@ class Umkm extends Model
         'jam_tutup',
         'status_operasional',
         'status_verifikasi',
-<<<<<<< HEAD
         'catatan',
-=======
-        'rating',
->>>>>>> 8df6092 (feat: regist process, interface and logical role pelanggan finish)
         'saldo',
         'metode_pembayaran',
     ];
@@ -40,11 +36,8 @@ class Umkm extends Model
     protected function casts(): array
     {
         return [
-<<<<<<< HEAD
-=======
             'status_verifikasi' => 'boolean',
             'rating' => 'decimal:2',
->>>>>>> 8df6092 (feat: regist process, interface and logical role pelanggan finish)
             'saldo' => 'decimal:2',
             'metode_pembayaran' => 'array',
         ];

@@ -9647,12 +9647,15 @@ body {
 
 /* Sembunyikan bottom-nav default pada mobile khusus halaman menu agar digantikan bar checkout */
 @media (max-width: 767.98px) {
-  .page-customer-menu .app-nav {
-    display: none;
+  .page-customer-menu .app-nav,
+  .page-customer-menu .bottom-nav,
+  .page-customer-menu .mobile-bottom-nav,
+  .page-customer-menu nav[class*="nav"] {
+    display: none !important;
   }
 
   .page-customer-menu .app-content-wrapper {
-    padding-bottom: 94px;
+    padding-bottom: 94px !important;
   }
 }
 
@@ -9950,8 +9953,9 @@ body {
   bottom: 0;
   left: 0;
   right: 0;
-  z-index: 48;
-  background-color: var(--white);
+  width: 100%;
+  z-index: 9999 !important;
+  background-color: var(--white, #ffffff);
   border-top: 1px solid #ECE8DA;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
   padding: 12px 18px 14px;
@@ -10148,6 +10152,7 @@ body {
   /* Sticky Checkout Bar sejajar dengan area konten kanan sidebar */
   .cmn-checkout-bar {
     left: var(--sidebar-width);
+    width: auto;
     padding: 14px 32px;
   }
 
