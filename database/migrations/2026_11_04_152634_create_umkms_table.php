@@ -15,15 +15,11 @@ return new class extends Migration {
             $table->string('foto_toko')->nullable();
             $table->time('jam_buka');
             $table->time('jam_tutup');
-<<<<<<< HEAD
             $table->string('status_operasional');
             $table->enum('status_verifikasi', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
             $table->text('catatan')->nullable();
-=======
             $table->boolean('status_operasional')->default(true);
-            $table->boolean('status_verifikasi')->default(false);
             $table->decimal('rating', 3, 2)->default(0);
->>>>>>> 8df6092 (feat: regist process, interface and logical role pelanggan finish)
             $table->decimal('saldo', 15, 2)->default(0);
             $table->json('metode_pembayaran');
         });
