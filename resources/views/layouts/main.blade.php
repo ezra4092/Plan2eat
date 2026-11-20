@@ -49,11 +49,11 @@
 
           <!-- Baris 2 Mobile / Kiri Desktop: Lokasi & Indikator Halaman Aktif -->
           <div class="header-bottom-row">
-            <button type="button" class="location-picker">
+            <!-- <button type="button" class="location-picker">
               <img class="icon-location" src="{{ asset('img/icon-4.svg') }}" alt="Lokasi">
               <span class="location-text">Malabar, Kota Bogor</span>
               <img class="icon-chevron" src="{{ asset('img/icon-6.svg') }}" alt="Pilih Lokasi">
-            </button>
+            </button> -->
 
             <div class="page-status-pill">
               <img src="{{ asset('img/icon-8.svg') }}" alt="Ikon Halaman">

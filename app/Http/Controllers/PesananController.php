@@ -285,7 +285,7 @@ class PesananController extends Controller
             'id_umkm'               => 'required|exists:umkm,id_umkm',
             'id_plan'               => 'nullable|exists:meal_plan,id_plan',
             'metode_pembayaran'     => 'required|string',
-            // 'metode_pengiriman'     => 'required|string',
+            'metode_pengiriman'     => 'required|string',
             'jadwal_pengiriman'     => 'nullable|string',
             'tgl_mulai'             => 'nullable|string',
             'tgl_selesai'           => 'nullable|string',

@@ -39,6 +39,15 @@
         </button>
       </form>
 
+      <form action="{{ route('pelanggan.ulasan') }}" method="GET" style="margin: 0;">
+        <button type="submit" class="nav-item {{ $activeMenu === 'ulasan' ? 'active' : '' }}" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
+          <div class="nav-icon-box">
+            <img src="{{ asset('img/icon-5.svg') }}" alt="Ulasan">
+          </div>
+          <span class="nav-label">Ulasan</span>
+        </button>
+      </form>
+
       <form action="{{ route('pelanggan.profil_kesehatan') }}" method="GET" style="margin: 0;">
         <button type="submit" class="nav-item {{ $activeMenu === 'profil' ? 'active' : '' }}" style="background: none; border: none; width: 100%; text-align: left; cursor: pointer; font-family: inherit;">
           <div class="nav-icon-box">
@@ -89,7 +98,7 @@
           <div class="nav-icon-box">
             <img src="{{ asset('img/icon-4.svg') }}" alt="Manajemen Menu">
           </div>
-          <span class="nav-label">Manajemen Menu</span>
+          <span class="nav-label">Menu</span>
         </button>
       </form>
 
@@ -98,7 +107,7 @@
           <div class="nav-icon-box">
             <img src="{{ asset('img/icon-4.svg') }}" alt="Manajemen Menu">
           </div>
-          <span class="nav-label">Manajemen Pesanan</span>
+          <span class="nav-label">Pesanan</span>
         </button>
       </form>
 

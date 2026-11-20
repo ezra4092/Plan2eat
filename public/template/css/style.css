@@ -10869,3 +10869,846 @@ body {
 .login-page-user .btn-toggle-pass:hover {
   background-color: rgba(5, 55, 31, 0.07);
 }
+
+/* ==========================================================================
+   HALAMAN KEUANGAN MITRA UMKM (umkm/keuangan.blade.php)
+   ========================================================================== */
+.keu-page {
+  width: 100%;
+  max-width: 1120px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 28px;
+}
+
+.keu-alert {
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+
+.keu-alert-success {
+  background-color: #ECFDF5;
+  border: 1px solid #A7F3D0;
+  color: #065F46;
+}
+
+.keu-alert-error {
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  color: #991B1B;
+}
+
+/* 1. Header Banner Card */
+.keu-hero-card {
+  background-color: #FAF7EB;
+  border: 1px solid #ECE6D3;
+  border-radius: 22px;
+  padding: 20px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.keu-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  flex: 1 1 320px;
+}
+
+.keu-hero-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  align-self: flex-start;
+  background-color: #DDF3E6;
+  color: #16442B;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  padding: 5px 12px;
+  border-radius: 999px;
+}
+
+.keu-hero-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.25;
+  color: #122118;
+}
+
+.keu-hero-sub {
+  margin: 0;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  line-height: 1.5;
+  color: #5C6860;
+}
+
+.keu-hero-actions {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.keu-btn-print {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 11px 18px;
+  border-radius: 14px;
+  background-color: #16442B;
+  color: #FFFFFF;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  text-decoration: none;
+  border: 1px solid #16442B;
+  box-shadow: 0 6px 14px rgba(22, 68, 43, 0.16);
+  transition: background-color 0.2s ease, transform 0.12s ease;
+}
+
+.keu-btn-print:hover {
+  background-color: #0F3520;
+  color: #FFFFFF;
+}
+
+.keu-btn-print:active {
+  transform: scale(0.99);
+}
+
+/* 2. Grid Utama (Mobile 1 Kolom, Desktop 2 Kolom) */
+.keu-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.keu-area-saldo,
+.keu-area-payment,
+.keu-area-log,
+.keu-area-admin {
+  min-width: 0;
+}
+
+/* 3. Kartu Sage Container (Saldo & Log) */
+.keu-sage-card {
+  background-color: #A5B7AD;
+  border-radius: 22px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Inner Dark Green Total Saldo */
+.keu-balance-hero {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(145deg, #174B30 0%, #103A23 100%);
+  border-radius: 18px;
+  padding: 18px;
+  color: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.keu-balance-hero::after {
+  content: "";
+  position: absolute;
+  right: -28px;
+  bottom: -34px;
+  width: 145px;
+  height: 145px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.06);
+  pointer-events: none;
+}
+
+.keu-balance-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.keu-balance-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-sans);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: #D1E7DA;
+}
+
+.keu-eye-btn {
+  background: rgba(255, 255, 255, 0.12);
+  border: none;
+  color: #E2F1E8;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.keu-eye-btn:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.keu-balance-amount-row {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+}
+
+.keu-currency {
+  font-family: var(--font-sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: #CFE4D7;
+}
+
+.keu-balance-value {
+  font-family: var(--font-sans);
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.1;
+  color: #FFFFFF;
+  letter-spacing: -0.02em;
+}
+
+.keu-sync-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 11px;
+  padding: 9px 12px;
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: #DCECE3;
+}
+
+/* 4. Kartu Metode Pembayaran */
+.keu-payment-card {
+  background-color: #FAF7EB;
+  border: 1px solid #ECE6D3;
+  border-radius: 22px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.keu-payment-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.keu-payment-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.keu-payment-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 11px;
+  background-color: #DDF3E6;
+  color: #16442B;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.keu-section-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 16px;
+  color: #122118;
+}
+
+.keu-link-manage {
+  background: none;
+  border: none;
+  padding: 4px 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  color: #16442B;
+  cursor: pointer;
+}
+
+.keu-link-manage:hover {
+  text-decoration: underline;
+}
+
+.keu-payment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.keu-payment-item {
+  background-color: #EFECE0;
+  border-radius: 15px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.keu-payment-item-left {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.keu-method-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 11px;
+  background-color: #FFFFFF;
+  color: #16442B;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(18, 33, 24, 0.05);
+}
+
+.keu-method-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.keu-method-info strong {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #122118;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.keu-method-info span {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  color: #5C6860;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.keu-badge-status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.keu-badge-status.is-primary {
+  background-color: #DDF3E6;
+  color: #16442B;
+}
+
+.keu-badge-status.is-active {
+  background-color: #E3EAE6;
+  color: #2B4B39;
+}
+
+/* 5. Log Uang Masuk */
+.keu-log-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.keu-log-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 17px;
+  color: #122118;
+}
+
+.keu-btn-range {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background-color: #FAF7EB;
+  border: 1px solid #DDD8C6;
+  color: #122118;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.keu-btn-range:hover {
+  background-color: #FFFFFF;
+}
+
+.keu-filter-drawer {
+  background-color: #FAF7EB;
+  border-radius: 15px;
+  padding: 13px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.keu-filter-drawer.is-hidden {
+  display: none;
+}
+
+.keu-filter-fields {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.keu-filter-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.keu-filter-field label {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  font-weight: 600;
+  color: #4A574F;
+}
+
+.keu-filter-field input,
+.keu-filter-field select {
+  width: 100%;
+  padding: 7px 10px;
+  border-radius: 10px;
+  border: 1px solid #D5CFC0;
+  background-color: #FFFFFF;
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: #122118;
+}
+
+.keu-filter-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.keu-btn-reset {
+  padding: 8px 14px;
+  border-radius: 10px;
+  border: 1px solid #D5CFC0;
+  background-color: #FFFFFF;
+  color: #3E4C43;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.keu-btn-apply,
+.keu-btn-save-payment {
+  padding: 8px 16px;
+  border-radius: 10px;
+  border: none;
+  background-color: #16442B;
+  color: #FFFFFF;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.keu-log-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.keu-log-item {
+  background-color: #EFECE0;
+  border-radius: 16px;
+  padding: 13px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.keu-log-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.keu-log-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.keu-log-icon.is-catering {
+  background-color: #CFE9DB;
+  color: #16442B;
+}
+
+.keu-log-icon.is-flash {
+  background-color: #F3E2B8;
+  color: #8A5A10;
+}
+
+.keu-log-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.keu-log-info strong {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #122118;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.keu-log-portion {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  font-weight: 500;
+  color: #4D5951;
+}
+
+.keu-log-time {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #6B7770;
+}
+
+.keu-log-item-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 5px;
+  flex-shrink: 0;
+}
+
+.keu-log-amount {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  font-weight: 800;
+  color: #122118;
+  white-space: nowrap;
+}
+
+.keu-log-amount.is-cancelled {
+  color: #991B1B;
+  text-decoration: line-through;
+}
+
+.keu-log-status {
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 10.5px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.keu-log-status.is-settled {
+  background-color: #D3EFE0;
+  color: #16442B;
+}
+
+.keu-log-status.is-pending {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.keu-log-status.is-cancelled {
+  background-color: #FEE2E2;
+  color: #991B1B;
+}
+
+.keu-log-empty {
+  background-color: #FAF7EB;
+  border-radius: 16px;
+  padding: 28px 16px;
+  text-align: center;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  color: #5C6860;
+}
+
+.keu-log-empty p {
+  margin: 0;
+}
+
+/* 6. Banner Bebas Biaya Admin Bank */
+.keu-admin-banner {
+  background-color: #E3F3EA;
+  border: 1px solid #C8E5D5;
+  border-radius: 18px;
+  padding: 15px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.keu-admin-badge-icon {
+  color: #16442B;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.keu-admin-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.keu-admin-banner-text strong {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #122118;
+}
+
+.keu-admin-banner-text p {
+  margin: 0;
+  font-family: var(--font-inter);
+  font-size: 12px;
+  line-height: 1.5;
+  color: #49594F;
+}
+
+/* 7. Modal Kelola Metode Pembayaran */
+.keu-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(15, 23, 42, 0.52);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  z-index: 1200;
+}
+
+.keu-modal-backdrop.is-hidden {
+  display: none;
+}
+
+.keu-modal-card {
+  width: 100%;
+  max-width: 460px;
+  background-color: #FAF7EB;
+  border-radius: 22px;
+  padding: 22px;
+  box-shadow: 0 24px 48px rgba(15, 23, 42, 0.22);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.keu-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.keu-modal-header h3 {
+  margin: 0 0 4px;
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 800;
+  color: #122118;
+}
+
+.keu-modal-header p {
+  margin: 0;
+  font-family: var(--font-inter);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #5C6860;
+}
+
+.keu-modal-close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  line-height: 1;
+  color: #5C6860;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.keu-modal-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.keu-modal-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.keu-modal-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  background-color: #FFFFFF;
+  border: 1px solid #DFDAC8;
+  border-radius: 14px;
+  padding: 12px 14px;
+  cursor: pointer;
+}
+
+.keu-modal-option input[type="checkbox"] {
+  margin-top: 3px;
+  width: 16px;
+  height: 16px;
+  accent-color: #16442B;
+  flex-shrink: 0;
+}
+
+.keu-modal-option-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.keu-modal-option-text strong {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #122118;
+}
+
+.keu-modal-option-text span {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: #5C6860;
+}
+
+.keu-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Responsive Breakpoints (Desktop & Mobile) */
+@media (min-width: 992px) {
+  .keu-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.08fr);
+    grid-auto-rows: max-content;
+    gap: 20px;
+  }
+
+  .keu-area-saldo {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .keu-area-payment {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .keu-area-admin {
+    grid-column: 1;
+    grid-row: 3;
+  }
+
+  .keu-area-log {
+    grid-column: 2;
+    grid-row: 1 / span 3;
+  }
+}
+
+@media (max-width: 767px) {
+  .keu-hero-card {
+    padding: 18px 16px;
+    border-radius: 18px;
+  }
+
+  .keu-hero-title {
+    font-size: 20px;
+  }
+
+  .keu-hero-actions,
+  .keu-btn-print {
+    width: 100%;
+  }
+
+  .keu-filter-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .keu-balance-value {
+    font-size: 28px;
+  }
+
+  .keu-log-amount {
+    font-size: 14.5px;
+  }
+}

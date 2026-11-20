@@ -140,9 +140,10 @@ Route::group(['middleware' => ['auth']], function() {
     Route::post('/pelanggan/pesanan/{id_pesanan}/pesan-lagi', [PesananController::class, 'pesanLagi'])->name('pelanggan.pesanan-reorder');
 
     // --- Ulasan & Rating (Pelanggan) ---
-    // Route::post('/pelanggan/ulasan', [UlasanController::class, 'store'])->name('pelanggan.ulasan-create');
+    Route::get('/pelanggan/ulasan', [UlasanController::class, 'index'])->name('pelanggan.ulasan');
+    Route::post('/pelanggan/ulasan', [UlasanController::class, 'store'])->name('pelanggan.ulasan-create');
     Route::put('/pelanggan/ulasan/{id_ulasan}', [UlasanController::class, 'update'])->name('pelanggan.ulasan-update');
-    // Route::delete('/pelanggan/ulasan/{id_ulasan}', [UlasanController::class, 'destroy'])->name('pelanggan.ulasan-delete');
+    Route::delete('/pelanggan/ulasan/{id_ulasan}', [UlasanController::class, 'destroy'])->name('pelanggan.ulasan-delete');
 
     // --- Langganan ---
     Route::get('/pesanan/langganan', [PesananController::class, 'langganan'])
@@ -184,6 +185,8 @@ Route::group(['middleware' => ['auth']], function() {
     // --- Dashboard, Jadwal Masak & Laporan UMKM ---
     // Route::get('/umkm/jadwal-masak', [JadwalMasakController::class, 'index'])->name('umkm.jadwal_masak');
     Route::get('/umkm/laporan-keuangan', [LaporanKeuanganController::class, 'index'])->name('umkm.laporan_keuangan');
+    Route::put('/umkm/laporan-keuangan/metode-pembayaran', [LaporanKeuanganController::class, 'updateMetodePembayaran'])->name('umkm.laporan_keuangan-metode');
+    Route::get('/umkm/laporan-keuangan/cetak', [LaporanKeuanganController::class, 'cetakLaporan'])->name('umkm.laporan_keuangan-cetak');
     // Route::post('/umkm/penutupan-harian', [PenutupanHarianController::class, 'store'])->name('umkm.penutupan_harian-create');
 
 
