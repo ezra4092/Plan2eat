@@ -68,24 +68,38 @@
                     </div>
                 </div>
 
-                <!-- Input Password -->
+                
+                {{-- Password --}}
                 <div class="form-group-custom">
                     <label for="password" class="label">Password</label>
-                    <div class="phone-OTP-input">
-                        <div class="background">
-                            <!-- Icon Lock (SVG) -->
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1C1C11" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="3" y="11" width="18" height="11" rx="3" ry="3"></rect>
-                                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                                <circle cx="10" cy="16.5" r="1" fill="#1C1C11"></circle>
-                                <circle cx="14" cy="16.5" r="1" fill="#1C1C11"></circle>
-                            </svg>
-                        </div>
+                        <div class="phone-OTP-input @error('password') is-invalid @enderror">
+                            <span class="background" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1C1C11" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="3"/>
+                                        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                    <circle cx="12" cy="16.5" r="1"/>
+                                </svg>
+                            </span>
                         <div class="input-wrapper">
-                            <input type="password" name="password" id="password" class="container-2" placeholder="**************" required>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                class="container-2"
+                                placeholder="***************"
+                                autocomplete="new-password"
+                                required
+                            >
                         </div>
+                        <button type="button" class="btn-toggle-pass" data-target="password" aria-label="Tampilkan atau sembunyikan password">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#717972" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
+
 
                 <!-- Submit Button -->
                 <button type="submit" class="action-primary">
@@ -170,6 +184,16 @@
         });
     </script>
     @endif
+
+    <script>
+        document.querySelectorAll('.btn-toggle-pass').forEach(function (btn) {
+            btn.addEventListener('click', function () {
+                const input = document.getElementById(this.dataset.target);
+                if (!input) return;
+                input.type = input.type === 'password' ? 'text' : 'password';
+            });
+        });
+    </script>
 
 </body>
 </html>
