@@ -16,7 +16,8 @@ return new class extends Migration {
             $table->time('jam_buka');
             $table->time('jam_tutup');
             $table->string('status_operasional');
-            $table->boolean('status_verifikasi')->default(false);
+            $table->enum('status_verifikasi', ['menunggu', 'disetujui', 'ditolak'])->default('menunggu');
+            $table->text('catatan')->nullable();
             $table->decimal('saldo', 15, 2)->default(0);
             $table->json('metode_pembayaran');
         });

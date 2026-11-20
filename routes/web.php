@@ -15,6 +15,7 @@ use App\Http\Controllers\UlasanController;
 // use App\Http\Controllers\JadwalMasakController;
 use App\Http\Controllers\LaporanKeuanganController;
 // use App\Http\Controllers\PenutupanHarianController;
+use App\Http\Controllers\VerifikasiUmkmController;
 // use App\Http\Controllers\AdminController;
 // use App\Http\Controllers\MasterDataController;
 
@@ -215,9 +216,8 @@ Route::group(['middleware' => ['auth']], function() {
     // --- Manajemen User & UMKM ---
     // Route::get('/admin/users', [AdminController::class, 'listUsers'])->name('admin.users');
     // Route::delete('/admin/users/{id_user}', [AdminController::class, 'deleteUser'])->name('admin.users-delete');
-    // Route::get('/admin/umkm', [AdminController::class, 'listUmkm'])->name('admin.umkm');
-    // Route::put('/admin/umkm/{id_umkm}/verifikasi', [AdminController::class, 'verifyUmkm'])->name('admin.umkm-verifikasi');
-
+    Route::get('/admin/umkm', [App\Http\Controllers\VerifikasiUmkmController::class, 'index'])->name('admin.umkm');
+    Route::put('/admin/umkm/{id_umkm}/verifikasi', [App\Http\Controllers\VerifikasiUmkmController::class, 'update'])->name('admin.umkm-verifikasi');
     // --- Master Data ---
     // Route::get('/admin/master-data', [MasterDataController::class, 'index'])->name('admin.master_data');
     // Route::post('/admin/master-data', [MasterDataController::class, 'store'])->name('admin.master_data-create');

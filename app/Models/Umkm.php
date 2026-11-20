@@ -27,6 +27,7 @@ class Umkm extends Model
         'jam_tutup',
         'status_operasional',
         'status_verifikasi',
+        'catatan',
         'saldo',
         'metode_pembayaran',
     ];
@@ -34,7 +35,6 @@ class Umkm extends Model
     protected function casts(): array
     {
         return [
-            'status_verifikasi' => 'boolean',
             'saldo' => 'decimal:2',
             'metode_pembayaran' => 'array',
         ];
