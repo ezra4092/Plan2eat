@@ -37,6 +37,8 @@
                             <span class="badge badge-success">Disetujui</span>
                         @elseif($umkm->status_verifikasi == 'ditolak')
                             <span class="badge badge-danger" style="background: #dc3545; color: white;">Ditolak</span>
+                        @elseif($umkm->status_verifikasi == 'ditangguhkan')
+                            <span class="badge" style="background: #fd7e14; color: white;">Ditangguhkan</span>
                         @else
                             <span class="badge badge-warning">Menunggu</span>
                         @endif
