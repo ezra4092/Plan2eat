@@ -4907,938 +4907,6 @@ body {
 }
 
 /* ==========================================================================
-   DASHBOARD ADMIN & DETAIL LAPORAN MODAL (Responsive Mobile + Desktop)
-   ========================================================================== */
-
-/* Topbar khusus Admin (Breadcrumb kiri + Halo Admin kanan) */
-.admin-shell .app-header.admin-header {
-  background-color: var(--bg-cream);
-  color: var(--black);
-  border-radius: 0;
-  box-shadow: none;
-  border-bottom: 1px solid #E5E1D3;
-}
-
-.admin-header-inner {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 14px 18px;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.admin-header-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.admin-mobile-logo-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 8px;
-  background-color: var(--emerald-bright);
-}
-
-.admin-breadcrumb {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-sans);
-  font-size: 13.5px;
-}
-
-.breadcrumb-parent {
-  color: #6B726C;
-  font-weight: 500;
-}
-
-.breadcrumb-sep {
-  color: #9CA39D;
-}
-
-.breadcrumb-current {
-  color: var(--black);
-  font-weight: 700;
-}
-
-.admin-header-right {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.admin-notif-btn {
-  color: var(--black);
-  background-color: transparent;
-}
-
-.admin-notif-btn:hover {
-  background-color: rgba(5, 55, 31, 0.08);
-}
-
-.admin-user-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.admin-greeting-text {
-  display: none;
-  font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 13.5px;
-  color: var(--black);
-}
-
-.admin-initial-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-  background-color: #DCECE3;
-  color: var(--forest-green);
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: 13px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* Container Konten Utama Admin */
-.admin-main-content {
-  max-width: 1240px;
-  padding: 20px 18px 32px;
-}
-
-.admin-dashboard {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-/* Header Judul + Filter Periode & Unduh Laporan */
-.admin-page-header {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.admin-page-title {
-  font-family: var(--font-sans);
-  font-weight: 800;
-  font-size: 24px;
-  line-height: 1.2;
-  letter-spacing: -0.5px;
-  color: var(--black);
-  margin: 0;
-}
-
-.admin-header-controls {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-}
-
-.admin-period-dropdown {
-  position: relative;
-}
-
-.btn-period-trigger {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  height: 38px;
-  padding: 0 14px;
-  border-radius: 10px;
-  border: 1px solid #DCD9CD;
-  background-color: #FAF8F0;
-  color: var(--black);
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 12.5px;
-  cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-}
-
-.btn-period-trigger:hover {
-  background-color: var(--white);
-}
-
-.btn-period-trigger.is-open {
-  background-color: var(--forest-green);
-  border-color: var(--forest-green);
-  color: var(--white);
-}
-
-.admin-period-menu {
-  position: absolute;
-  top: calc(100% + 6px);
-  left: 0;
-  z-index: 35;
-  min-width: 165px;
-  margin: 0;
-  padding: 8px 6px;
-  list-style: none;
-  background-color: var(--white);
-  border: 1px solid #E5E1D3;
-  border-radius: 12px;
-  box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
-}
-
-.period-option-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 7px 10px;
-  border: none;
-  border-radius: 8px;
-  background: transparent;
-  font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 12.5px;
-  color: var(--black);
-  text-align: left;
-  cursor: pointer;
-}
-
-.period-option-btn:hover {
-  background-color: #F5F3E8;
-}
-
-.period-option-btn .period-dot {
-  width: 5px;
-  height: 5px;
-  border-radius: 50%;
-  background-color: var(--black);
-}
-
-.period-option-btn.is-selected {
-  font-weight: 700;
-  color: var(--forest-green);
-}
-
-.period-option-btn.is-selected .period-dot {
-  background-color: var(--forest-green);
-}
-
-.btn-download-report {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  height: 38px;
-  padding: 0 14px;
-  border-radius: 10px;
-  border: 1px solid #DCD9CD;
-  background-color: #FAF8F0;
-  color: var(--black);
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 12.5px;
-  cursor: pointer;
-  transition: background-color 0.2s ease;
-}
-
-.btn-download-report:hover {
-  background-color: var(--white);
-}
-
-/* 1. Grid 4 Kartu KPI */
-.admin-kpi-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
-}
-
-.admin-kpi-card {
-  background-color: #EFECE0;
-  border: 1px solid #E2DEC9;
-  border-radius: 16px;
-  padding: 16px 18px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.admin-kpi-top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.admin-kpi-label {
-  font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 12.5px;
-  color: #4D554E;
-}
-
-.admin-kpi-icon {
-  color: var(--forest-green);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.admin-kpi-value {
-  font-family: var(--font-sans);
-  font-weight: 800;
-  font-size: 23px;
-  line-height: 1.15;
-  letter-spacing: -0.5px;
-  color: var(--black);
-}
-
-/* 2. Grid 2 Kolom Tengah & Bawah */
-.admin-two-col-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.admin-panel-card {
-  background-color: var(--white);
-  border: 1px solid #ECE8DA;
-  border-radius: 18px;
-  padding: 20px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.admin-panel-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.admin-panel-head-col {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.admin-panel-title {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--black);
-  margin: 0;
-}
-
-.admin-panel-subtitle {
-  font-family: var(--font-inter);
-  font-size: 12px;
-  color: var(--gray);
-  margin: 0;
-}
-
-.admin-see-all-link {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 12px;
-  color: var(--black);
-  text-decoration: none;
-}
-
-.admin-see-all-link:hover {
-  color: var(--forest-green);
-  text-decoration: underline;
-}
-
-/* Grafik Batang Pesanan Mingguan */
-.admin-chart-wrap {
-  display: flex;
-  align-items: stretch;
-  gap: 14px;
-  padding-top: 4px;
-}
-
-.admin-chart-yaxis {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  padding-bottom: 24px;
-  font-family: var(--font-inter);
-  font-size: 11px;
-  color: #8C928D;
-  min-width: 30px;
-}
-
-.admin-chart-plot {
-  flex: 1;
-  min-width: 0;
-}
-
-.admin-chart-bars {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-around;
-  gap: 10px;
-  height: 165px;
-}
-
-.admin-bar-item {
-  flex: 1;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.admin-bar-track {
-  width: 100%;
-  flex: 1;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-}
-
-.admin-bar-fill {
-  width: 100%;
-  max-width: 34px;
-  border-radius: 5px 5px 0 0;
-  background-color: #A2D5B6;
-  transition: height 0.35s ease, background-color 0.25s ease;
-}
-
-.admin-bar-fill.is-peak {
-  background-color: #123F26;
-}
-
-.admin-bar-label {
-  font-family: var(--font-sans);
-  font-size: 11px;
-  font-weight: 500;
-  color: #6B726C;
-  white-space: nowrap;
-}
-
-.admin-bar-item.is-peak .admin-bar-label {
-  font-weight: 700;
-  color: var(--black);
-}
-
-/* Perlu Ditinjau */
-.admin-review-list {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.admin-review-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.admin-review-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  min-width: 0;
-}
-
-.admin-soft-icon-box {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  background-color: #F3EFE2;
-  color: var(--forest-green);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.admin-review-name {
-  font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 13px;
-  color: var(--black);
-}
-
-.admin-review-right {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  flex-shrink: 0;
-}
-
-.admin-count-pill {
-  min-width: 24px;
-  height: 24px;
-  padding: 0 7px;
-  border-radius: 999px;
-  background-color: #F3EFE2;
-  color: var(--black);
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: 11px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.btn-review-action {
-  padding: 5px 12px;
-  border-radius: 8px;
-  border: 1px solid #DCD9CD;
-  background-color: #FAF8F0;
-  color: var(--black);
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 11.5px;
-  text-decoration: none;
-  transition: background-color 0.2s ease;
-}
-
-.btn-review-action:hover {
-  background-color: #EFECE0;
-}
-
-/* Tabel Laporan Aduan */
-.admin-table-responsive {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.admin-report-table {
-  width: 100%;
-  min-width: 480px;
-  border-collapse: collapse;
-  font-family: var(--font-sans);
-  font-size: 12.5px;
-}
-
-.admin-report-table thead tr {
-  background-color: #EFECE0;
-}
-
-.admin-report-table th {
-  padding: 10px 14px;
-  font-weight: 600;
-  color: var(--black);
-  text-align: left;
-  white-space: nowrap;
-}
-
-.admin-report-table th:first-child {
-  border-radius: 8px 0 0 8px;
-}
-
-.admin-report-table th:last-child {
-  border-radius: 0 8px 8px 0;
-}
-
-.admin-report-table td {
-  padding: 12px 14px;
-  color: var(--black);
-  border-bottom: 1px solid #F1EFE7;
-  white-space: nowrap;
-}
-
-.admin-report-table .col-id {
-  font-weight: 600;
-}
-
-.admin-report-table .text-center {
-  text-align: center;
-}
-
-.btn-table-detail {
-  background: transparent;
-  border: none;
-  padding: 2px 6px;
-  font-family: var(--font-sans);
-  font-weight: 500;
-  font-size: 12px;
-  color: #8C928D;
-  cursor: pointer;
-  transition: color 0.2s ease;
-}
-
-.btn-table-detail:hover {
-  color: var(--forest-green);
-  text-decoration: underline;
-}
-
-.admin-table-footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding-top: 2px;
-}
-
-.admin-pagination-info {
-  font-family: var(--font-inter);
-  font-size: 11.5px;
-  color: #8C928D;
-}
-
-.admin-pagination-nav {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.page-arrow-btn,
-.page-num-btn {
-  min-width: 26px;
-  height: 26px;
-  padding: 0 6px;
-  border: none;
-  border-radius: 7px;
-  background: transparent;
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 12px;
-  color: #6B726C;
-  cursor: pointer;
-}
-
-.page-num-btn.is-active {
-  background-color: var(--forest-green);
-  color: var(--white);
-}
-
-.page-ellipsis {
-  font-size: 12px;
-  color: #8C928D;
-  padding: 0 2px;
-}
-
-/* Aktivitas Terbaru */
-.admin-activity-list {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.admin-activity-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.admin-activity-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.admin-activity-icon.icon-mint {
-  background-color: #DCECE3;
-  color: var(--forest-green);
-}
-
-.admin-activity-icon.icon-cream {
-  background-color: #F3EFE2;
-  color: #7A5C2E;
-}
-
-.admin-activity-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.admin-activity-title {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--black);
-}
-
-.admin-activity-time {
-  font-family: var(--font-inter);
-  font-size: 11.5px;
-  color: #8C928D;
-}
-
-/* Modal Detail Laporan / Aduan */
-.admin-modal-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 90;
-  background-color: rgba(28, 28, 17, 0.35);
-  backdrop-filter: blur(5px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 16px;
-}
-
-.admin-modal-card {
-  width: 100%;
-  max-width: 640px;
-  background-color: var(--white);
-  border-radius: 20px;
-  padding: 20px 24px 24px;
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.18);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.admin-modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.admin-modal-icon-btn {
-  width: 32px;
-  height: 32px;
-  border: none;
-  border-radius: 50%;
-  background: transparent;
-  color: var(--black);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-
-.admin-modal-icon-btn:hover {
-  background-color: #F3EFE2;
-}
-
-.admin-modal-title {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: 16px;
-  color: var(--black);
-  margin: 0;
-  text-align: center;
-  flex: 1;
-}
-
-.admin-modal-header-right {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.status-investigation-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  padding: 5px 11px;
-  border-radius: 999px;
-  background-color: #E7F5EC;
-  color: var(--forest-green);
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 11px;
-  white-space: nowrap;
-}
-
-.status-investigation-pill .status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: #16A34A;
-}
-
-.admin-modal-divider {
-  border: 0;
-  border-top: 1px solid #ECE8DA;
-  margin: 0;
-}
-
-.admin-modal-meta-row {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.admin-modal-meta-left,
-.admin-modal-meta-right {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.admin-modal-meta-right {
-  text-align: right;
-}
-
-.admin-modal-meta-label {
-  font-family: var(--font-inter);
-  font-size: 11.5px;
-  color: #8C928D;
-}
-
-.admin-modal-id-group {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.admin-modal-id-val {
-  font-family: var(--font-sans);
-  font-weight: 800;
-  font-size: 15px;
-  color: var(--black);
-}
-
-.admin-modal-inline-badge {
-  padding: 3px 9px;
-  border-radius: 999px;
-  background-color: #E7F5EC;
-  color: var(--forest-green);
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 10.5px;
-}
-
-.admin-modal-date-val {
-  font-family: var(--font-sans);
-  font-weight: 600;
-  font-size: 13px;
-  color: var(--black);
-}
-
-.admin-modal-parties-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 12px;
-}
-
-.admin-modal-info-box {
-  border: 1px solid #E5E1D3;
-  border-radius: 14px;
-  padding: 14px 16px;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.admin-modal-box-label {
-  font-family: var(--font-inter);
-  font-size: 11.5px;
-  color: #8C928D;
-}
-
-.admin-modal-box-title {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: 14px;
-  color: var(--black);
-}
-
-.admin-modal-box-sub {
-  font-family: var(--font-inter);
-  font-size: 12px;
-  color: #6B726C;
-}
-
-.admin-modal-subject-text {
-  font-family: var(--font-sans);
-  font-weight: 700;
-  font-size: 14px;
-  line-height: 1.45;
-  color: var(--black);
-  margin: 2px 0 0;
-}
-
-/* Mobile Layar Sangat Kecil (<= 420px) */
-@media (max-width: 420px) {
-  .admin-kpi-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .status-investigation-pill {
-    display: none;
-  }
-
-  .admin-modal-meta-right {
-    text-align: left;
-  }
-}
-
-/* Tablet & Desktop (>= 768px) */
-@media (min-width: 768px) {
-  .admin-header-inner {
-    padding: 16px 32px;
-    flex-direction: row;
-  }
-
-  .admin-greeting-text {
-    display: inline-block;
-  }
-
-  .admin-main-content {
-    padding: 24px 32px 44px;
-  }
-
-  .admin-page-header {
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .admin-page-title {
-    font-size: 28px;
-  }
-
-  .admin-header-controls {
-    width: auto;
-  }
-
-  .admin-kpi-value {
-    font-size: 27px;
-  }
-
-  .admin-modal-parties-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-/* Desktop Lebar (>= 1024px) */
-@media (min-width: 1024px) {
-  .admin-kpi-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
-  }
-
-  .admin-two-col-grid {
-    display: grid;
-    grid-template-columns: 1.85fr 1fr;
-    gap: 18px;
-    align-items: stretch;
-  }
-}
-
-/* ==========================================================================
    TAMBAHAN PENYEMPURNAAN ADMIN DASHBOARD (Mobile & Desktop Responsive)
    ========================================================================== */
 
@@ -16111,4 +15179,1009 @@ body {
 
 .btl-btn-yes:hover {
     background-color: #B91C1C;
+}
+
+/* ==========================================================================
+   ADMIN DASHBOARD (main.blade + nav.blade + dashboard.blade)
+   Responsif Mobile Website (< 768px) & Desktop Website (>= 768px)
+   ========================================================================== */
+
+.adm-shell {
+  background-color: var(--bg-cream);
+  color: var(--black);
+  min-height: 100vh;
+}
+
+.adm-shell .is-hidden {
+  display: none !important;
+}
+
+/* --------------------------------------------------------------------------
+   1. Navigasi Admin (Mobile Bottom Nav & Desktop Left Sidebar)
+   -------------------------------------------------------------------------- */
+.adm-sidebar {
+  background-color: var(--white);
+  border-top: 1px solid #ECE8DA;
+  box-shadow: 0 -4px 18px rgba(0, 0, 0, 0.05);
+}
+
+.adm-brand-icon-box {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background-color: var(--emerald-bright);
+  color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.adm-sidebar-footer {
+  display: none;
+}
+
+/* Topbar Header */
+.adm-topbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background-color: var(--bg-cream);
+  border-bottom: 1px solid #ECE8DA;
+}
+
+.adm-topbar-inner {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.adm-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.adm-mobile-brand {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.adm-breadcrumb {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+
+.adm-breadcrumb-icon {
+  color: #6B726C;
+  display: inline-flex;
+  align-items: center;
+}
+
+.adm-breadcrumb-parent {
+  color: #717972;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.adm-breadcrumb-parent:hover {
+  color: var(--forest-green);
+}
+
+.adm-breadcrumb-sep {
+  color: #A3A8A3;
+}
+
+.adm-breadcrumb-current {
+  color: var(--black);
+  font-weight: 700;
+}
+
+.adm-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.adm-notif-btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid #E5E1D3;
+  background-color: var(--white);
+  color: #414942;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.adm-notif-btn:hover {
+  background-color: #F3EFE2;
+}
+
+.adm-notif-dot {
+  position: absolute;
+  top: 8px;
+  right: 9px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #E74A3B;
+}
+
+.adm-profile-menu-wrap {
+  position: relative;
+}
+
+.adm-avatar-btn {
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+}
+
+.adm-avatar-initials {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: #16442B;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.adm-mobile-account-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: 210px;
+  background-color: var(--white);
+  border: 1px solid #E5E1D3;
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.adm-account-menu-head {
+  padding: 8px 10px;
+  border-bottom: 1px solid #EFECE0;
+  margin-bottom: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.adm-account-menu-head strong {
+  font-size: 13px;
+  color: var(--black);
+}
+
+.adm-account-menu-head span {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #717972;
+}
+
+.adm-account-menu-item {
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--black);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.adm-account-menu-item:hover {
+  background-color: #F6F3E8;
+}
+
+.adm-account-menu-item.is-danger {
+  color: #DC2626;
+}
+
+/* Main Content Container */
+.adm-main-content {
+  max-width: 1240px;
+  width: 100%;
+  padding: 20px 18px 36px;
+}
+
+.adm-alert.is-success {
+  padding: 12px 16px;
+  border-radius: 12px;
+  background-color: #DDF3E6;
+  border: 1px solid #B7E4C7;
+  color: #16442B;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* --------------------------------------------------------------------------
+   2. Dashboard Content Layout
+   -------------------------------------------------------------------------- */
+.adm-dash {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Header Ringkasan Platform */
+.adm-dash-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.adm-dash-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.4px;
+  color: var(--black);
+}
+
+.adm-dash-subtitle {
+  margin: 4px 0 0;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  color: #717972;
+}
+
+.adm-dash-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  width: 100%;
+}
+
+.adm-period-wrap {
+  position: relative;
+}
+
+.adm-btn-period {
+  width: 100%;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #DCD9CD;
+  background-color: var(--white);
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.adm-btn-period:hover {
+  background-color: #F6F3E8;
+  border-color: #16442B;
+}
+
+.adm-period-dropdown {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  min-width: 175px;
+  background-color: var(--white);
+  border: 1px solid #E5E1D3;
+  border-radius: 12px;
+  padding: 6px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.1);
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.adm-period-option {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--black);
+  text-decoration: none;
+}
+
+.adm-period-option:hover,
+.adm-period-option.is-selected {
+  background-color: #E7F5EC;
+  color: #16442B;
+  font-weight: 700;
+}
+
+.adm-btn-download {
+  width: 100%;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 10px;
+  background-color: #16442B;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.adm-btn-download:hover {
+  background-color: var(--forest-green);
+  color: var(--white);
+}
+
+/* --------------------------------------------------------------------------
+   3. Grid 4 Kartu KPI
+   -------------------------------------------------------------------------- */
+.adm-kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.adm-kpi-card {
+  background-color: #F6F1E3;
+  border: 1px solid #E7E1CE;
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.adm-kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.adm-kpi-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12.5px;
+  color: #555D56;
+}
+
+.adm-kpi-icon {
+  color: #16442B;
+  display: inline-flex;
+  align-items: center;
+}
+
+.adm-kpi-value {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  color: var(--black);
+}
+
+.adm-kpi-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  color: #16A34A;
+}
+
+/* --------------------------------------------------------------------------
+   4. Middle Grid: Pendapatan Bulanan Chart + Aktivitas Terbaru
+   -------------------------------------------------------------------------- */
+.adm-middle-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+}
+
+.adm-card {
+  background-color: var(--white);
+  border: 1px solid #ECE8DA;
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.adm-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.adm-card-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--black);
+}
+
+.adm-card-subtitle {
+  margin: 3px 0 0;
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: #717972;
+}
+
+.adm-chart-legend {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  color: #414942;
+  white-space: nowrap;
+}
+
+.adm-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #16442B;
+}
+
+/* Bar Chart */
+.adm-chart-box {
+  display: flex;
+  align-items: stretch;
+  gap: 12px;
+  padding-top: 8px;
+}
+
+.adm-chart-yaxis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 24px;
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #8C928D;
+  text-align: right;
+  min-width: 20px;
+}
+
+.adm-chart-plot {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.adm-chart-gridlines {
+  position: absolute;
+  top: 6px;
+  left: 0;
+  right: 0;
+  bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.adm-chart-gridlines span {
+  width: 100%;
+  border-top: 1px dashed #E5E1D3;
+}
+
+.adm-chart-gridlines span.is-base {
+  border-top: 1px solid #DCD7C5;
+}
+
+.adm-chart-bars {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+  align-items: end;
+}
+
+.adm-bar-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.adm-bar-track {
+  width: 100%;
+  height: 185px;
+  padding-top: 6px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+.adm-bar-fill {
+  position: relative;
+  width: 100%;
+  max-width: 44px;
+  border-radius: 8px 8px 0 0;
+  background-color: #A7D7BE;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+  cursor: pointer;
+}
+
+.adm-bar-fill.is-highlight,
+.adm-bar-fill:hover,
+.adm-bar-fill:focus {
+  background-color: #16442B;
+  outline: none;
+}
+
+.adm-bar-tooltip {
+  position: absolute;
+  top: -28px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 3px 8px;
+  border-radius: 6px;
+  background-color: var(--black);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10.5px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.adm-bar-fill:hover .adm-bar-tooltip,
+.adm-bar-fill:focus .adm-bar-tooltip {
+  opacity: 1;
+}
+
+.adm-bar-month {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  color: #6B726C;
+}
+
+/* Aktivitas Terbaru Feed */
+.adm-activity-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.adm-activity-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.adm-activity-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.adm-activity-dot.is-green {
+  background-color: #16A34A;
+}
+
+.adm-activity-dot.is-blue {
+  background-color: #2563EB;
+}
+
+.adm-activity-dot.is-amber {
+  background-color: #D97706;
+}
+
+.adm-activity-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.adm-activity-title {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--black);
+}
+
+.adm-activity-desc {
+  margin: 0;
+  font-family: var(--font-inter);
+  font-size: 12px;
+  line-height: 1.4;
+  color: #555D56;
+}
+
+.adm-activity-time {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #8C928D;
+}
+
+.adm-activity-footer {
+  margin-top: auto;
+  padding-top: 6px;
+  text-align: center;
+}
+
+.adm-text-link {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  color: #16442B;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.adm-text-link:hover {
+  text-decoration: underline;
+}
+
+/* --------------------------------------------------------------------------
+   5. Tabel Permintaan Verifikasi UMKM Terbaru
+   -------------------------------------------------------------------------- */
+.adm-table-wrap {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.adm-table {
+  width: 100%;
+  min-width: 680px;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: 13px;
+}
+
+.adm-table thead tr {
+  background-color: #EFECE0;
+}
+
+.adm-table th {
+  padding: 11px 14px;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0.4px;
+  color: #4D554E;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.adm-table th:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.adm-table th:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+.adm-table td {
+  padding: 13px 14px;
+  color: var(--black);
+  border-bottom: 1px solid #F2EFE6;
+  vertical-align: middle;
+}
+
+.adm-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.adm-table .is-right {
+  text-align: right;
+}
+
+.adm-umkm-cell {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.adm-umkm-monogram {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background-color: #DCECE3;
+  color: #16442B;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.adm-umkm-name {
+  font-weight: 700;
+  color: var(--black);
+}
+
+.adm-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.adm-status-badge.is-pending {
+  background-color: #FEF3C7;
+  color: #B45309;
+}
+
+.adm-status-badge.is-verified {
+  background-color: #DDF3E6;
+  color: #16442B;
+}
+
+.adm-btn-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #DCD9CD;
+  background-color: var(--white);
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  text-decoration: none;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.adm-btn-action:hover {
+  background-color: #16442B;
+  border-color: #16442B;
+  color: var(--white);
+}
+
+.adm-empty-row {
+  text-align: center;
+  padding: 28px 16px !important;
+  color: #8C928D !important;
+}
+
+/* --------------------------------------------------------------------------
+   6. Breakpoints Responsif (Tablet & Desktop >= 768px / >= 1024px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 480px) {
+  .adm-kpi-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+  }
+}
+
+@media (min-width: 768px) {
+  /* Transformasi Bottom Nav menjadi Left Sidebar Bersih */
+  .adm-sidebar {
+    background: #FAF8F0;
+    border-top: none;
+    border-right: 1px solid #ECE8DA;
+    box-shadow: none;
+    padding: 20px 14px;
+  }
+
+  .adm-sidebar-brand {
+    padding: 4px 10px 18px;
+  }
+
+  .adm-brand-text {
+    color: var(--black);
+    font-size: 18px;
+    letter-spacing: -0.3px;
+  }
+
+  .adm-section-label {
+    color: #9CA39D;
+    padding: 6px 12px 10px;
+  }
+
+  .adm-sidebar .nav-item {
+    position: relative;
+    color: #4D554E;
+    border-radius: 10px;
+    padding: 11px 14px;
+  }
+
+  .adm-sidebar .nav-item:hover {
+    background-color: #EFECE0;
+    color: var(--black);
+  }
+
+  .adm-sidebar .nav-item.active {
+    background-color: #E7F5EC;
+    color: #16442B;
+  }
+
+  .adm-sidebar .nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 7px;
+    bottom: 7px;
+    width: 3.5px;
+    border-radius: 0 4px 4px 0;
+    background-color: #16442B;
+  }
+
+  .adm-sidebar .nav-item.active .nav-label {
+    color: #16442B;
+    font-weight: 700;
+  }
+
+  .adm-sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: auto;
+    padding-top: 16px;
+  }
+
+  .adm-logout-form {
+    margin: 0;
+  }
+
+  .adm-logout-btn {
+    width: 100%;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font: inherit;
+    text-align: left;
+  }
+
+  .adm-sidebar-divider {
+    border: 0;
+    border-top: 1px solid #ECE8DA;
+    margin: 10px 4px 12px;
+  }
+
+  .adm-sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 2px 8px;
+  }
+
+  .adm-sidebar-avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: #E7F5EC;
+    color: #16442B;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .adm-sidebar-user-info {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .adm-sidebar-user-info strong {
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--black);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .adm-sidebar-user-info span {
+    font-family: var(--font-inter);
+    font-size: 11px;
+    color: #8C928D;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Topbar & Header Desktop */
+  .adm-mobile-brand,
+  .adm-mobile-account-menu {
+    display: none !important;
+  }
+
+  .adm-topbar-inner {
+    padding: 14px 32px;
+  }
+
+  .adm-main-content {
+    padding: 24px 32px 44px;
+  }
+
+  .adm-dash-header {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .adm-dash-title {
+    font-size: 25px;
+  }
+
+  .adm-dash-actions {
+    display: inline-flex;
+    width: auto;
+  }
+
+  .adm-btn-period,
+  .adm-btn-download {
+    width: auto;
+  }
+
+  .adm-period-dropdown {
+    left: auto;
+    right: 0;
+  }
+}
+
+@media (min-width: 1024px) {
+  .adm-kpi-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .adm-middle-grid {
+    grid-template-columns: 1.55fr 1fr;
+    gap: 20px;
+    align-items: stretch;
+  }
 }
