@@ -11841,6 +11841,2152 @@ body {
 }
 
 /* ==========================================================================
+   TAMBAHAN CSS — Halaman Detail Mitra UMKM (3 Status + Modal)
+   Tempel di bagian paling bawah style.css
+   ========================================================================== */
+
+.btn-tinjau-umkm {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.umkm-back-row {
+  display: flex;
+  align-items: center;
+}
+
+.umkm-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  color: #414942;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.umkm-back-link:hover {
+  color: #16442B;
+}
+
+/* 3 Kartu Statistik Atas */
+.umkm-detail-kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+.umkm-detail-kpi-card {
+  background-color: #F6F1E3;
+  border: 1px solid #EAE3D0;
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.umkm-detail-kpi-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.umkm-detail-kpi-label {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  font-weight: 500;
+  color: #717972;
+}
+
+.umkm-detail-kpi-num {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.1;
+  color: var(--black);
+}
+
+.umkm-detail-kpi-num small {
+  font-size: 14px;
+  font-weight: 600;
+  color: #717972;
+}
+
+.umkm-detail-kpi-sub {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  color: #717972;
+}
+
+.umkm-detail-kpi-sub .star-gold {
+  color: #EAB308;
+}
+
+.umkm-detail-kpi-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background-color: var(--white);
+  border: 1px solid #EAE3D0;
+  color: #16442B;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.umkm-detail-kpi-icon.is-amber {
+  color: #D97706;
+}
+
+.umkm-dot-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.umkm-dot-pill .status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+
+.umkm-dot-pill.is-active {
+  background-color: #DCECE3;
+  color: #16442B;
+}
+
+.umkm-dot-pill.is-pending {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.umkm-dot-pill.is-suspended {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+
+/* Grid Utama 2 Kolom */
+.umkm-detail-main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  align-items: start;
+}
+
+.umkm-info-panel {
+  padding: 22px 24px;
+}
+
+.umkm-profile-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.umkm-detail-monogram {
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background-color: #DCECE3;
+  color: #16442B;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.umkm-profile-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.umkm-profile-title-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+}
+
+.umkm-profile-title-line h2 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 19px;
+  color: var(--black);
+}
+
+.umkm-profile-meta-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 8px;
+  font-family: var(--font-inter);
+  font-size: 12.5px;
+  color: #555D56;
+}
+
+.umkm-profile-meta-line strong {
+  color: var(--black);
+  font-weight: 600;
+}
+
+.umkm-category-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 8px;
+  background-color: #F6F1E3;
+  color: #414942;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11.5px;
+}
+
+.umkm-detail-divider {
+  border: none;
+  border-top: 1px solid #EFECE0;
+  margin: 18px 0;
+}
+
+.umkm-section-heading {
+  margin: 0 0 14px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--black);
+}
+
+.umkm-info-fields-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px 20px;
+}
+
+.umkm-info-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.umkm-info-field.is-full {
+  grid-column: 1 / -1;
+}
+
+.umkm-info-field .field-caption {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  color: #8C928D;
+}
+
+.umkm-info-field .field-val {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--black);
+}
+
+.umkm-info-field .field-val.is-address {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.umkm-desc-cream-box {
+  margin-top: 18px;
+  background-color: #F6F1E3;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.umkm-desc-label {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.5px;
+  color: #717972;
+  margin-bottom: 6px;
+}
+
+.umkm-desc-cream-box p {
+  margin: 0;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  line-height: 1.55;
+  color: #343B35;
+}
+
+/* Kolom Kanan: Dokumen & Kontrol Akun */
+.umkm-detail-side-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.umkm-doc-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.umkm-doc-header .umkm-section-heading {
+  margin: 0;
+}
+
+.umkm-doc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.umkm-doc-badge.is-verified {
+  background-color: #DCECE3;
+  color: #16442B;
+}
+
+.umkm-doc-badge.is-pending {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.umkm-doc-badge.is-rejected {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+
+.umkm-doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.umkm-doc-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 1px solid #EAE6D9;
+  border-radius: 12px;
+  background-color: var(--white);
+}
+
+.umkm-doc-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.umkm-doc-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background-color: #F6F1E3;
+  color: #555D56;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.umkm-doc-meta {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.umkm-doc-meta strong {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  color: var(--black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.umkm-doc-meta span {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #8C928D;
+}
+
+.btn-lihat-dokumen {
+  padding: 6px 11px;
+  border-radius: 8px;
+  border: 1px solid #DCD9CD;
+  background-color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  color: var(--black);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-lihat-dokumen:hover {
+  background-color: #F6F1E3;
+  border-color: #16442B;
+}
+
+/* Status & Kontrol Akun (3 Versi) */
+.umkm-control-head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11.5px;
+  letter-spacing: 0.4px;
+  color: var(--black);
+  margin-bottom: 10px;
+}
+
+.umkm-control-desc {
+  margin: 0 0 14px;
+  font-family: var(--font-inter);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #555D56;
+}
+
+.umkm-control-panel .umkm-control-desc:last-child {
+  margin-bottom: 0;
+}
+
+.btn-suspend-mitra {
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #F5C2C2;
+  background-color: #FFF5F5;
+  color: #DC2626;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-suspend-mitra:hover {
+  background-color: #FEE2E2;
+}
+
+.umkm-verify-btn-row {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 10px;
+}
+
+.umkm-approve-form {
+  margin: 0;
+}
+
+.btn-reject-mitra {
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #F5C2C2;
+  background-color: #FFF5F5;
+  color: #DC2626;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.btn-approve-mitra {
+  width: 100%;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  background-color: #16442B;
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.btn-approve-mitra:hover {
+  background-color: #103320;
+}
+
+.umkm-suspended-note {
+  background-color: #FFF5F5;
+  border: 1px solid #F5C2C2;
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.umkm-suspended-note span {
+  display: block;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  color: #B91C1C;
+  margin-bottom: 3px;
+}
+
+.umkm-suspended-note p {
+  margin: 0;
+  font-family: var(--font-inter);
+  font-size: 12.5px;
+  color: #7F1D1D;
+}
+
+/* Modal Penangguhan & Modal Preview Dokumen */
+.umkm-overlay-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(20, 24, 21, 0.35);
+  backdrop-filter: blur(2px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.umkm-overlay-backdrop.is-hidden {
+  display: none;
+}
+
+.umkm-action-modal,
+.umkm-doc-preview-modal {
+  width: 100%;
+  max-width: 640px;
+  background-color: var(--white);
+  border: 1px solid #EAE6D9;
+  border-radius: 16px;
+  box-shadow: 0 20px 44px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+}
+
+.umkm-action-modal-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #EFECE0;
+}
+
+.umkm-action-modal-top h3 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--black);
+}
+
+.umkm-modal-back-btn {
+  width: 30px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--black);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.umkm-modal-back-btn:hover {
+  background-color: #F6F1E3;
+}
+
+.modal-top-spacer {
+  width: 30px;
+}
+
+.umkm-action-modal-form {
+  padding: 18px 22px 22px;
+  display: flex;
+  flex-direction: column;
+}
+
+.umkm-modal-field-label {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--black);
+  margin-bottom: 8px;
+}
+
+.umkm-modal-reason-box {
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #EAE6D9;
+  background-color: #FAF8F0;
+  padding: 12px 14px;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  color: var(--black);
+  resize: vertical;
+  outline: none;
+}
+
+.umkm-modal-reason-box:focus {
+  border-color: #16442B;
+  background-color: var(--white);
+}
+
+.umkm-modal-confirm-text {
+  margin: 18px 0 14px;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--black);
+}
+
+.umkm-modal-dual-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.btn-modal-outline-neutral {
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #DCD9CD;
+  background-color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  color: var(--black);
+  cursor: pointer;
+}
+
+.btn-modal-outline-neutral:hover {
+  background-color: #F6F1E3;
+}
+
+.btn-modal-outline-danger {
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid #F5C2C2;
+  background-color: #FFF5F5;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  color: #DC2626;
+  cursor: pointer;
+}
+
+.btn-modal-outline-danger:hover {
+  background-color: #FEE2E2;
+}
+
+/* Preview Dokumen Stage */
+.umkm-doc-preview-stage {
+  padding: 20px;
+  background-color: #FAF8F0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 75vh;
+  overflow: auto;
+}
+
+.umkm-doc-preview-stage img {
+  max-width: 100%;
+  max-height: 62vh;
+  border-radius: 10px;
+  object-fit: contain;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Responsif Desktop (>= 768px & >= 1024px) */
+@media (min-width: 768px) {
+  .umkm-detail-kpi-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+  }
+
+  .umkm-info-fields-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .umkm-detail-main-grid {
+    grid-template-columns: 1.65fr 1fr;
+    gap: 18px;
+  }
+}
+
+/* ==========================================================================
+   verifikasi umkm
+   ========================================================================== */
+
+/* 1. Admin Sidebar (Desktop) & Bottom Nav (Mobile) */
+.admin-shell .admin-sidebar {
+  background-color: #FAF8F0;
+  border-top: 1px solid #E5E1D3;
+}
+
+.admin-brand-square {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background-color: #16442B;
+  color: var(--white);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.admin-sidebar-footer {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .admin-shell .admin-sidebar {
+    background: #FAF8F0;
+    border-top: none;
+    border-right: 1px solid #E5E1D3;
+    box-shadow: none;
+    padding: 20px 14px;
+  }
+
+  .admin-shell .sidebar-brand-text {
+    color: var(--black);
+    font-size: 18px;
+    letter-spacing: -0.3px;
+  }
+
+  .admin-shell .sidebar-section-label {
+    color: #8C928D;
+    padding: 10px 12px 8px;
+  }
+
+  .admin-shell .nav-item {
+    position: relative;
+    color: #414942;
+    border-radius: 10px;
+    padding: 11px 14px;
+  }
+
+  .admin-shell .nav-item:hover {
+    background-color: #EFECE0;
+    color: var(--black);
+  }
+
+  .admin-shell .nav-item.active {
+    background-color: #E7F5EC;
+    color: #16442B;
+  }
+
+  .admin-shell .nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 6px;
+    bottom: 6px;
+    width: 3.5px;
+    border-radius: 0 4px 4px 0;
+    background-color: #16442B;
+  }
+
+  .admin-shell .nav-item.active .nav-label {
+    color: #16442B;
+    font-weight: 700;
+  }
+
+  .admin-shell .nav-item svg {
+    color: currentColor;
+    opacity: 1;
+  }
+
+  .admin-sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: auto;
+    padding-top: 14px;
+  }
+
+  .admin-logout-form {
+    margin: 0;
+  }
+
+  .admin-profile-card {
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 1px solid #E5E1D3;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .admin-profile-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: #DCECE3;
+    color: #16442B;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .admin-profile-meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .admin-profile-meta strong {
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--black);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .admin-profile-meta span {
+    font-family: var(--font-inter);
+    font-size: 11px;
+    color: #8C928D;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* 2. Halaman Mitra UMKM — Manajemen Usaha */
+.umkm-mgmt-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+}
+
+.umkm-mgmt-subtitle {
+  font-family: var(--font-inter);
+  font-size: 13px;
+  color: #717972;
+}
+
+.umkm-subtabs {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.umkm-subtabs::-webkit-scrollbar {
+  display: none;
+}
+
+.umkm-subtab {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  color: #555D56;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.umkm-subtab:hover {
+  background-color: #EFECE0;
+  color: var(--black);
+}
+
+.umkm-subtab.is-active {
+  background-color: #16442B;
+  color: var(--white);
+}
+
+/* Toolbar Search & Filter Chips */
+.umkm-filter-toolbar {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.umkm-search-pill {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 40px;
+  padding: 0 14px;
+  background-color: var(--white);
+  border: 1px solid #E5E1D3;
+  border-radius: 11px;
+  color: #717972;
+  width: 100%;
+}
+
+.umkm-search-pill:focus-within {
+  border-color: #16442B;
+  box-shadow: 0 0 0 3px rgba(22, 68, 43, 0.1);
+}
+
+.umkm-search-pill input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  color: var(--black);
+}
+
+.umkm-status-chips {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.umkm-status-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.umkm-chip {
+  height: 34px;
+  padding: 0 14px;
+  border: none;
+  border-radius: 999px;
+  background-color: #EFECE0;
+  color: #414942;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.umkm-chip:hover {
+  background-color: #E4DFC9;
+}
+
+.umkm-chip.is-active {
+  background-color: #16442B;
+  color: var(--white);
+}
+
+/* Sel Tabel Usaha, Rating, Status Badge & Tombol Tinjau */
+.umkm-mgmt-table {
+  min-width: 780px;
+}
+
+.umkm-vendor-cell {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.umkm-monogram {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background-color: #DCECE3;
+  color: #16442B;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11.5px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.umkm-vendor-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.umkm-vendor-info strong {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--black);
+}
+
+.umkm-vendor-info span {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #8C928D;
+}
+
+.umkm-location-cell {
+  max-width: 210px;
+  white-space: normal !important;
+  line-height: 1.35;
+}
+
+.umkm-rating-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+  color: var(--black);
+}
+
+.umkm-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.umkm-status-pill.is-active {
+  background-color: #E3F5EA;
+  color: #16442B;
+}
+
+.umkm-status-pill.is-pending {
+  background-color: #FEF3C7;
+  color: #92400E;
+}
+
+.umkm-status-pill.is-suspended {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+
+.btn-tinjau-umkm {
+  padding: 6px 14px;
+  border-radius: 8px;
+  border: 1px solid #DCD9CD;
+  background-color: #FAF8F0;
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-tinjau-umkm:hover {
+  background-color: #16442B;
+  border-color: #16442B;
+  color: var(--white);
+}
+
+/* Modal Detail & Keputusan Verifikasi */
+.umkm-modal-detail-box {
+  background-color: var(--white);
+  border: 1px solid #E5E0CE;
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px 14px;
+}
+
+.umkm-detail-pair {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.umkm-detail-pair.is-full {
+  grid-column: 1 / -1;
+}
+
+.umkm-detail-pair span {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #717972;
+}
+
+.umkm-detail-pair strong {
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--black);
+}
+
+.umkm-detail-pair p {
+  margin: 0;
+  font-family: var(--font-inter);
+  font-size: 12.5px;
+  line-height: 1.45;
+  color: #414942;
+}
+
+.umkm-decision-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.umkm-decision-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background-color: var(--white);
+  border: 1.5px solid #DCD7C5;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.umkm-decision-option.is-approve input {
+  accent-color: #16442B;
+}
+
+.umkm-decision-option.is-reject input {
+  accent-color: #DC2626;
+}
+
+/* Responsif Desktop (>= 768px) */
+@media (min-width: 768px) {
+  .umkm-filter-toolbar {
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .umkm-search-pill {
+    max-width: 280px;
+  }
+}
+
+/* Responsif Mobile Kecil (<= 480px) */
+@media (max-width: 480px) {
+  .umkm-modal-detail-box,
+  .umkm-decision-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   Halaman Ulasan Pelanggan (Plan2Eat Design System)
+   ========================================================================== */
+.uls-page {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    width: 100%;
+}
+
+/* Back link */
+.uls-back-row {
+    display: flex;
+    align-items: center;
+}
+
+.uls-back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: var(--black, #1C1C11);
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 600;
+    font-size: 14.5px;
+    letter-spacing: -0.2px;
+    transition: color 0.2s ease, transform 0.1s ease;
+}
+
+.uls-back-link:hover {
+    color: var(--forest-green, #05371F);
+}
+
+.uls-back-link:active {
+    transform: translateX(-2px);
+}
+
+/* Hero Banner Header */
+.uls-hero-card {
+    position: relative;
+    overflow: hidden;
+    background-color: #EFECE0;
+    border: 1px solid #E4DFC9;
+    border-radius: 22px;
+    padding: 20px 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.uls-hero-top {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    position: relative;
+    z-index: 2;
+}
+
+.uls-hero-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 999px;
+    background-color: #C7EBD6;
+    color: #16442B;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 11.5px;
+}
+
+.uls-hero-title {
+    margin: 0;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 800;
+    font-size: 21px;
+    line-height: 1.25;
+    letter-spacing: -0.4px;
+    color: #16442B;
+}
+
+.uls-hero-sub {
+    margin: 0;
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-size: 13px;
+    line-height: 1.5;
+    color: #4D554E;
+    max-width: 620px;
+}
+
+/* Strip Statistik Ringkas */
+.uls-stats-strip {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    background-color: var(--card-cream, #F7F3EA);
+    border: 1px solid #E2DEC9;
+    border-radius: 16px;
+    padding: 12px 8px;
+}
+
+.uls-stat-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+    border-right: 1px solid #E2DEC9;
+    padding: 0 6px;
+    text-align: center;
+}
+
+.uls-stat-box:last-child {
+    border-right: none;
+}
+
+.uls-stat-num {
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 800;
+    font-size: 18px;
+    color: #16442B;
+    line-height: 1.2;
+}
+
+.uls-stat-num.is-amber {
+    color: #B45309;
+}
+
+.uls-stat-label {
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-size: 11px;
+    font-weight: 500;
+    color: #555D56;
+}
+
+/* Toast / Alert Session & Validasi */
+.uls-alert {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 16px;
+    border-radius: 16px;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.45;
+}
+
+.uls-alert svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+}
+
+.uls-alert.is-success {
+    background-color: #D3F3DF;
+    border: 1px solid #A7E3BE;
+    color: #16442B;
+}
+
+.uls-alert.is-error {
+    background-color: #FDECEC;
+    border: 1px solid #FBCACA;
+    color: #B42318;
+}
+
+.uls-alert ul {
+    margin: 0;
+    padding-left: 16px;
+}
+
+/* Filter Chips */
+.uls-chips {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+}
+
+.uls-chips::-webkit-scrollbar {
+    display: none;
+}
+
+.uls-chip {
+    flex-shrink: 0;
+    height: 38px;
+    padding: 0 16px;
+    border: 1px solid #E2DEC9;
+    border-radius: 999px;
+    background-color: #EFECE0;
+    color: #3A423B;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 600;
+    font-size: 12.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.uls-chip:hover {
+    background-color: #E6E0CB;
+}
+
+.uls-chip.is-active {
+    background-color: #16442B;
+    border-color: #16442B;
+    color: var(--white, #FFFFFF);
+}
+
+.uls-chip-count {
+    padding: 2px 7px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    background-color: rgba(28, 28, 17, 0.08);
+}
+
+.uls-chip.is-active .uls-chip-count {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: var(--white, #FFFFFF);
+}
+
+/* Grid Daftar Kartu Pesanan & Ulasan */
+.uls-cards-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.uls-card {
+    background-color: var(--white, #FFFFFF);
+    border: 1px solid #ECE8DA;
+    border-radius: 22px;
+    padding: 18px;
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.055);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.uls-card:hover {
+    box-shadow: 0 10px 26px rgba(5, 55, 31, 0.08);
+}
+
+.uls-card.is-hidden {
+    display: none !important;
+}
+
+/* Bagian Atas Kartu: Info Pesanan & UMKM */
+.uls-order-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 12px;
+    padding-bottom: 14px;
+    border-bottom: 1px dashed #E2DEC9;
+}
+
+.uls-vendor-group {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    min-width: 0;
+}
+
+.uls-vendor-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
+    background-color: #E6F4EC;
+    color: #16442B;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.uls-order-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.uls-order-id-row {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-size: 11.5px;
+    font-weight: 700;
+    color: #16442B;
+}
+
+.uls-vendor-name {
+    margin: 0;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 800;
+    font-size: 16.5px;
+    line-height: 1.25;
+    color: var(--black, #1C1C11);
+}
+
+.uls-order-sub {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 10px;
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-size: 12px;
+    color: var(--gray, #717972);
+}
+
+.uls-order-sub strong {
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    color: var(--black, #1C1C11);
+}
+
+/* Status Pill */
+.uls-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 11px;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.uls-status-pill .dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+}
+
+.uls-status-pill.is-pending {
+    background-color: #FEF3C7;
+    color: #92400E;
+}
+
+.uls-status-pill.is-reviewed {
+    background-color: #D3F3DF;
+    color: #16442B;
+}
+
+/* Form Input Ulasan */
+.uls-form {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+}
+
+.uls-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.uls-label {
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--black, #1C1C11);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.uls-label span.optional {
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-weight: 400;
+    font-size: 11.5px;
+    color: var(--gray, #717972);
+}
+
+/* Star Picker Interaktif */
+.uls-star-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 14px;
+    border-radius: 14px;
+    background-color: #F6F3EB;
+    border: 1px solid #EAE6D8;
+}
+
+.uls-stars-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.uls-star-radio {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.uls-star-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background-color: var(--white, #FFFFFF);
+    border: 1.5px solid #E5E0CE;
+    color: #C7C5B8;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.12s ease, color 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+}
+
+.uls-star-btn:hover {
+    transform: scale(1.06);
+}
+
+.uls-star-btn.is-active {
+    background-color: #FFFBEB;
+    border-color: #F59E0B;
+    color: #F59E0B;
+}
+
+.uls-rating-caption {
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 12px;
+    color: #555D56;
+}
+
+.uls-rating-caption.has-value {
+    color: #B45309;
+}
+
+/* Textarea Cream */
+.uls-textarea-wrap {
+    padding: 12px 14px;
+    border-radius: 14px;
+    background-color: #F6F3EB;
+    border: 1.5px solid transparent;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.uls-textarea-wrap:focus-within {
+    background-color: var(--white, #FFFFFF);
+    border-color: #16442B;
+}
+
+.uls-textarea {
+    width: 100%;
+    min-height: 84px;
+    border: none;
+    background: transparent;
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--black, #1C1C11);
+    resize: vertical;
+    outline: none;
+}
+
+.uls-textarea::placeholder {
+    color: #8C928D;
+}
+
+/* Upload Foto */
+.uls-upload-zone {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 14px;
+    border-radius: 14px;
+    background-color: #FAF8F2;
+    border: 1.5px dashed #CFC9B6;
+    cursor: pointer;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.uls-upload-zone:hover {
+    border-color: #16442B;
+    background-color: #F3EFE2;
+}
+
+.uls-file-input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+    width: 100%;
+    height: 100%;
+}
+
+.uls-upload-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background-color: #E6F4EC;
+    color: #16442B;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.uls-upload-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+}
+
+.uls-upload-text strong {
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 12.5px;
+    color: var(--black, #1C1C11);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.uls-upload-text span {
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-size: 11px;
+    color: var(--gray, #717972);
+}
+
+.uls-preview-box {
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background-color: #F6F3EB;
+    border: 1px solid #E5E0CE;
+}
+
+.uls-preview-box.is-visible {
+    display: flex;
+}
+
+.uls-preview-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+}
+
+.uls-preview-thumb {
+    width: 48px;
+    height: 48px;
+    border-radius: 9px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background-color: #E2DEC9;
+}
+
+.uls-preview-name {
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--black, #1C1C11);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.uls-btn-clear-file {
+    padding: 5px 10px;
+    border-radius: 8px;
+    border: 1px solid #F5C2C2;
+    background-color: #FFF5F5;
+    color: #DC2626;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 11px;
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    z-index: 2;
+}
+
+/* Tombol Submit */
+.uls-btn-primary {
+    width: 100%;
+    height: 46px;
+    padding: 0 20px;
+    border: none;
+    border-radius: 14px;
+    background-color: #16442B;
+    color: var(--white, #FFFFFF);
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 13.5px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(22, 68, 43, 0.2);
+    transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.uls-btn-primary:hover {
+    background-color: var(--forest-green, #05371F);
+}
+
+.uls-btn-primary:active {
+    transform: scale(0.99);
+}
+
+/* Tampilan Ulasan yang Sudah Dikirim */
+.uls-review-box {
+    background-color: var(--card-cream, #F7F3EA);
+    border: 1px solid #EAE4D2;
+    border-radius: 16px;
+    padding: 15px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+}
+
+.uls-review-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.uls-rendered-stars {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.uls-star-icon.is-filled {
+    color: #F59E0B;
+}
+
+.uls-star-icon.is-empty {
+    color: #D4D0C2;
+}
+
+.uls-score-badge {
+    margin-left: 4px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background-color: #FEF3C7;
+    color: #92400E;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 800;
+    font-size: 11px;
+}
+
+.uls-review-text {
+    margin: 0;
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-size: 13.5px;
+    line-height: 1.55;
+    color: var(--black, #1C1C11);
+}
+
+.uls-review-text.is-muted {
+    color: var(--gray, #717972);
+    font-style: italic;
+}
+
+.uls-review-photo-wrap {
+    align-self: flex-start;
+    position: relative;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1.5px solid #E2DEC9;
+    cursor: zoom-in;
+}
+
+.uls-review-photo {
+    width: 112px;
+    height: 112px;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.25s ease;
+}
+
+.uls-review-photo-wrap:hover .uls-review-photo {
+    transform: scale(1.05);
+}
+
+.uls-review-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 9px;
+    padding-top: 8px;
+    border-top: 1px solid #E6E0CE;
+}
+
+.uls-btn-edit {
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid #DCD7C5;
+    background-color: var(--white, #FFFFFF);
+    color: #16442B;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.uls-btn-edit:hover {
+    background-color: #E6F4EC;
+    border-color: #16442B;
+}
+
+.uls-btn-delete {
+    height: 36px;
+    padding: 0 14px;
+    border-radius: 10px;
+    border: 1px solid #FBCACA;
+    background-color: #FDECEC;
+    color: #DC2626;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 12px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.uls-btn-delete:hover {
+    background-color: #FBD8D8;
+}
+
+/* Form Edit Tersembunyi */
+.uls-edit-drawer {
+    display: none;
+    padding-top: 14px;
+    border-top: 1px dashed #DCD7C5;
+}
+
+.uls-edit-drawer.is-open {
+    display: block;
+}
+
+.uls-edit-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+}
+
+.uls-edit-title {
+    margin: 0;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 800;
+    font-size: 14px;
+    color: #16442B;
+}
+
+.uls-edit-btn-row {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 10px;
+}
+
+.uls-btn-cancel {
+    height: 44px;
+    border-radius: 13px;
+    border: 1px solid #DCD7C5;
+    background-color: var(--white, #FFFFFF);
+    color: #414942;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.uls-btn-cancel:hover {
+    background-color: #F3EFE2;
+}
+
+.uls-btn-save-edit {
+    height: 44px;
+    border: none;
+    border-radius: 13px;
+    background-color: #16442B;
+    color: var(--white, #FFFFFF);
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(22, 68, 43, 0.2);
+}
+
+.uls-btn-save-edit:hover {
+    background-color: var(--forest-green, #05371F);
+}
+
+/* Empty State */
+.uls-empty-card {
+    background-color: var(--white, #FFFFFF);
+    border: 1px dashed #D6D0BE;
+    border-radius: 22px;
+    padding: 42px 22px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.uls-empty-icon {
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    background-color: #E6F4EC;
+    color: #16442B;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.uls-empty-card h3 {
+    margin: 0;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 800;
+    font-size: 17px;
+    color: var(--black, #1C1C11);
+}
+
+.uls-empty-card p {
+    margin: 0;
+    max-width: 360px;
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--gray, #717972);
+}
+
+/* Modal Lightbox Foto & Konfirmasi Hapus */
+.uls-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background-color: rgba(28, 28, 17, 0.55);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+}
+
+.uls-modal-backdrop.is-hidden {
+    display: none;
+}
+
+.uls-modal-box {
+    width: 100%;
+    max-width: 400px;
+    background-color: var(--bg-cream, #FCFAE7);
+    border: 1px solid #E5E0CE;
+    border-radius: 22px;
+    padding: 22px;
+    box-shadow: 0 20px 44px rgba(0, 0, 0, 0.22);
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    text-align: center;
+}
+
+.uls-modal-danger-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto;
+    border-radius: 14px;
+    background-color: #FDECEC;
+    color: #DC2626;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.uls-modal-box h4 {
+    margin: 0;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 800;
+    font-size: 17px;
+    color: var(--black, #1C1C11);
+}
+
+.uls-modal-box p {
+    margin: 0;
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-size: 13px;
+    line-height: 1.5;
+    color: #555D56;
+}
+
+.uls-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.uls-btn-confirm-del {
+    height: 42px;
+    border: none;
+    border-radius: 12px;
+    background-color: #DC2626;
+    color: var(--white, #FFFFFF);
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.uls-lightbox-img {
+    max-width: 92vw;
+    max-height: 82vh;
+    border-radius: 16px;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+}
+
+/* Responsif Desktop (>= 768px) */
+@media (min-width: 768px) {
+    .uls-page {
+        gap: 22px;
+    }
+
+    .uls-hero-card {
+        padding: 24px 28px;
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        gap: 24px;
+    }
+
+    .uls-hero-title {
+        font-size: 24px;
+    }
+
+    .uls-stats-strip {
+        min-width: 310px;
+        padding: 14px 12px;
+    }
+
+    .uls-cards-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 22px;
+        align-items: start;
+    }
+
+    .uls-card {
+        padding: 22px;
+    }
+}
+
+/* ==========================================================================
    TAMBAHAN style.css — Admin Manajemen Mitra UMKM (Responsive Mobile & Desktop)
    Tempel di bagian paling bawah style.css
    ========================================================================== */
@@ -13737,4 +15883,232 @@ body {
   .apu-orders-table {
     min-width: 820px;
   }
+}
+
+/* ==========================================================================
+   Komponen Pembatalan Pesanan Pelanggan 
+   ========================================================================== */
+.btl-action-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.btl-btn-trigger {
+    height: 40px;
+    padding: 0 18px;
+    border-radius: 12px;
+    background-color: #FFF5F5;
+    border: 1px solid #F8CACA;
+    color: #DC2626;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 13px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+}
+
+.btl-btn-trigger:hover {
+    background-color: #FEE2E2;
+    border-color: #F2A7A7;
+}
+
+.btl-btn-trigger:active {
+    transform: scale(0.98);
+}
+
+/* Backdrop Blur Pop-up */
+.btl-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 1100;
+    background-color: rgba(28, 28, 17, 0.5);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.btl-modal-backdrop.is-hidden {
+    display: none;
+}
+
+/* Kotak Dialog Modal */
+.btl-modal-box {
+    width: 100%;
+    max-width: 440px;
+    background-color: var(--bg-cream, #FCFAE7);
+    border: 1px solid #E5E0CE;
+    border-radius: 24px;
+    padding: 28px 26px;
+    box-shadow: 0 24px 52px rgba(0, 0, 0, 0.22);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.btl-modal-head {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 12px;
+}
+
+.btl-modal-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+    background-color: #FDECEC;
+    border: 1px solid #FBCACA;
+    color: #DC2626;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btl-modal-title {
+    margin: 0;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 800;
+    font-size: 19.5px;
+    line-height: 1.3;
+    letter-spacing: -0.3px;
+    color: var(--black, #1C1C11);
+}
+
+.btl-modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+.btl-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btl-label {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 13.5px;
+    color: var(--black, #1C1C11);
+}
+
+.btl-required {
+    padding: 2px 8px;
+    border-radius: 999px;
+    background-color: #FDECEC;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 11px;
+    color: #DC2626;
+}
+
+.btl-textarea-wrap {
+    padding: 14px 16px;
+    border-radius: 14px;
+    background-color: var(--white, #FFFFFF);
+    border: 1.5px solid #DCD7C5;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btl-textarea-wrap:focus-within {
+    border-color: #16442B;
+    box-shadow: 0 0 0 3px rgba(22, 68, 43, 0.08);
+}
+
+.btl-textarea {
+    width: 100%;
+    min-height: 100px;
+    border: none;
+    background: transparent;
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--black, #1C1C11);
+    resize: vertical;
+    outline: none;
+}
+
+.btl-textarea::placeholder {
+    color: #969B96;
+}
+
+.btl-confirm-box {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 13px 15px;
+    border-radius: 14px;
+    background-color: #FEF3C7;
+    border: 1px solid #FDE68A;
+    color: #92400E;
+}
+
+.btl-confirm-box svg {
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+.btl-confirm-box p {
+    margin: 0;
+    font-family: var(--font-inter, 'Inter', sans-serif);
+    font-size: 12.5px;
+    line-height: 1.55;
+}
+
+.btl-modal-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 2px;
+}
+
+.btl-btn-no {
+    height: 46px;
+    border-radius: 14px;
+    border: 1px solid #DCD7C5;
+    background-color: var(--white, #FFFFFF);
+    color: #3A423B;
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.btl-btn-no:hover {
+    background-color: #F3EFE2;
+}
+
+.btl-btn-yes {
+    height: 46px;
+    border: none;
+    border-radius: 14px;
+    background-color: #DC2626;
+    color: var(--white, #FFFFFF);
+    font-family: var(--font-sans, 'Plus Jakarta Sans', sans-serif);
+    font-weight: 700;
+    font-size: 13.5px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.22);
+    transition: background-color 0.15s ease;
+}
+
+.btl-btn-yes:hover {
+    background-color: #B91C1C;
 }

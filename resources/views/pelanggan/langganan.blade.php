@@ -333,8 +333,8 @@
                     </div>
                 </div>
 
-                {{-- Tombol Detail Pesanan --}}
-                <div class="lgn-contact-wrap">
+                {{-- Tombol Detail & Batalkan Pesanan --}}
+                <div class="lgn-contact-wrap btl-action-row">
                     <a href="{{ $order['detail_url'] }}" class="lgn-btn-contact">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -344,6 +344,29 @@
                         </svg>
                         <span>Lihat Detail Pesanan</span>
                     </a>
+
+                    @php
+                        $orderId = $order['id_pesanan'] ?? ($order['id'] ?? null);
+                        $cancelUrl = ($orderId && Route::has('pelanggan.pesanan-batal'))
+                            ? route('pelanggan.pesanan-batal', $orderId)
+                            : '#';
+                    @endphp
+
+                    <button
+                        type="button"
+                        class="btl-btn-trigger"
+                        onclick="openCancelModal(this)"
+                        data-mitra="{{ $order['mitra_name'] }}"
+                        data-menu="{{ $order['menu_name'] }}"
+                        data-action="{{ $cancelUrl }}"
+                    >
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="15" y1="9" x2="9" y2="15"/>
+                            <line x1="9" y1="9" x2="15" y2="15"/>
+                        </svg>
+                        <span>Batalkan Pesanan</span>
+                    </button>
                 </div>
             </div>
         @endif
@@ -478,6 +501,7 @@
             </div>
         </div>
     </section>
+    @include('pelanggan.pembatalan')
 </div>
 @endsection
 

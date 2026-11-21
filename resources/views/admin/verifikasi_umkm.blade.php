@@ -1,183 +1,467 @@
-@extends('layouts.main') <!-- Sesuaikan dengan nama layout utamamu -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mitra UMKM - Manajemen Usaha | Plan2Eat Admin</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
+</head>
+<body class="app-shell admin-shell">
+<div class="app-layout">
 
-@section('title', 'Verifikasi UMKM')
-@section('page_badge', 'Verifikasi UMKM')
+    {{-- Sidebar / Bottom Navigation --}}
+    @include('admin.nav')
 
-@section('content')
-<div class="verifikasi-container">
-    <h2>Daftar Pengajuan UMKM</h2>
+    {{-- Area Konten Utama --}}
+    <div class="app-content-wrapper">
+        {{-- Topbar Breadcrumb & User --}}
+        <header class="app-header admin-header">
+            <div class="admin-header-inner">
+                <div class="admin-header-left">
+                    <span class="admin-mobile-logo-badge mobile-only-brand" aria-hidden="true">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4">
+                            <circle cx="12" cy="12" r="8"/>
+                            <path d="M12 8c2.2 0 4 1.8 4 4s-1.8 4-4 4"/>
+                        </svg>
+                    </span>
+                    <nav class="admin-breadcrumb" aria-label="Breadcrumb">
+                        <span class="breadcrumb-parent">Admin</span>
+                        <span class="breadcrumb-sep">/</span>
+                        <span class="breadcrumb-parent">Mitra UMKM</span>
+                        <span class="breadcrumb-sep">/</span>
+                        <span class="breadcrumb-current">Manajemen Usaha</span>
+                    </nav>
+                </div>
 
-    <!-- Pesan Sukses -->
-    @if(session('success'))
-        <div class="alert-success">
-            {{ session('success') }}
-        </div>
-    @endif
+                <div class="admin-header-right">
+                    <button type="button" class="btn-notification admin-notif-btn" aria-label="Notifikasi">
+                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
+                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+                        </svg>
+                    </button>
+                    <div class="admin-user-chip">
+                        <span class="admin-greeting-text">Halo, Admin</span>
+                        <span class="admin-initial-avatar">
+                            {{ strtoupper(substr(auth()->user()->nama_lengkap ?? 'A', 0, 1)) }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
 
-    <div class="table-responsive">
-        <table class="data-table">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Nama Vendor</th>
-                    <th>Pemilik (User)</th>
-                    <th>Status</th>
-                    <th>Aksi</th>
-                </tr>
-            </thead>
-            <tbody>
-                @forelse($umkmList as $umkm)
-                <tr>
-                    <td>#{{ $umkm->id_umkm }}</td>
-                    <td>{{ $umkm->nama_vendor }}</td>
-                    <td>{{ $umkm->user->nama_lengkap ?? 'User Dihapus' }}</td>
-                    <td>
-                        <!-- BAGIAN INI YANG DIUBAH UNTUK ENUM -->
-                        @if($umkm->status_verifikasi == 'disetujui')
-                            <span class="badge badge-success">Disetujui</span>
-                        @elseif($umkm->status_verifikasi == 'ditolak')
-                            <span class="badge badge-danger" style="background: #dc3545; color: white;">Ditolak</span>
-                        @elseif($umkm->status_verifikasi == 'ditangguhkan')
-                            <span class="badge" style="background: #fd7e14; color: white;">Ditangguhkan</span>
-                        @else
-                            <span class="badge badge-warning">Menunggu</span>
-                        @endif
-                    </td>
-                    <td>
-                        <!-- Tombol Buka Modal -->
-                        <button type="button" class="btn-detail" 
-                            onclick="bukaModalVerifikasi(
-                                {{ $umkm->id_umkm }}, 
-                                '{{ addslashes($umkm->nama_vendor) }}', 
-                                '{{ addslashes($umkm->deskripsi_toko) }}',
-                                '{{ addslashes($umkm->alamat_lengkap) }}',
-                                '{{ $umkm->status_verifikasi }}' 
-                            )">
-                            Detail & Tinjau
-                        </button>
-                    </td>
-                </tr>
-                @empty
-                <tr>
-                    <td colspan="5" style="text-align: center;">Belum ada data pengajuan UMKM.</td>
-                </tr>
-                @endforelse
-            </tbody>
-        </table>
+        {{-- Main Content --}}
+        <main class="app-main-content admin-main-content">
+            @php
+                $collection = collect($umkmList ?? []);
+                $totalMitra = $collection->count();
+                $totalAktif = $collection->where('status_verifikasi', 'disetujui')->count();
+                $totalDitangguhkan = $collection->where('status_verifikasi', 'ditolak')->count();
+                $totalMenunggu = $totalMitra - $totalAktif - $totalDitangguhkan;
+            @endphp
+
+            @if(session('success'))
+                <div class="mm-toast is-success" role="alert">{{ session('success') }}</div>
+            @endif
+            @if($errors->any())
+                <div class="mm-toast is-error" role="alert">{{ $errors->first() }}</div>
+            @endif
+
+            <div class="admin-dashboard">
+                {{-- Header Judul --}}
+                <div class="umkm-mgmt-title-row">
+                    <h1 class="admin-page-title">Mitra UMKM</h1>
+                    <span class="umkm-mgmt-subtitle">Kelola mitra dan profil usaha.</span>
+                </div>
+
+                {{-- Sub-navigasi Tab --}}
+                <div class="umkm-subtabs" role="tablist">
+                    <button type="button" class="umkm-subtab is-active" data-subtab="usaha">Manajemen Usaha</button>
+                    <button type="button" class="umkm-subtab" data-subtab="menu">Menu &amp; Paket</button>
+                    <button type="button" class="umkm-subtab" data-subtab="transaksi">Transaksi</button>
+                </div>
+
+                {{-- Search & Filter Pills --}}
+                <div class="umkm-filter-toolbar">
+                    <div class="umkm-search-pill">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <circle cx="11" cy="11" r="8"/>
+                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        </svg>
+                        <input type="search" id="umkmSearchInput" placeholder="Cari nama usaha..." aria-label="Cari nama usaha">
+                    </div>
+
+                    <div class="umkm-status-chips" role="group" aria-label="Filter status mitra">
+                        <button type="button" class="umkm-chip is-active" data-filter="semua">Semua</button>
+                        <button type="button" class="umkm-chip" data-filter="aktif">Aktif</button>
+                        <button type="button" class="umkm-chip" data-filter="menunggu">Menunggu verifikasi</button>
+                        <button type="button" class="umkm-chip" data-filter="ditangguhkan">Ditangguhkan</button>
+                    </div>
+                </div>
+
+                {{-- 4 Kartu KPI --}}
+                <section class="admin-kpi-grid" aria-label="Ringkasan Mitra UMKM">
+                    <div class="admin-kpi-card">
+                        <div class="admin-kpi-top">
+                            <span class="admin-kpi-label">Total mitra</span>
+                            <span class="admin-kpi-icon" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 9l1.5-5h15L21 9"/>
+                                    <path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/>
+                                    <path d="M5 12v8h14v-8"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <span class="admin-kpi-value">{{ number_format($totalMitra, 0, ',', '.') }}</span>
+                    </div>
+
+                    <div class="admin-kpi-card">
+                        <div class="admin-kpi-top">
+                            <span class="admin-kpi-label">Aktif</span>
+                            <span class="admin-kpi-icon" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="9"/>
+                                    <polyline points="9 12 11 14 15 10"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <span class="admin-kpi-value">{{ number_format($totalAktif, 0, ',', '.') }}</span>
+                    </div>
+
+                    <div class="admin-kpi-card">
+                        <div class="admin-kpi-top">
+                            <span class="admin-kpi-label">Menunggu verifikasi</span>
+                            <span class="admin-kpi-icon" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="9"/>
+                                    <polyline points="12 7 12 12 15 14"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <span class="admin-kpi-value">{{ number_format($totalMenunggu, 0, ',', '.') }}</span>
+                    </div>
+
+                    <div class="admin-kpi-card">
+                        <div class="admin-kpi-top">
+                            <span class="admin-kpi-label">Ditangguhkan</span>
+                            <span class="admin-kpi-icon" aria-hidden="true">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="12" cy="12" r="9"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                            </span>
+                        </div>
+                        <span class="admin-kpi-value">{{ number_format($totalDitangguhkan, 0, ',', '.') }}</span>
+                    </div>
+                </section>
+
+                {{-- Panel Daftar Mitra UMKM --}}
+                <section class="admin-panel-card">
+                    <div class="admin-panel-head">
+                        <h2 class="admin-panel-title">Daftar mitra UMKM</h2>
+                        <span class="admin-pagination-info" id="umkmTotalText">{{ $totalMitra }} data</span>
+                    </div>
+
+                    <div class="admin-table-responsive">
+                        <table class="admin-report-table umkm-mgmt-table">
+                            <thead>
+                                <tr>
+                                    <th>Usaha</th>
+                                    <th>Lokasi</th>
+                                    <th>Kategori</th>
+                                    <th>Rating</th>
+                                    <th>Pesanan bulan ini</th>
+                                    <th>Status</th>
+                                    <th>Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="umkmTableBody">
+                                @forelse($collection as $item)
+                                    @php
+                                        $rawStatus = strtolower($item->status_verifikasi ?? 'menunggu');
+                                        if ($rawStatus === 'disetujui') {
+                                            $filterKey = 'aktif';
+                                            $statusLabel = 'Aktif';
+                                            $badgeClass = 'is-active';
+                                        } elseif ($rawStatus === 'ditolak') {
+                                            $filterKey = 'ditangguhkan';
+                                            $statusLabel = 'Ditangguhkan';
+                                            $badgeClass = 'is-suspended';
+                                        } else {
+                                            $filterKey = 'menunggu';
+                                            $statusLabel = 'Menunggu verifikasi';
+                                            $badgeClass = 'is-pending';
+                                        }
+
+                                        $words = preg_split('/\s+/', trim($item->nama_vendor ?? 'UM'));
+                                        $initials = strtoupper(
+                                            substr($words[0] ?? 'U', 0, 1) .
+                                            substr($words[1] ?? ($words[0] ?? 'M'), 0, 1)
+                                        );
+
+                                        $ownerName = $item->user->nama_lengkap ?? 'Pemilik Mitra';
+                                        $ownerEmail = $item->user->email ?? '-';
+                                        $kategori = $item->kategori ?? 'Katering Sehat';
+                                        $rating = isset($item->rating) && $item->rating > 0
+                                            ? number_format((float) $item->rating, 1, ',', '.')
+                                            : '—';
+                                        $pesananBulanIni = $item->pesanan_bulan_ini ?? ($item->pesanan_count ?? 0);
+                                        $actionUrl = Route::has('admin.umkm-verifikasi')
+                                            ? route('admin.umkm-verifikasi', $item->id_umkm)
+                                            : url('/admin/umkm/' . $item->id_umkm . '/verifikasi');
+                                    @endphp
+                                    <tr class="umkm-row"
+                                        data-status="{{ $filterKey }}"
+                                        data-search="{{ strtolower(($item->nama_vendor ?? '') . ' ' . $ownerName . ' ' . ($item->alamat_lengkap ?? '')) }}">
+                                        <td>
+                                            <div class="umkm-vendor-cell">
+                                                <span class="umkm-monogram">{{ $initials }}</span>
+                                                <div class="umkm-vendor-info">
+                                                    <strong>{{ $item->nama_vendor }}</strong>
+                                                    <span>Pemilik: {{ $ownerName }}</span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="umkm-location-cell">{{ $item->alamat_lengkap }}</td>
+                                        <td>{{ $kategori }}</td>
+                                        <td>
+                                            <span class="umkm-rating-cell">
+                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                                                </svg>
+                                                {{ $rating }}
+                                            </span>
+                                        </td>
+                                        <td>{{ number_format((int) $pesananBulanIni, 0, ',', '.') }}</td>
+                                        <td>
+                                            <span class="umkm-status-pill {{ $badgeClass }}">{{ $statusLabel }}</span>
+                                        </td>
+                                        <td>
+                                            <button type="button"
+                                                    class="btn-tinjau-umkm"
+                                                    data-action="{{ $actionUrl }}"
+                                                    data-nama="{{ $item->nama_vendor }}"
+                                                    data-pemilik="{{ $ownerName }}"
+                                                    data-email="{{ $ownerEmail }}"
+                                                    data-alamat="{{ $item->alamat_lengkap }}"
+                                                    data-deskripsi="{{ $item->deskripsi_toko ?? 'Tidak ada deskripsi toko.' }}"
+                                                    data-jam="{{ substr($item->jam_buka ?? '08:00', 0, 5) }} - {{ substr($item->jam_tutup ?? '20:00', 0, 5) }} WIB"
+                                                    data-pembayaran="{{ $item->metode_pembayaran ?? '-' }}"
+                                                    data-status="{{ $rawStatus }}"
+                                                    data-catatan="{{ $item->catatan ?? '' }}">
+                                                Tinjau
+                                            </button>
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr id="umkmEmptyServerRow">
+                                        <td colspan="7" class="text-center" style="padding: 28px 14px; color: #717972;">
+                                            Belum ada data mitra UMKM terdaftar.
+                                        </td>
+                                    </tr>
+                                @endforelse
+                                <tr id="umkmNoMatchRow" class="is-hidden">
+                                    <td colspan="7" class="text-center" style="padding: 28px 14px; color: #717972;">
+                                        Tidak ada mitra UMKM yang sesuai dengan pencarian atau filter.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    {{-- Footer Pagination --}}
+                    <div class="admin-table-footer">
+                        <span class="admin-pagination-info" id="umkmShowingInfo">
+                            Menampilkan {{ $totalMitra > 0 ? '1–' . $totalMitra : '0' }} dari {{ $totalMitra }}
+                        </span>
+                        <div class="admin-pagination-nav" aria-label="Navigasi Halaman">
+                            <button type="button" class="page-arrow-btn" aria-label="Sebelumnya">&lsaquo;</button>
+                            <button type="button" class="page-num-btn is-active">1</button>
+                            <button type="button" class="page-num-btn">2</button>
+                            <button type="button" class="page-num-btn">3</button>
+                            <span class="page-ellipsis">...</span>
+                            <button type="button" class="page-arrow-btn" aria-label="Berikutnya">&rsaquo;</button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
     </div>
 </div>
 
-<!-- ========================================== -->
-<!-- MODAL DETAIL VERIFIKASI UMKM -->
-<!-- ========================================== -->
-<div id="modalVerifikasi" class="modal-overlay" style="display: none;">
-    <div class="modal-content modal-lg">
-        <h3 style="margin-top: 0;">Detail Peninjauan Berkas UMKM</h3>
-        
-        <div class="detail-berkas">
-            <p><strong>Nama Vendor:</strong> <span id="modal-nama"></span></p>
-            <p><strong>Deskripsi:</strong> <span id="modal-deskripsi"></span></p>
-            <p><strong>Alamat:</strong> <span id="modal-alamat"></span></p>
-            
-            <div class="foto-toko-box">
-                <p><strong>Foto Toko / Berkas:</strong></p>
-                <!-- Asumsi foto statis, ganti src dengan asset dari DB jika ada -->
-                <img src="{{ asset('img/dummy-store.jpg') }}" alt="Foto Toko" class="img-preview">
+{{-- Modal Tinjau & Verifikasi UMKM (Terhubung ke VerifikasiUmkmController@update) --}}
+<div id="tinjauUmkmModal" class="mp-modal-backdrop is-hidden" role="dialog" aria-modal="true" aria-labelledby="modalTinjauTitle">
+    <div class="mp-modal-card">
+        <div class="mp-modal-header">
+            <div class="mp-modal-title-group">
+                <div class="mp-modal-icon-badge" aria-hidden="true">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 9l1.5-5h15L21 9"/>
+                        <path d="M5 12v8h14v-8"/>
+                    </svg>
+                </div>
+                <div>
+                    <h3 id="modalTinjauTitle" class="mp-modal-title">Tinjau Mitra UMKM</h3>
+                    <p id="modalVendorSub" class="mp-modal-subtitle">Verifikasi kelayakan usaha mitra</p>
+                </div>
             </div>
+            <button type="button" id="closeTinjauModal" class="mp-modal-close-btn" aria-label="Tutup dialog">&times;</button>
         </div>
 
-        <hr style="margin: 20px 0;">
+        <hr class="mp-modal-divider">
 
-        <!-- Area ini hanya akan muncul jika status = menunggu -->
-        <div id="area-aksi-verifikasi">
-            <form id="formVerifikasi" method="POST" action="">
-                @csrf
-                @method('PUT')
-                
-                <div class="form-group">
-                    <label>Catatan Verifikasi (Alasan):</label>
-                    <textarea name="catatan" rows="3" placeholder="Masukkan alasan jika ditolak..."></textarea>
-                </div>
+        <form id="formVerifikasiUmkm" method="POST" action="">
+            @csrf
+            @method('PUT')
 
-                <!-- Input tersembunyi untuk menyimpan status yang diklik -->
-                <input type="hidden" name="status_verifikasi" id="inputStatus">
-
-                <div class="modal-actions" style="margin-top: 20px; display: flex; gap: 10px;">
-                    <button type="button" class="btn-batal" onclick="tutupModalVerifikasi()">Batal Tutup</button>
-                    
-                    <div class="action-buttons" style="margin-left: auto;">
-                        <button type="submit" class="btn-reject" onclick="document.getElementById('inputStatus').value='ditolak'">Tolak Berkas</button>
-                        <button type="submit" class="btn-approve" onclick="document.getElementById('inputStatus').value='disetujui'">Setujui UMKM</button>
+            <div class="mp-modal-body">
+                <div class="umkm-modal-detail-box">
+                    <div class="umkm-detail-pair">
+                        <span>Nama Usaha</span>
+                        <strong id="detailNamaVendor">-</strong>
+                    </div>
+                    <div class="umkm-detail-pair">
+                        <span>Pemilik &amp; Email</span>
+                        <strong id="detailPemilik">-</strong>
+                    </div>
+                    <div class="umkm-detail-pair">
+                        <span>Jam Operasional</span>
+                        <strong id="detailJam">-</strong>
+                    </div>
+                    <div class="umkm-detail-pair">
+                        <span>Metode Pembayaran</span>
+                        <strong id="detailPembayaran">-</strong>
+                    </div>
+                    <div class="umkm-detail-pair is-full">
+                        <span>Alamat Lengkap</span>
+                        <strong id="detailAlamat">-</strong>
+                    </div>
+                    <div class="umkm-detail-pair is-full">
+                        <span>Deskripsi Toko</span>
+                        <p id="detailDeskripsi">-</p>
                     </div>
                 </div>
-            </form>
-        </div>
 
-        <!-- Tombol Tutup Saja (Muncul jika status selain menunggu) -->
-        <div id="area-tutup-saja" style="margin-top: 20px; display: none; text-align: right;">
-             <button type="button" class="btn-batal" onclick="tutupModalVerifikasi()">Tutup Detail</button>
-        </div>
-@endsection
+                <div class="mp-modal-field">
+                    <label class="mp-modal-label">Keputusan Verifikasi</label>
+                    <div class="umkm-decision-grid">
+                        <label class="umkm-decision-option is-approve">
+                            <input type="radio" name="status_verifikasi" value="disetujui" required>
+                            <span>Setujui (Aktifkan)</span>
+                        </label>
+                        <label class="umkm-decision-option is-reject">
+                            <input type="radio" name="status_verifikasi" value="ditolak" required>
+                            <span>Tolak / Tangguhkan</span>
+                        </label>
+                    </div>
+                </div>
 
-@push('styles')
-<style>
-    /* CSS Tabel & Tombol Standar */
-    .verifikasi-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-    .table-responsive { overflow-x: auto; margin-top: 20px; }
-    .data-table { width: 100%; border-collapse: collapse; }
-    .data-table th, .data-table td { padding: 12px; border: 1px solid #ddd; text-align: left; }
-    .data-table th { background-color: #f8f9fa; }
-    
-    .badge { padding: 5px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; }
-    .badge-success { background: #d4edda; color: #155724; }
-    .badge-warning { background: #fff3cd; color: #856404; }
-    .alert-success { background: #d4edda; color: #155724; padding: 15px; margin-bottom: 20px; border-radius: 4px; }
-    
-    .btn-detail { background: #0d6efd; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; }
-    
-    /* CSS Modal Blur */
-    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-    .modal-content.modal-lg { background: white; padding: 25px; border-radius: 8px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
-    
-    .img-preview { width: 100%; max-height: 250px; object-fit: cover; border-radius: 8px; border: 1px solid #ddd; margin-top: 10px; }
-    
-    .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; }
-    
-    .btn-batal { background: #6c757d; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
-    .btn-reject { background: #dc3545; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
-    .btn-approve { background: #198754; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
-</style>
-@endpush
+                <div class="mp-modal-field">
+                    <label for="inputCatatanVerifikasi" class="mp-modal-label">Catatan Admin (Opsional)</label>
+                    <div class="mp-modal-textarea-wrap">
+                        <textarea id="inputCatatanVerifikasi" name="catatan" rows="3" class="mp-modal-textarea" placeholder="Tambahkan catatan persetujuan atau alasan penolakan..."></textarea>
+                    </div>
+                </div>
+            </div>
 
-@push('scripts')
+            <div class="mp-modal-footer" style="margin-top: 14px;">
+                <button type="button" id="cancelTinjauModal" class="mp-modal-btn-cancel">Batal</button>
+                <button type="submit" class="mp-modal-btn-confirm">Simpan Keputusan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <script>
-    // Fungsi untuk membuka modal dan menyisipkan data dinamis dari tabel
-    function bukaModalVerifikasi(id, nama, deskripsi, alamat, status) {
-        document.getElementById('modal-nama').innerText = nama;
-        document.getElementById('modal-deskripsi').innerText = deskripsi || 'Tidak ada deskripsi';
-        document.getElementById('modal-alamat').innerText = alamat;
-        
-        // Ubah action form agar mengarah ke ID UMKM yang tepat
-        let form = document.getElementById('formVerifikasi');
-        form.action = "/admin/verifikasi-umkm/" + id;
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('umkmSearchInput');
+    const chips = document.querySelectorAll('.umkm-chip');
+    const rows = document.querySelectorAll('.umkm-row');
+    const noMatchRow = document.getElementById('umkmNoMatchRow');
+    const showingInfo = document.getElementById('umkmShowingInfo');
+    const totalText = document.getElementById('umkmTotalText');
+    const totalAll = rows.length;
+    let activeFilter = 'semua';
 
-        // --- Logika untuk menyembunyikan/menampilkan aksi ---
-        let areaAksi = document.getElementById('area-aksi-verifikasi');
-        let areaTutup = document.getElementById('area-tutup-saja');
+    function applyFilter() {
+        const keyword = (searchInput.value || '').toLowerCase().trim();
+        let visibleCount = 0;
 
-        if (status === 'menunggu') {
-            areaAksi.style.display = 'block'; // Tampilkan form & tombol approve/reject
-            areaTutup.style.display = 'none'; // Sembunyikan tombol tutup saja
-        } else {
-            areaAksi.style.display = 'none';  // Sembunyikan form
-            areaTutup.style.display = 'block'; // Tampilkan tombol tutup saja
+        rows.forEach(row => {
+            const matchStatus = activeFilter === 'semua' || row.dataset.status === activeFilter;
+            const matchText = !keyword || (row.dataset.search || '').includes(keyword);
+            const show = matchStatus && matchText;
+
+            row.classList.toggle('is-hidden', !show);
+            if (show) visibleCount++;
+        });
+
+        if (noMatchRow) {
+            noMatchRow.classList.toggle('is-hidden', visibleCount > 0 || totalAll === 0);
         }
-
-        document.getElementById('modalVerifikasi').style.display = 'flex';
+        if (totalText) totalText.textContent = visibleCount + ' data';
+        if (showingInfo) {
+            showingInfo.textContent = visibleCount > 0
+                ? `Menampilkan 1–${visibleCount} dari ${totalAll}`
+                : `Menampilkan 0 dari ${totalAll}`;
+        }
     }
 
-    function tutupModalVerifikasi() {
-        document.getElementById('modalVerifikasi').style.display = 'none';
+    chips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            chips.forEach(c => c.classList.remove('is-active'));
+            chip.classList.add('is-active');
+            activeFilter = chip.dataset.filter;
+            applyFilter();
+        });
+    });
+
+    if (searchInput) {
+        searchInput.addEventListener('input', applyFilter);
     }
+
+    // Modal Tinjau UMKM
+    const modal = document.getElementById('tinjauUmkmModal');
+    const form = document.getElementById('formVerifikasiUmkm');
+    const catatanInput = document.getElementById('inputCatatanVerifikasi');
+
+    document.querySelectorAll('.btn-tinjau-umkm').forEach(btn => {
+        btn.addEventListener('click', () => {
+            form.action = btn.dataset.action;
+            document.getElementById('detailNamaVendor').textContent = btn.dataset.nama;
+            document.getElementById('detailPemilik').textContent = `${btn.dataset.pemilik} (${btn.dataset.email})`;
+            document.getElementById('detailJam').textContent = btn.dataset.jam;
+            document.getElementById('detailPembayaran').textContent = btn.dataset.pembayaran;
+            document.getElementById('detailAlamat').textContent = btn.dataset.alamat;
+            document.getElementById('detailDeskripsi').textContent = btn.dataset.deskripsi;
+            catatanInput.value = btn.dataset.catatan || '';
+
+            const currentStatus = btn.dataset.status;
+            form.querySelectorAll('input[name="status_verifikasi"]').forEach(radio => {
+                radio.checked = (radio.value === currentStatus);
+            });
+
+            modal.classList.remove('is-hidden');
+        });
+    });
+
+    function closeModal() {
+        modal.classList.add('is-hidden');
+    }
+
+    document.getElementById('closeTinjauModal')?.addEventListener('click', closeModal);
+    document.getElementById('cancelTinjauModal')?.addEventListener('click', closeModal);
+    modal?.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+    });
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('is-hidden')) closeModal();
+    });
+});
 </script>
-@endpush
+</body>
+</html>
