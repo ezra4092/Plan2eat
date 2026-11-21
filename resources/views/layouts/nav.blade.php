@@ -149,5 +149,114 @@
         Kelola kuota katering harian dan kurangi sisa makanan lewat fitur Night Flash Sale.
       </p>
     </div>
+    
+  @elseif ($userRole === 'admin')
+    <!-- Label Kategori Menu (Desktop) -->
+    <div class="sidebar-section-label">MENU UTAMA</div>
+
+    <!-- Daftar Menu Utama Admin -->
+    <div class="nav-menu-list admin-nav-list">
+      <form action="{{ route('admin.dashboard') }}" method="GET" class="nav-form-item">
+        <button type="submit" class="nav-item admin-nav-item {{ $activeMenu === 'dashboard' || $activeMenu === 'beranda' ? 'active' : '' }}">
+          <div class="nav-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="14" y="3" width="7" height="7" rx="1.5"></rect>
+              <rect x="3" y="14" width="7" height="7" rx="1.5"></rect>
+              <rect x="14" y="14" width="7" height="7" rx="1.5"></rect>
+            </svg>
+          </div>
+          <span class="nav-label">Dashboard</span>
+        </button>
+      </form>
+
+      <form action="{{ route('admin.pengguna') }}" method="GET" class="nav-form-item">
+        <button type="submit" class="nav-item admin-nav-item {{ $activeMenu === 'pengguna' ? 'active' : '' }}">
+          <div class="nav-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M22 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <span class="nav-label">Pengguna</span>
+        </button>
+      </form>
+
+      <form action="{{ route('admin.umkm') }}" method="GET" class="nav-form-item">
+        <button type="submit" class="nav-item admin-nav-item {{ $activeMenu === 'mitra' || $activeMenu === 'mitra_umkm' ? 'active' : '' }}">
+          <div class="nav-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 9l1.5-5h15L21 9"></path>
+              <path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"></path>
+              <path d="M5 12v8h14v-8"></path>
+              <path d="M10 20v-5h4v5"></path>
+            </svg>
+          </div>
+          <span class="nav-label">Mitra UMKM</span>
+        </button>
+      </form>
+
+      <form action="{{ route('admin.laporan') }}" method="GET" class="nav-form-item">
+        <button type="submit" class="nav-item admin-nav-item {{ $activeMenu === 'laporan' ? 'active' : '' }}">
+          <div class="nav-icon-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+          </div>
+          <span class="nav-label">Laporan</span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Bagian Bawah Sidebar Admin (Desktop) -->
+    <div class="admin-sidebar-footer">
+      <hr class="sidebar-divider admin-sidebar-divider">
+
+      <div class="admin-footer-menu">
+        <form action="{{ route('admin.pengaturan') }}" method="GET" class="nav-form-item">
+          <button type="submit" class="nav-item admin-nav-item {{ $activeMenu === 'pengaturan' ? 'active' : '' }}">
+            <div class="nav-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="3"></circle>
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+              </svg>
+            </div>
+            <span class="nav-label">Pengaturan</span>
+          </button>
+        </form>
+
+        <form action="{{ route('logout') }}" method="POST" class="nav-form-item">
+          @csrf
+          <button type="submit" class="nav-item admin-nav-item admin-logout-item">
+            <div class="nav-icon-box">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                <polyline points="16 17 21 12 16 7"></polyline>
+                <line x1="21" y1="12" x2="9" y2="12"></line>
+              </svg>
+            </div>
+            <span class="nav-label">Keluar</span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Profil Card Admin -->
+      <div class="admin-profile-card">
+        <div class="admin-profile-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+        </div>
+        <div class="admin-profile-info">
+          <span class="admin-profile-name">{{ Auth::user()->name ?? 'Admin Plan2Eat' }}</span>
+          <span class="admin-profile-email">{{ Auth::user()->email ?? 'admin@plan2eat.id' }}</span>
+        </div>
+      </div>
+    </div>
   @endif
 </nav>

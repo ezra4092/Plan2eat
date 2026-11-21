@@ -5838,6 +5838,133 @@ body {
   }
 }
 
+/* ==========================================================================
+   TAMBAHAN PENYEMPURNAAN ADMIN DASHBOARD (Mobile & Desktop Responsive)
+   ========================================================================== */
+
+/* Tooltip nilai di atas batang grafik saat hover */
+.admin-bar-fill {
+  position: relative;
+}
+
+.admin-bar-tooltip {
+  position: absolute;
+  top: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 6px;
+  border-radius: 6px;
+  background-color: var(--black);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s ease;
+}
+
+.admin-bar-item:hover .admin-bar-tooltip {
+  opacity: 1;
+}
+
+/* Animasi halus saat Modal Detail Laporan dibuka */
+.admin-modal-backdrop {
+  animation: adminFadeIn 0.18s ease-out;
+}
+
+.admin-modal-card {
+  animation: adminSlideUp 0.2s ease-out;
+}
+
+@keyframes adminFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes adminSlideUp {
+  from { opacity: 0; transform: translateY(10px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Toast Feedback Unduh Laporan */
+.admin-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 92px;
+  transform: translateX(-50%);
+  z-index: 95;
+  max-width: calc(100vw - 32px);
+  padding: 11px 18px;
+  border-radius: 999px;
+  background-color: var(--forest-green);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  box-shadow: 0 10px 24px rgba(5, 55, 31, 0.25);
+}
+
+/* Penyesuaian Responsif Mobile (< 768px) */
+@media (max-width: 767.98px) {
+  .admin-header-controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .admin-period-dropdown,
+  .btn-period-trigger,
+  .btn-download-report {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .admin-period-menu {
+    left: 0;
+    right: 0;
+    min-width: 100%;
+  }
+
+  .admin-chart-wrap {
+    gap: 8px;
+  }
+
+  .admin-chart-bars {
+    gap: 6px;
+    height: 150px;
+  }
+
+  .admin-bar-label {
+    font-size: 10px;
+  }
+
+  .admin-modal-card {
+    padding: 18px 16px 20px;
+    border-radius: 18px;
+  }
+}
+
+/* Penyesuaian Responsif Desktop (>= 768px) */
+@media (min-width: 768px) {
+  /* Sembunyikan logo mobile di topbar karena logo sudah tampil di kiri atas sidebar */
+  .admin-mobile-logo-badge {
+    display: none;
+  }
+
+  /* Sejajarkan menu dropdown periode ke kanan bawah tombol filter */
+  .admin-period-menu {
+    left: auto;
+    right: 0;
+  }
+
+  .admin-toast {
+    bottom: 28px;
+    left: calc(50% + (var(--sidebar-width) / 2));
+  }
+}
+
 /* --------------------------------------------------------------------------
    Profil Kesehatan Page (Mobile-First & Responsive Desktop)
    -------------------------------------------------------------------------- */
@@ -11710,5 +11837,1904 @@ body {
 
   .keu-log-amount {
     font-size: 14.5px;
+  }
+}
+
+/* ==========================================================================
+   TAMBAHAN style.css — Admin Manajemen Mitra UMKM (Responsive Mobile & Desktop)
+   Tempel di bagian paling bawah style.css
+   ========================================================================== */
+
+.admin-umkm-shell .is-hidden {
+  display: none !important;
+}
+
+/* Override Sidebar Putih Bersih Khusus Admin (Desktop >= 768px) */
+@media (min-width: 768px) {
+  .admin-umkm-shell .app-nav.admin-sidebar-nav {
+    background: var(--white);
+    border-right: 1px solid #ECE8DA;
+    box-shadow: none;
+    padding: 20px 14px;
+  }
+
+  .admin-umkm-shell .sidebar-brand {
+    padding: 4px 10px 18px;
+  }
+
+  .admin-brand-logo-box {
+    width: 32px;
+    height: 32px;
+    border-radius: 9px;
+    background-color: var(--emerald-bright);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .admin-umkm-shell .sidebar-brand-text {
+    color: var(--black);
+    font-size: 18px;
+    letter-spacing: -0.3px;
+  }
+
+  .admin-umkm-shell .sidebar-section-label {
+    color: #9CA39D;
+    padding: 4px 12px 10px;
+  }
+
+  .admin-umkm-shell .nav-item {
+    position: relative;
+    color: #4D554E;
+    padding: 11px 14px;
+    border-radius: 12px;
+  }
+
+  .admin-umkm-shell .nav-item:hover {
+    background-color: #F6F4EA;
+    color: var(--black);
+  }
+
+  .admin-umkm-shell .nav-item.active {
+    background-color: #E7F5EC;
+    color: var(--forest-green);
+  }
+
+  .admin-umkm-shell .nav-item.active::before {
+    content: "";
+    position: absolute;
+    left: -14px;
+    top: 8px;
+    bottom: 8px;
+    width: 4px;
+    border-radius: 0 4px 4px 0;
+    background-color: var(--forest-green);
+  }
+
+  .admin-umkm-shell .nav-item.active .nav-label {
+    color: var(--forest-green);
+    font-weight: 700;
+  }
+
+  .admin-sidebar-bottom {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-top: 16px;
+  }
+
+  .admin-logout-form {
+    margin: 0;
+  }
+
+  .admin-sidebar-sep {
+    border: 0;
+    border-top: 1px solid #ECE8DA;
+    margin: 10px 6px 12px;
+  }
+
+  .admin-sidebar-profile {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 4px 10px;
+  }
+
+  .admin-profile-badge {
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background-color: #E7F5EC;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .admin-profile-meta {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .admin-profile-meta strong {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--black);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .admin-profile-meta span {
+    font-family: var(--font-inter);
+    font-size: 11px;
+    color: #8C928D;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* Mobile Bottom Nav Adjustment (< 768px) */
+@media (max-width: 767.98px) {
+  .admin-sidebar-bottom {
+    display: none;
+  }
+
+  .admin-umkm-shell .app-nav.admin-sidebar-nav {
+    background-color: var(--white);
+    border-top: 1px solid #ECE8DA;
+  }
+}
+
+.admin-initial-avatar.is-dark-badge {
+  background-color: var(--forest-green);
+  color: var(--white);
+}
+
+/* Container Halaman Manajemen Mitra UMKM */
+.aum-page,
+.aum-view-section,
+.aum-tab-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.aum-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.aum-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 8px 12px;
+}
+
+.aum-page-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: -0.5px;
+  color: var(--black);
+}
+
+.aum-page-subtitle {
+  margin: 0;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  color: #7B817C;
+}
+
+/* Sub-Navigasi Tab Pills */
+.aum-main-tabs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+  scrollbar-width: none;
+}
+
+.aum-main-tabs::-webkit-scrollbar {
+  display: none;
+}
+
+.aum-main-tab {
+  height: 36px;
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  background-color: #EFECE0;
+  color: #3A423B;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.aum-main-tab:hover {
+  background-color: #E5E1D2;
+}
+
+.aum-main-tab.is-active {
+  background-color: var(--forest-green);
+  color: var(--white);
+  font-weight: 700;
+}
+
+/* Toolbar Pencarian & Filter Chips */
+.aum-toolbar-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+.aum-toolbar-row.is-between {
+  justify-content: space-between;
+}
+
+.aum-toolbar-left-group {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.aum-search-box {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  height: 38px;
+  min-width: 240px;
+  padding: 0 14px;
+  border-radius: 11px;
+  border: 1px solid #E2DEC9;
+  background-color: var(--white);
+  color: #8C928D;
+}
+
+.aum-search-box:focus-within {
+  border-color: var(--forest-green);
+}
+
+.aum-search-input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-inter);
+  font-size: 12.5px;
+  color: var(--black);
+}
+
+.aum-filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px;
+}
+
+.aum-chip {
+  height: 32px;
+  padding: 0 13px;
+  border: none;
+  border-radius: 999px;
+  background-color: #EFECE0;
+  color: #4D554E;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.aum-chip:hover {
+  background-color: #E4E0CF;
+}
+
+.aum-chip.is-active {
+  background-color: var(--forest-green);
+  color: var(--white);
+}
+
+/* KPI Grids */
+.aum-kpi-grid-4 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.aum-kpi-grid-2 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.aum-kpi-card {
+  background-color: #EFECE0;
+  border: 1px solid #E4DFCD;
+  border-radius: 16px;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.aum-kpi-card.is-large {
+  padding: 18px 20px;
+}
+
+.aum-kpi-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.aum-kpi-label {
+  font-family: var(--font-sans);
+  font-weight: 500;
+  font-size: 12.5px;
+  color: #555D56;
+}
+
+.aum-kpi-icon {
+  color: var(--forest-green);
+  display: inline-flex;
+  align-items: center;
+}
+
+.aum-kpi-value {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  color: var(--black);
+}
+
+.aum-kpi-value.is-xl {
+  font-size: 28px;
+}
+
+/* Panel Tabel Daftar Mitra & Transaksi */
+.aum-panel-card {
+  background-color: var(--white);
+  border: 1px solid #ECE8DA;
+  border-radius: 18px;
+  padding: 20px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.aum-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.aum-panel-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--black);
+}
+
+.aum-panel-count {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: #8C928D;
+}
+
+.aum-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.aum-table {
+  width: 100%;
+  min-width: 720px;
+  border-collapse: collapse;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+}
+
+.aum-table thead tr {
+  background-color: #EFECE0;
+}
+
+.aum-table th {
+  padding: 11px 14px;
+  font-weight: 600;
+  color: #4D554E;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.aum-table th:first-child {
+  border-radius: 10px 0 0 10px;
+}
+
+.aum-table th:last-child {
+  border-radius: 0 10px 10px 0;
+}
+
+.aum-table td {
+  padding: 13px 14px;
+  color: var(--black);
+  border-bottom: 1px solid #F2EFE6;
+  vertical-align: middle;
+}
+
+.aum-biz-cell,
+.aum-trx-mitra-cell {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.aum-initials-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background-color: #DCECE3;
+  color: var(--forest-green);
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.aum-initials-badge.is-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  font-size: 11px;
+}
+
+.aum-biz-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.aum-biz-text strong {
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--black);
+}
+
+.aum-biz-text span {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #8C928D;
+}
+
+.aum-rating-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-weight: 600;
+}
+
+.aum-status-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.aum-status-pill.is-active {
+  background-color: #DDF3E6;
+  color: var(--forest-green);
+}
+
+.aum-status-pill.is-pending {
+  background-color: #FEF3C7;
+  color: #B45309;
+}
+
+.aum-status-pill.is-suspended {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+
+.aum-btn-tinjau {
+  padding: 6px 14px;
+  border-radius: 9px;
+  border: 1px solid #DCD9CD;
+  background-color: var(--white);
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.aum-btn-tinjau:hover {
+  background-color: #F6F3E8;
+  border-color: var(--forest-green);
+}
+
+.aum-trx-id,
+.aum-trx-total {
+  font-weight: 600;
+}
+
+/* Footer Pagination */
+.aum-table-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.aum-table-footer.is-standalone {
+  padding-top: 6px;
+}
+
+.aum-pagination-info {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: #8C928D;
+}
+
+.aum-pagination-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.aum-page-btn,
+.aum-page-text-btn {
+  height: 28px;
+  min-width: 28px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  background-color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12px;
+  color: #4D554E;
+  cursor: pointer;
+}
+
+.aum-page-text-btn {
+  border-color: #E2DEC9;
+  padding: 0 11px;
+}
+
+.aum-page-btn.is-active {
+  background-color: var(--forest-green);
+  color: var(--white);
+}
+
+.aum-page-dots {
+  font-size: 12px;
+  color: #8C928D;
+  padding: 0 3px;
+}
+
+/* Tab 2: Menu & Paket Grid */
+.aum-menu-summary-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-family: var(--font-sans);
+  font-size: 12px;
+  color: #6B726C;
+}
+
+.aum-menu-summary-inline strong {
+  color: var(--black);
+}
+
+.aum-inline-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.aum-inline-dot.is-green {
+  background-color: #16A34A;
+}
+
+.aum-inline-dot.is-red {
+  background-color: #DC2626;
+}
+
+.aum-menu-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 14px;
+}
+
+.aum-menu-card {
+  background-color: var(--white);
+  border: 1px solid #ECE8DA;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.035);
+}
+
+.aum-menu-media {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  background-color: #EFECE0;
+}
+
+.aum-menu-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.aum-menu-top-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: rgba(255, 255, 255, 0.94);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10.5px;
+  color: var(--black);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+}
+
+.aum-menu-body {
+  padding: 13px 14px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.aum-menu-vendor {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.4px;
+  color: #8C928D;
+  text-transform: uppercase;
+}
+
+.aum-menu-title {
+  margin: 0 0 8px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  line-height: 1.35;
+  color: var(--black);
+}
+
+.aum-menu-footer {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.aum-menu-price {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--black);
+}
+
+.aum-menu-price.is-strike {
+  color: #9CA39D;
+  text-decoration: line-through;
+  font-weight: 600;
+}
+
+.aum-menu-tag {
+  padding: 3px 9px;
+  border-radius: 999px;
+  background-color: #F3EFE2;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 10px;
+  color: #555D56;
+  white-space: nowrap;
+}
+
+.aum-menu-card.is-habis .aum-menu-media img {
+  opacity: 0.78;
+}
+
+/* Tab 3: Transaksi Buttons & Date Drawer */
+.aum-trx-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.aum-outline-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 10px;
+  border: 1px solid #DCD9CD;
+  background-color: var(--white);
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 12.5px;
+  cursor: pointer;
+}
+
+.aum-outline-btn:hover {
+  background-color: #F6F3E8;
+}
+
+.aum-date-drawer {
+  background-color: var(--white);
+  border: 1px solid #E2DEC9;
+  border-radius: 12px;
+  padding: 12px 16px;
+}
+
+.aum-date-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+.aum-date-field select {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid #DCD9CD;
+  font-family: var(--font-inter);
+  font-size: 12.5px;
+}
+
+/* ==========================================================================
+   KONDISIONAL: DETAIL MITRA UMKM (TINJAU)
+   ========================================================================== */
+.aum-detail-top {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.aum-back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 0;
+  border: none;
+  background: transparent;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  color: #4D554E;
+  cursor: pointer;
+}
+
+.aum-back-btn:hover {
+  color: var(--forest-green);
+}
+
+.aum-detail-kpi-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 14px;
+}
+
+.aum-detail-kpi-card {
+  background-color: #EFECE0;
+  border: 1px solid #E2DEC9;
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.aum-detail-kpi-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.aum-detail-kpi-label {
+  font-family: var(--font-sans);
+  font-size: 12px;
+  font-weight: 500;
+  color: #6B726C;
+}
+
+.aum-detail-kpi-val {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.15;
+  color: var(--black);
+}
+
+.aum-detail-rating-val {
+  display: flex;
+  align-items: baseline;
+  gap: 5px;
+}
+
+.aum-detail-rating-val span {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 600;
+  color: #6B726C;
+}
+
+.aum-detail-kpi-sub {
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: #6B726C;
+}
+
+.aum-detail-kpi-sub.is-star {
+  color: #B45309;
+  font-weight: 500;
+}
+
+.aum-status-dot-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  margin: 4px 0;
+}
+
+.aum-status-dot-pill .dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+}
+
+.aum-status-dot-pill.is-active {
+  background-color: #DDF3E6;
+  color: var(--forest-green);
+}
+
+.aum-status-dot-pill.is-active .dot {
+  background-color: #16A34A;
+}
+
+.aum-status-dot-pill.is-pending {
+  background-color: #FEF3C7;
+  color: #B45309;
+}
+
+.aum-status-dot-pill.is-pending .dot {
+  background-color: #D97706;
+}
+
+.aum-status-dot-pill.is-suspended {
+  background-color: #FEE2E2;
+  color: #B91C1C;
+}
+
+.aum-status-dot-pill.is-suspended .dot {
+  background-color: #DC2626;
+}
+
+.aum-detail-kpi-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background-color: var(--white);
+  color: var(--forest-green);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.aum-detail-kpi-icon.is-amber {
+  color: #D97706;
+}
+
+.aum-detail-main-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  align-items: start;
+}
+
+.aum-detail-right-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.aum-detail-card {
+  background-color: var(--white);
+  border: 1px solid #ECE8DA;
+  border-radius: 20px;
+  padding: 22px 24px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.aum-biz-hero-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.aum-hero-initials {
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background-color: #DCECE3;
+  color: var(--forest-green);
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.aum-hero-biz-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.aum-hero-title-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.aum-hero-title-line h2 {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 21px;
+  color: var(--black);
+}
+
+.aum-hero-sub-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  color: #555D56;
+}
+
+.aum-cat-pill {
+  padding: 3px 10px;
+  border-radius: 8px;
+  background-color: #F3EFE2;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 11.5px;
+  color: #4D554E;
+}
+
+.aum-soft-line {
+  border: 0;
+  border-top: 1px solid #F1EFE7;
+  margin: 0;
+}
+
+.aum-sub-heading {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 15.5px;
+  color: var(--black);
+}
+
+.aum-info-two-col {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px 24px;
+}
+
+.aum-info-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.aum-info-field span {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  color: #8C928D;
+}
+
+.aum-info-field strong {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13.5px;
+  color: var(--black);
+}
+
+.aum-address-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.aum-desc-cream-box {
+  background-color: #F7F3EA;
+  border-radius: 14px;
+  padding: 15px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.aum-caps-label {
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 10.5px;
+  letter-spacing: 0.5px;
+  color: #8C928D;
+}
+
+.aum-desc-cream-box p {
+  margin: 0;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  line-height: 1.55;
+  color: #4D554E;
+}
+
+/* Dokumen Usaha & Kontrol Akun */
+.aum-card-head-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.aum-verified-chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background-color: #DDF3E6;
+  color: var(--forest-green);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+}
+
+.aum-verified-chip.is-pending {
+  background-color: #FEF3C7;
+  color: #B45309;
+}
+
+.aum-doc-list {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.aum-doc-item {
+  background-color: #FAF8F2;
+  border: 1px solid #EFECE2;
+  border-radius: 14px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.aum-doc-left {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 0;
+}
+
+.aum-doc-icon-box {
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
+  background-color: var(--white);
+  border: 1px solid #E5E1D3;
+  color: #4D554E;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.aum-doc-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.aum-doc-meta strong {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--black);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.aum-doc-meta span {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #8C928D;
+}
+
+.aum-btn-lihat-dok {
+  padding: 7px 12px;
+  border-radius: 9px;
+  border: 1px solid #DCD9CD;
+  background-color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11.5px;
+  color: var(--black);
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.aum-btn-lihat-dok:hover {
+  background-color: #F3EFE2;
+}
+
+.aum-control-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.4px;
+  color: var(--black);
+}
+
+.aum-control-desc {
+  margin: 0;
+  font-family: var(--font-inter);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: #6B726C;
+}
+
+.aum-suspended-reason {
+  padding: 10px 14px;
+  border-radius: 12px;
+  background-color: #FEF2F2;
+  border: 1px solid #FECACA;
+  font-family: var(--font-inter);
+  font-size: 12px;
+  color: #991B1B;
+}
+
+.aum-suspended-reason p {
+  margin: 4px 0 0;
+}
+
+.aum-control-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.aum-inline-form {
+  margin: 0;
+  width: 100%;
+}
+
+.aum-btn-suspend-outline {
+  width: 100%;
+  height: 44px;
+  border-radius: 12px;
+  border: 1px solid #FBCACA;
+  background-color: #FDF2F2;
+  color: #DC2626;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.aum-btn-suspend-outline:hover {
+  background-color: #FEE2E2;
+}
+
+.aum-btn-approve-solid {
+  width: 100%;
+  height: 44px;
+  border: none;
+  border-radius: 12px;
+  background-color: var(--forest-green);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* ==========================================================================
+   MODALS: TINJAU DOKUMEN & MENANGGUHKAN AKUN MITRA
+   ========================================================================== */
+.aum-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  background-color: rgba(28, 28, 17, 0.32);
+  backdrop-filter: blur(5px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.aum-modal-box {
+  width: 100%;
+  max-width: 660px;
+  background-color: var(--white);
+  border-radius: 18px;
+  box-shadow: 0 24px 54px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.aum-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid #ECE8DA;
+}
+
+.aum-modal-back {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--black);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.aum-modal-back:hover {
+  background-color: #F3EFE2;
+}
+
+.aum-modal-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 14.5px;
+  color: var(--black);
+  text-align: center;
+}
+
+.aum-modal-spacer {
+  width: 32px;
+}
+
+.aum-doc-preview-stage {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #FAF9F5;
+}
+
+.aum-doc-real-img {
+  max-width: 100%;
+  max-height: 360px;
+  border-radius: 12px;
+  object-fit: contain;
+}
+
+/* Mockup KTP Sesuai Desain */
+.aum-ktp-card {
+  width: 100%;
+  max-width: 470px;
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: linear-gradient(135deg, #B8E1FA 0%, #D9F0FD 55%, #A9D8F5 100%);
+  border: 1px solid #8CC6EC;
+  color: #0F2942;
+  font-family: var(--font-sans);
+  box-shadow: 0 8px 20px rgba(15, 41, 66, 0.12);
+}
+
+.ktp-header {
+  text-align: center;
+  margin-bottom: 10px;
+  line-height: 1.25;
+}
+
+.ktp-header strong {
+  display: block;
+  font-size: 13px;
+  letter-spacing: 0.4px;
+}
+
+.ktp-header span {
+  font-size: 11.5px;
+  font-weight: 700;
+}
+
+.ktp-body {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ktp-fields {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2.5px;
+  font-size: 9.5px;
+  font-weight: 700;
+}
+
+.ktp-fields div {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+}
+
+.ktp-nik {
+  font-size: 11px;
+  margin-bottom: 3px;
+}
+
+.ktp-photo-col {
+  width: 92px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  text-align: center;
+}
+
+.ktp-photo-box {
+  width: 82px;
+  height: 102px;
+  border-radius: 6px;
+  background-color: #D92B2B;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.ktp-photo-col small {
+  font-size: 7.5px;
+  font-weight: 700;
+}
+
+/* Modal Suspend Body */
+#suspendMitraForm {
+  padding: 18px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.aum-suspend-field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.aum-suspend-field label {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--black);
+}
+
+.aum-suspend-field textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #DCD9CD;
+  background-color: #FAF9F5;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  color: var(--black);
+  resize: vertical;
+  outline: none;
+}
+
+.aum-suspend-field textarea:focus {
+  border-color: var(--forest-green);
+  background-color: var(--white);
+}
+
+.aum-suspend-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+.aum-suspend-question {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--black);
+  text-align: center;
+}
+
+.aum-suspend-btn-row {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.aum-modal-btn-cancel,
+.aum-modal-btn-done {
+  width: 100%;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #BFC4BC;
+  background-color: var(--white);
+  color: var(--black);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.aum-modal-btn-cancel:hover,
+.aum-modal-btn-done:hover {
+  background-color: #F6F4EA;
+}
+
+.aum-modal-btn-danger-soft {
+  width: 100%;
+  height: 42px;
+  border-radius: 10px;
+  border: 1px solid #FBCACA;
+  background-color: #FDF2F2;
+  color: #DC2626;
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.aum-modal-btn-danger-soft:hover {
+  background-color: #FEE2E2;
+}
+
+/* ==========================================================================
+   RESPONSIVE BREAKPOINTS (Mobile & Desktop)
+   ========================================================================== */
+@media (max-width: 600px) {
+  .aum-menu-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .aum-info-two-col {
+    grid-template-columns: 1fr;
+  }
+
+  .aum-suspend-btn-row {
+    grid-template-columns: 1fr;
+  }
+
+  .ktp-fields div {
+    grid-template-columns: 78px 1fr;
+  }
+}
+
+@media (min-width: 768px) {
+  .aum-kpi-grid-4 {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .aum-kpi-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .aum-menu-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 18px;
+  }
+
+  .aum-detail-kpi-grid {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .aum-menu-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .aum-detail-main-grid {
+    grid-template-columns: 1.55fr 1fr;
+    gap: 20px;
+  }
+}
+
+/* Pastikan ukuran ikon SVG di Sidebar & Bottom Nav konsisten */
+.admin-umkm-shell .nav-icon-box svg {
+  width: 19px;
+  height: 19px;
+  flex-shrink: 0;
+}
+
+/* Override max-width container agar full-width responsif di Mobile & Desktop */
+.admin-umkm-shell .app-main-content.admin-main-content {
+  max-width: 1240px;
+  width: 100%;
+  padding: 20px 16px 32px;
+}
+
+/* Ikon bintang hollow pada kolom Rating */
+.aum-star-icon {
+  color: #6B726C;
+  flex-shrink: 0;
+}
+
+/* Hover state pada baris tabel & tombol pagination */
+.aum-table tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.aum-table tbody tr:hover {
+  background-color: #FAF9F4;
+}
+
+.aum-page-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background-color 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.aum-page-btn:hover:not(.is-active) {
+  background-color: #F3EFE2;
+  color: var(--black);
+}
+
+.aum-page-arrow {
+  font-size: 15px;
+  line-height: 1;
+}
+
+/* Penyesuaian Responsif Mobile (< 768px) */
+@media (max-width: 767.98px) {
+  .admin-umkm-shell .app-header.admin-header {
+    background-color: var(--bg-cream);
+  }
+
+  .admin-umkm-shell .admin-breadcrumb {
+    font-size: 12px;
+    flex-wrap: wrap;
+  }
+
+  .aum-page-title {
+    font-size: 21px;
+  }
+
+  /* Search box melebar penuh di layar HP */
+  .aum-toolbar-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .aum-search-box {
+    width: 100%;
+    min-width: 0;
+  }
+
+  /* Filter chips bisa digeser horizontal secara halus di HP kecil */
+  .aum-filter-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .aum-filter-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .aum-chip {
+    flex-shrink: 0;
+  }
+
+  .aum-kpi-card {
+    padding: 14px 15px;
+  }
+
+  .aum-kpi-value {
+    font-size: 23px;
+  }
+
+  .aum-panel-card {
+    padding: 16px 14px;
+  }
+
+  .aum-table-responsive {
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .aum-table-footer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+}
+
+/* Penyesuaian Responsif Desktop (>= 768px) */
+@media (min-width: 768px) {
+  .admin-umkm-shell .app-main-content.admin-main-content {
+    padding: 24px 32px 44px;
+  }
+
+  .aum-search-box {
+    width: 280px;
+    min-width: 280px;
+  }
+
+  .aum-page-title {
+    font-size: 26px;
+  }
+}
+
+/* ==========================================================================
+   Admin Pengguna (Pesanan & Transaksi)
+   Responsif Mobile Website & Desktop Website
+   ========================================================================== */
+
+.apu-page {
+  gap: 18px;
+}
+
+/* Grid 3 Kartu KPI (Total pesanan, Sedang diproses, Dibatalkan) */
+.apu-kpi-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* Badge Status "Dikirim" (Soft Sky Blue) */
+.aum-status-pill.is-shipped {
+  background-color: #E0F2FE;
+  color: #0369A1;
+}
+
+/* Avatar Bulat Inisial Pengguna di Tabel */
+.apu-user-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #DCECE3;
+  color: var(--forest-green);
+  font-family: var(--font-sans);
+  font-weight: 700;
+  font-size: 11px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Header Kanan Panel Tabel ("8.420 data •••") */
+.apu-panel-meta-right {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.apu-more-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: #6B726C;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.apu-more-btn:hover {
+  background-color: #F3EFE2;
+  color: var(--black);
+}
+
+/* Kolom & Tombol Aksi Mata */
+.apu-col-action {
+  text-align: center !important;
+  width: 68px;
+}
+
+.apu-eye-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 50%;
+  background: transparent;
+  color: #4D554E;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.18s ease, color 0.18s ease;
+}
+
+.apu-eye-btn:hover {
+  background-color: #EFECE0;
+  color: var(--forest-green);
+}
+
+.apu-empty-cell {
+  text-align: center;
+  padding: 28px 16px !important;
+  color: #8C928D !important;
+  font-family: var(--font-inter);
+}
+
+/* Drawer Filter Tanggal */
+.apu-date-drawer-inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* Modal Detail Pesanan */
+.apu-detail-body {
+  padding: 20px 22px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.apu-detail-top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background-color: #F7F3EA;
+}
+
+.apu-detail-id {
+  font-family: var(--font-sans);
+  font-weight: 800;
+  font-size: 18px;
+  color: var(--black);
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Responsif Mobile (< 768px)
+   -------------------------------------------------------------------------- */
+@media (max-width: 767.98px) {
+  .apu-toolbar-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .apu-toolbar-left {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+
+  .apu-search-box {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .apu-toolbar-right {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+
+  .apu-toolbar-right .aum-outline-btn {
+    justify-content: center;
+    width: 100%;
+  }
+
+  .apu-orders-table {
+    min-width: 780px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Responsif Tablet & Desktop (>= 640px & >= 768px)
+   -------------------------------------------------------------------------- */
+@media (min-width: 640px) {
+  .apu-kpi-grid-3 {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+}
+
+@media (min-width: 768px) {
+  .apu-search-box {
+    width: 265px;
+    min-width: 265px;
+  }
+
+  .apu-orders-table {
+    min-width: 820px;
   }
 }
