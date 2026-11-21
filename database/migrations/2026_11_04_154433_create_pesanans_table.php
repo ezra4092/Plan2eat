@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('metode_pembayaran');
             $table->string('metode_pengiriman');
             $table->dateTime('jadwal_pengiriman');
+            $table->text('catatan')->nullable();
         });
     }
     public function down(): void {

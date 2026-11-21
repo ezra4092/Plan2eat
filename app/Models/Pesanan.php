@@ -26,6 +26,7 @@ class Pesanan extends Model
         'metode_pembayaran',
         'metode_pengiriman',
         'jadwal_pengiriman',
+        'catatan',
     ];
 
     protected function casts(): array
