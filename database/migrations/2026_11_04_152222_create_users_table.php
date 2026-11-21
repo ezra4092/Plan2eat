@@ -13,6 +13,8 @@ return new class extends Migration {
             $table->enum('role', ['admin', 'umkm', 'pelanggan'])->default('pelanggan');
             $table->string('no_hp', 20)->nullable();
             $table->string('foto')->nullable();
+            $table->boolean('is_suspended')->default(false);
+            $table->timestamps(); // Menambahkan created_at dan updated_at
         });
     }
     public function down(): void {

@@ -16,7 +16,7 @@ use App\Http\Controllers\UlasanController;
 use App\Http\Controllers\LaporanKeuanganController;
 // use App\Http\Controllers\PenutupanHarianController;
 use App\Http\Controllers\VerifikasiUmkmController;
-// use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminController;
 // use App\Http\Controllers\MasterDataController;
 
 /*
@@ -80,9 +80,7 @@ Route::group(['middleware' => ['auth']], function() {
     // ------------------------------------------
     // DASHBOARD PER ROLE
     // ------------------------------------------
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
     Route::get('/umkm/dashboard', function () {
         return view('umkm.dashboard');
@@ -194,15 +192,20 @@ Route::group(['middleware' => ['auth']], function() {
     // MODUL ADMIN
     // ==========================================
 
-    // --- Manajemen User & UMKM ---
-    // Route::get('/admin/users', [AdminController::class, 'listUsers'])->name('admin.users');
-    // Route::delete('/admin/users/{id_user}', [AdminController::class, 'deleteUser'])->name('admin.users-delete');
-    Route::get('/admin/umkm', [App\Http\Controllers\VerifikasiUmkmController::class, 'index'])->name('admin.umkm');
-    Route::put('/admin/umkm/{id_umkm}/verifikasi', [App\Http\Controllers\VerifikasiUmkmController::class, 'update'])->name('admin.umkm-verifikasi');
-    // --- Master Data ---
-    // Route::get('/admin/master-data', [MasterDataController::class, 'index'])->name('admin.master_data');
-    // Route::post('/admin/master-data', [MasterDataController::class, 'store'])->name('admin.master_data-create');
-    // Route::put('/admin/master-data/{id}', [MasterDataController::class, 'update'])->name('admin.master_data-update');
-    // Route::delete('/admin/master-data/{id}', [MasterDataController::class, 'destroy'])->name('admin.master_data-delete');
+    Route::prefix('admin')->name('admin.')->group(function () {
+    // Pengelolaan Pengguna (Master Data)
+    Route::get('/pengguna', [AdminController::class, 'pengguna'])->name('pengguna');
+    Route::patch('/pengguna/{id_user}/suspend', [AdminController::class, 'toggleSuspend'])->name('pengguna.suspend');
+    Route::delete('/pengguna/{id_user}', [AdminController::class, 'hapusPengguna'])->name('pengguna.delete');
 
+    // Verifikasi UMKM
+    Route::get('/umkm', [App\Http\Controllers\VerifikasiUmkmController::class, 'index'])->name('umkm');
+    Route::put('/umkm/{id_umkm}/verifikasi', [App\Http\Controllers\VerifikasiUmkmController::class, 'update'])->name('umkm-verifikasi');
+    // Tambahkan 2 baris ini untuk mencegah error di nav.blade.php
+    Route::get('/laporan', function() { return "Halaman Laporan Belum Dibuat"; })->name('laporan');
+    Route::get('/pengaturan', function() { return "Halaman Pengaturan Belum Dibuat"; })->name('pengaturan');
+    Route::get('/ulasan', [AdminController::class, 'ulasan'])->name('ulasan');
+    Route::get('/transaksi', [AdminController::class, 'transaksi'])->name('transaksi');
+
+});
 });

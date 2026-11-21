@@ -20,6 +20,7 @@ return new class extends Migration {
             $table->string('status_operasional', 50)->default('Buka');
             $table->decimal('rating', 3, 2)->default(0);
             $table->decimal('saldo', 15, 2)->default(0);
+            $table->timestamps();
             $table->json('metode_pembayaran');
         });
     }
