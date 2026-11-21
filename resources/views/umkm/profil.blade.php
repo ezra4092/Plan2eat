@@ -49,7 +49,7 @@
                         alt="Foto {{ $umkm->nama_vendor }}"
                         class="mp-avatar-img"
                     >
-                    @if ($umkm->status_verifikasi)
+                    @if ($umkm->isTerverifikasi())
                         <span class="mp-avatar-verified" title="Mitra Terverifikasi">
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
                                 <polyline points="20 6 9 17 4 12"/>
@@ -62,7 +62,7 @@
                     <div class="mp-title-row">
                         <h1 id="displayStoreName" class="mp-store-title">{{ old('nama_vendor', $umkm->nama_vendor) }}</h1>
                         <span class="mp-pill-verified">
-                            {{ $umkm->status_verifikasi ? 'Mitra Terverifikasi' : 'Menunggu Verifikasi' }}
+                            {{ $umkm->isTerverifikasi() ? 'Mitra Terverifikasi' : 'Menunggu Verifikasi' }}
                         </span>
                     </div>
 

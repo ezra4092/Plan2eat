@@ -7,7 +7,7 @@
 @section('content')
 @php
   $storeName = $mitra->nama_vendor ?? 'Mitra Catering';
-  $isVerified = (bool) ($mitra->status_verifikasi ?? false);
+  $isVerified = isset($mitra) ? $mitra->isTerverifikasi() : false;
   $daftarMenu = $menus ?? collect();
 
   $initialPorsi = (int) ($cartSummary->total_porsi ?? 0);

@@ -408,7 +408,7 @@ class MenuController extends Controller
             ->firstOrFail();
 
         // 2. Cek apakah menu ini sedang memiliki promo Flash Sale aktif hari ini
-        $flashSaleAktif = FlashSale::where('id_menu', $menu->id_menu)
+        $flashSaleAktif = Flashsale::where('id_menu', $menu->id_menu)
             ->whereDate('tgl_flash_sale', now()->toDateString())
             ->where('stok_sisa', '>', 0)
             ->first();

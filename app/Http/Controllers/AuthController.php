@@ -311,7 +311,7 @@ class AuthController extends Controller
                     'jam_buka' => '08:00:00',
                     'jam_tutup' => '21:00:00',
                     'status_operasional' => 'Buka',
-                    'status_verifikasi' => false,
+                    'status_verifikasi' => 'menunggu',
                     'rating' => 0,
                     'saldo' => 0,
                     'metode_pembayaran' => ['QRIS', 'Tunai'],
@@ -349,7 +349,7 @@ class AuthController extends Controller
                         ->with('success', 'Silakan lengkapi pendaftaran toko UMKM Anda terlebih dahulu.');
                 }
 
-                if (! $umkm->status_verifikasi) {
+                if (! $umkm->isTerverifikasi()) {
                     Auth::logout();
                     $request->session()->invalidate();
                     $request->session()->regenerateToken();

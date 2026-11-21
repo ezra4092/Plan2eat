@@ -28,7 +28,7 @@ class Flashsale extends Model
     protected function casts(): array
     {
         return [
-            'tgl_flash_sale' => 'datetime',
+            'tgl_flash_sale' => 'date',
             'kuantitas' => 'integer',
             'stok_sisa' => 'integer',
             'harga_diskon' => 'decimal:2',

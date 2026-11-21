@@ -29,6 +29,7 @@ class Umkm extends Model
         'status_operasional',
         'status_verifikasi',
         'catatan',
+        'rating',
         'saldo',
         'metode_pembayaran',
     ];
@@ -36,11 +37,20 @@ class Umkm extends Model
     protected function casts(): array
     {
         return [
-            'status_verifikasi' => 'boolean',
             'rating' => 'decimal:2',
             'saldo' => 'decimal:2',
             'metode_pembayaran' => 'array',
         ];
+    }
+
+    /**
+     * Mengecek apakah UMKM berstatus terverifikasi ('disetujui' atau boolean true).
+     */
+    public function isTerverifikasi(): bool
+    {
+        $val = strtolower((string) $this->status_verifikasi);
+
+        return in_array($val, ['disetujui', 'true', '1'], true) || $this->status_verifikasi === true;
     }
 
     public function user(): BelongsTo

@@ -73,7 +73,7 @@ class MealPlanController extends Controller
         // 2. Tambahkan validasi batas tanggal (after_or_equal & before_or_equal)
         $request->validate([
             'id_menu'      => 'required|exists:menu,id_menu', 
-            'jadwal_makan' => 'required|date|after_or_equal:' . $mealPlan->tanggal_mulai . '|before_or_equal:' . $mealPlan->tanggal_selesai,
+            'jadwal_makan' => 'required|date|after_or_equal:' . $mealPlan->tanggal_mulai->toDateString() . '|before_or_equal:' . $mealPlan->tanggal_selesai->toDateString(),
             'waktu_makan'  => 'required|string|max:255',
         ], [
             // (Opsional) Pesan error jika user memaksa memasukkan tanggal yang salah

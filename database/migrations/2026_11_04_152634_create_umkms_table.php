@@ -15,10 +15,9 @@ return new class extends Migration {
             $table->string('foto_toko')->nullable();
             $table->time('jam_buka');
             $table->time('jam_tutup');
-            $table->string('status_operasional');
-            $table->enum('status_verifikasi', ['menunggu', 'disetujui', 'ditolak','ditangguhkan'])->default('menunggu');
+            $table->enum('status_verifikasi', ['menunggu', 'disetujui', 'ditolak', 'ditangguhkan'])->default('menunggu');
             $table->text('catatan')->nullable();
-            $table->boolean('status_operasional')->default(true);
+            $table->string('status_operasional', 50)->default('Buka');
             $table->decimal('rating', 3, 2)->default(0);
             $table->decimal('saldo', 15, 2)->default(0);
             $table->json('metode_pembayaran');
