@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Pesanan;
 use App\Models\Umkm;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,6 +17,144 @@ use Illuminate\View\View;
 
 class UmkmController extends Controller
 {
+    /**
+     * Menampilkan dashboard operasional UMKM beserta metrik dan grafik porsi mingguan.
+     */
+    public function dashboard(Request $request): View
+    {
+        $idUser = Auth::id();
+        $umkm = $idUser ? Umkm::where('id_user', $idUser)->first() : null;
+
+        if (! $umkm) {
+            $umkm = Umkm::firstOrFail();
+        }
+
+        $range = $request->query('range') === '30_days' ? '30_days' : '7_days';
+
+        $orders = Pesanan::with('detailPesanan')
+            ->where('id_umkm', $umkm->id_umkm)
+            ->get();
+
+        $activeStatuses = ['persiapan', 'masak', 'siap diambil'];
+        $activeOrders = $orders->filter(
+            fn (Pesanan $order): bool => in_array(strtolower((string) $order->status_pesanan), $activeStatuses, true)
+        );
+        $completedOrders = $orders->filter(
+            fn (Pesanan $order): bool => strtolower((string) $order->status_pesanan) === 'selesai'
+        );
+        $validOrders = $orders->filter(
+            fn (Pesanan $order): bool => ! in_array(strtolower((string) $order->status_pesanan), ['dibatalkan', 'menunggu pembayaran'], true)
+        );
+
+        $pesananPerluDiproses = $activeOrders->count();
+        $porsiPerluDiproses = (int) $activeOrders->sum(
+            fn (Pesanan $order): int => (int) $order->detailPesanan->sum('kuantitas')
+        );
+        $pesananSelesai = $completedOrders->count();
+
+        $totalOperasional = $pesananPerluDiproses + $pesananSelesai;
+        $progressDiproses = $totalOperasional > 0 ? (int) round(($pesananPerluDiproses / $totalOperasional) * 100) : 0;
+        $progressSelesai = $totalOperasional > 0 ? (int) round(($pesananSelesai / $totalOperasional) * 100) : 0;
+
+        $pelangganAktif = $validOrders->pluck('id_user')->unique()->count();
+        $batasMinggu = Carbon::now('Asia/Jakarta')->subDays(7);
+        $pelangganMingguIni = $validOrders
+            ->filter(fn (Pesanan $order): bool => $order->tgl_mulai && Carbon::parse($order->tgl_mulai)->gte($batasMinggu))
+            ->pluck('id_user')
+            ->unique()
+            ->count();
+
+        $ulasanStats = DB::table('ulasan')
+            ->join('pesanan', 'ulasan.id_pesanan', '=', 'pesanan.id_pesanan')
+            ->where('pesanan.id_umkm', $umkm->id_umkm)
+            ->selectRaw('COUNT(ulasan.id_ulasan) as total, COALESCE(AVG(ulasan.rating), 0) as avg_rating')
+            ->first();
+
+        $totalUlasan = (int) ($ulasanStats->total ?? 0);
+        $ratingWarung = $totalUlasan > 0
+            ? round((float) $ulasanStats->avg_rating, 1)
+            : round((float) ($umkm->rating ?? 0), 1);
+
+        $totalPendapatan = 0.0;
+        $pendapatanFlashSale = 0.0;
+
+        foreach ($validOrders as $order) {
+            if ($order->detailPesanan->isNotEmpty()) {
+                $totalPendapatan += (float) $order->detailPesanan->sum('subtotal');
+                $pendapatanFlashSale += (float) $order->detailPesanan
+                    ->filter(fn ($detail): bool => ! empty($detail->id_flash_sale))
+                    ->sum('subtotal');
+            } else {
+                $totalPendapatan += max(0.0, (float) $order->total_pembayaran - (float) ($order->biaya_admin ?? 0));
+            }
+        }
+
+        $dayMeta = [
+            1 => ['key' => 'senin', 'label' => 'Senin'],
+            2 => ['key' => 'selasa', 'label' => 'Selasa'],
+            3 => ['key' => 'rabu', 'label' => 'Rabu'],
+            4 => ['key' => 'kamis', 'label' => 'Kamis'],
+            5 => ['key' => 'jumat', 'label' => 'Jumat'],
+            6 => ['key' => 'sabtu', 'label' => 'Sabtu'],
+            7 => ['key' => 'minggu', 'label' => 'Minggu'],
+        ];
+
+        $kateringPerDay = array_fill_keys(array_column($dayMeta, 'key'), 0);
+        $flashSalePerDay = array_fill_keys(array_column($dayMeta, 'key'), 0);
+
+        $chartCutoff = $range === '30_days'
+            ? Carbon::now('Asia/Jakarta')->subDays(30)->startOfDay()
+            : Carbon::now('Asia/Jakarta')->subDays(7)->startOfDay();
+
+        foreach ($validOrders as $order) {
+            $orderDate = $order->tgl_mulai ?? $order->jadwal_pengiriman;
+            if (! $orderDate) {
+                continue;
+            }
+            $carbonDate = Carbon::parse($orderDate)->timezone('Asia/Jakarta');
+            if ($carbonDate->lt($chartCutoff)) {
+                continue;
+            }
+
+            $dayKey = $dayMeta[$carbonDate->dayOfWeekIso]['key'] ?? 'senin';
+            foreach ($order->detailPesanan as $detail) {
+                $qty = (int) $detail->kuantitas;
+                if (! empty($detail->id_flash_sale)) {
+                    $flashSalePerDay[$dayKey] += $qty;
+                } else {
+                    $kateringPerDay[$dayKey] += $qty;
+                }
+            }
+        }
+
+        $rawMax = max(10, (int) max($kateringPerDay), (int) max($flashSalePerDay));
+        $chartMax = (int) (ceil($rawMax / 5) * 5);
+        $chartMid = (int) round($chartMax / 2);
+
+        $chartDays = array_values($dayMeta);
+
+        return view('umkm.dashboard', compact(
+            'umkm',
+            'range',
+            'porsiPerluDiproses',
+            'pelangganAktif',
+            'pelangganMingguIni',
+            'pesananPerluDiproses',
+            'progressDiproses',
+            'ratingWarung',
+            'totalUlasan',
+            'pesananSelesai',
+            'progressSelesai',
+            'totalPendapatan',
+            'pendapatanFlashSale',
+            'chartDays',
+            'kateringPerDay',
+            'flashSalePerDay',
+            'chartMax',
+            'chartMid'
+        ));
+    }
+
     /**
      * Menampilkan profil akun dan profil UMKM.
      */
@@ -68,16 +208,8 @@ class UmkmController extends Controller
             'jam_buka' => 'required|date_format:H:i',
             'jam_tutup' => 'required|date_format:H:i',
             'status_operasional' => 'required|string|max:50',
-            'metode_pembayaran' => 'required',
             'foto_toko' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
-
-        // Normalisasi metode_pembayaran agar selalu tersimpan sebagai array JSON
-        $metodePembayaran = $validatedUmkm['metode_pembayaran'];
-        if (is_string($metodePembayaran)) {
-            $metodePembayaran = [$metodePembayaran];
-        }
-        $validatedUmkm['metode_pembayaran'] = array_values((array) $metodePembayaran);
 
         // Handle upload foto_toko jika ada
         if ($request->hasFile('foto_toko')) {

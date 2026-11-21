@@ -21,7 +21,6 @@ return new class extends Migration {
             $table->decimal('rating', 3, 2)->default(0);
             $table->decimal('saldo', 15, 2)->default(0);
             $table->timestamps();
-            $table->json('metode_pembayaran');
         });
     }
 

@@ -499,26 +499,13 @@
     </div>
   </div>
 
-  @if(session('error'))
-    <div style="background: #FEF2F2; color: #991B1B; padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-size: 13.5px; border: 1px solid #FECACA;">
-      <i class="fa-solid fa-triangle-exclamation"></i> {{ session('error') }}
-    </div>
-  @endif
-
-  @if($errors->any())
-    <div style="background: #FEF2F2; color: #991B1B; padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-size: 13.5px; border: 1px solid #FECACA;">
-      <ul style="margin: 0; padding-left: 20px;">
-        @foreach($errors->all() as $err)
-          <li>{{ $err }}</li>
-        @endforeach
-      </ul>
-    </div>
-  @endif
-
   <form id="payOrderForm" action="{{ route('pelanggan.pesanan-create') }}" method="POST">
     @csrf
     <input type="hidden" name="id_umkm" value="{{ $umkm->id_umkm }}">
-    <input type="hidden" name="tgl_mulai" value="{{ $cart['tgl_mulai'] ?? now()->toDateString() }}">
+    @if(!empty($cart['id_plan']))
+      <input type="hidden" name="id_plan" value="{{ $cart['id_plan'] }}">
+    @endif
+    <input type="hidden" name="tgl_mulai" value="{{ $cart['tgl_mulai'] ?? now('Asia/Jakarta')->toDateString() }}">
     @if(!empty($cart['tgl_selesai']))
       <input type="hidden" name="tgl_selesai" value="{{ $cart['tgl_selesai'] }}">
     @endif
@@ -557,6 +544,22 @@
           </div>
         @endforeach
 
+        @php
+          $subtotalDisplay = $subtotalMenu ?? collect($cart['items'])->sum(fn ($i) => $i['harga_satuan'] * $i['kuantitas']);
+          $biayaAdminDisplay = $biayaAdmin ?? round($subtotalDisplay * 0.05);
+        @endphp
+
+        <div style="border-top: 1px dashed #E5E7EB; padding-top: 12px; margin-top: 4px; display: flex; flex-direction: column; gap: 6px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #4B5563;">
+            <span>Subtotal Menu</span>
+            <strong>Rp {{ number_format($subtotalDisplay, 0, ',', '.') }}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #4B5563;">
+            <span>Biaya Admin Plan2Eat (5%)</span>
+            <strong>Rp {{ number_format($biayaAdminDisplay, 0, ',', '.') }}</strong>
+          </div>
+        </div>
+
         <div class="pay-total-row">
           <span style="font-size: 14px; font-weight: 700; color: #374151;">Total Pembayaran</span>
           <span class="pay-total-amount">Rp {{ number_format($totalHarga, 0, ',', '.') }}</span>
@@ -578,14 +581,25 @@
         </select>
       </div>
 
-      <div class="pay-form-group" style="margin-bottom: 0;">
+      <div class="pay-form-group" style="margin-bottom: 14px;">
         <label for="jadwal_pengiriman" class="pay-form-label">Jadwal Pengantaran Pertama</label>
+        @php
+          $minDeliveryDateTime = !empty($cart['id_plan'])
+              ? now('Asia/Jakarta')->addDay()->format('Y-m-d') . 'T00:00'
+              : now('Asia/Jakarta')->format('Y-m-d') . 'T00:00';
+        @endphp
         <input type="datetime-local"
           name="jadwal_pengiriman"
           id="jadwal_pengiriman"
           class="pay-form-input"
-          value="{{ ($cart['tgl_mulai'] ?? now()->toDateString()) . 'T' . ($cart['items'][0]['waktu'] ?? '12:00') }}"
+          min="{{ $minDeliveryDateTime }}"
+          value="{{ ($cart['tgl_mulai'] ?? (!empty($cart['id_plan']) ? now('Asia/Jakarta')->addDay()->toDateString() : now('Asia/Jakarta')->toDateString())) . 'T' . ($cart['items'][0]['waktu'] ?? '12:00') }}"
           required>
+      </div>
+
+      <div class="pay-form-group" style="margin-bottom: 0;">
+        <label for="catatan_pesanan" class="pay-form-label">Catatan untuk Dapur (Opsional)</label>
+        <textarea name="catatan" id="catatan_pesanan" rows="2" class="pay-form-input" style="resize: vertical;" placeholder="Contoh: Jangan terlalu pedas, pisah sambal, atau patokan alamat...">{{ old('catatan') }}</textarea>
       </div>
     </div>
 

@@ -201,6 +201,105 @@
     background: #0F301E;
     transform: translateY(-1px);
   }
+
+  /* Badge Status Pesanan Berwarna */
+  .lgn-status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 4px 11px;
+    border-radius: 999px;
+    font-family: var(--font-sans);
+    font-size: 11.5px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+  .lgn-status-pill.is-unpaid { background: #F3F4F6; color: #4B5563; }
+  .lgn-status-pill.is-prep { background: #DBEAFE; color: #1D4ED8; }
+  .lgn-status-pill.is-cook { background: #FEF3C7; color: #B45309; }
+  .lgn-status-pill.is-ready { background: #E0E7FF; color: #4338CA; }
+  .lgn-status-pill.is-done { background: #DCFCE7; color: #15803D; }
+  .lgn-status-pill.is-cancelled { background: #FEE2E2; color: #B91C1C; }
+
+  /* Saldo Pelanggan Pill & Card Dibatalkan */
+  .lgn-status-head-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .lgn-status-head-row .lgn-section-title {
+    margin: 0;
+  }
+  .lgn-saldo-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #E8F5E9;
+    color: #16442B;
+    border: 1px solid #C8E6C9;
+    padding: 5px 12px;
+    border-radius: 999px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .lgn-status-card.is-cancelled {
+    background: #FFFFFF;
+    border: 1.5px solid #FECACA;
+    border-radius: 22px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+  .lgn-cancelled-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    align-self: flex-start;
+    background: #FEE2E2;
+    color: #B91C1C;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .lgn-cancel-reason-box {
+    background: #FEF2F2;
+    border-left: 3px solid #EF4444;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 12.5px;
+    color: #7F1D1D;
+    line-height: 1.45;
+  }
+
+  .btl-btn-trigger.is-disabled,
+  .btl-btn-trigger:disabled {
+    background: #F3F4F6 !important;
+    color: #9CA3AF !important;
+    border-color: #E5E7EB !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+  .btl-rule-note {
+    margin: 8px 0 0;
+    font-size: 11.5px;
+    color: #6B7280;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  .btl-rule-note.is-allowed {
+    color: #15803D;
+    font-weight: 600;
+  }
 </style>
 @endpush
 
@@ -215,29 +314,64 @@
 @endphp
 
 <div class="lgn-page">
-    {{-- Notifikasi Flash --}}
-    @if (session('success') || session('error'))
-        <div style="grid-column: 1 / -1;">
-            @if (session('success'))
-                <div style="background: #ECFDF5; border-left: 4px solid #10B981; color: #065F46; padding: 12px 16px; border-radius: 10px; margin-bottom: 12px; font-size: 13.5px; font-weight: 600;">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if (session('error'))
-                <div style="background: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 10px; margin-bottom: 12px; font-size: 13.5px; font-weight: 600;">
-                    {{ session('error') }}
-                </div>
-            @endif
-        </div>
-    @endif
-
     {{-- =====================================================================
          BAGIAN 1: STATUS PESANAN HARI INI
          ===================================================================== --}}
     <section class="lgn-section lgn-status-section">
-        <h2 class="lgn-section-title">Status Pesanan</h2>
+        <div class="lgn-status-head-row">
+            <h2 class="lgn-section-title">Status Pesanan</h2>
+            <span class="lgn-saldo-chip" title="Saldo refund dari pembatalan pesanan">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="2" y="5" width="20" height="14" rx="2"/>
+                    <path d="M16 12h4"/>
+                </svg>
+                <span>Saldo Anda: Rp {{ number_format((float) ($userSaldo ?? 0), 0, ',', '.') }}</span>
+            </span>
+        </div>
 
-        @if ($status === 'empty' || !$order)
+        @if ($status === 'cancelled' && !empty($cancelledOrder))
+            {{-- KONDISI BARU: Pesanan Baru Saja Dibatalkan --}}
+            <div class="lgn-status-card is-cancelled">
+                <div class="lgn-cancelled-banner">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="15" y1="9" x2="9" y2="15"/>
+                        <line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                    <span>Pesanan Dibatalkan</span>
+                </div>
+
+                <div class="lgn-order-product">
+                    <img
+                        src="{{ $cancelledOrder['image'] }}"
+                        alt="{{ $cancelledOrder['menu_name'] }}"
+                        class="lgn-product-thumb"
+                        onerror="this.src='https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80';"
+                    >
+                    <div class="lgn-product-info">
+                        <div class="lgn-vendor-row">
+                            <span>{{ $cancelledOrder['mitra_name'] }} &bull; #P2E-{{ $cancelledOrder['id_pesanan'] }}</span>
+                        </div>
+                        <h3 class="lgn-dish-title">{{ $cancelledOrder['menu_name'] }}</h3>
+                        <p class="lgn-dish-meta">{{ $cancelledOrder['portion_detail'] }} &bull; Jadwal {{ $cancelledOrder['tgl_mulai'] }}</p>
+                    </div>
+                </div>
+
+                <div class="lgn-cancel-reason-box">
+                    <strong>Alasan Pembatalan:</strong> {{ $cancelledOrder['catatan'] }}
+                </div>
+
+                <div class="lgn-contact-wrap btl-action-row">
+                    <a href="{{ $cancelledOrder['detail_url'] }}" class="lgn-btn-contact">
+                        <span>Lihat Detail Pesanan</span>
+                    </a>
+                    <a href="{{ route('pelanggan.mitra') }}" class="lgn-btn-add-order" style="margin: 0;">
+                        <span>Pesan Makanan Lagi</span>
+                    </a>
+                </div>
+            </div>
+
+        @elseif ($status === 'empty' || !$order)
             {{-- KONDISI 1: Belum memesan makanan apapun --}}
             <div class="lgn-status-card is-empty">
                 <div class="lgn-mint-banner">
@@ -350,24 +484,54 @@
                         $cancelUrl = ($orderId && Route::has('pelanggan.pesanan-batal'))
                             ? route('pelanggan.pesanan-batal', $orderId)
                             : '#';
+                        $canCancel = !empty($order['can_cancel']);
                     @endphp
 
-                    <button
-                        type="button"
-                        class="btl-btn-trigger"
-                        onclick="openCancelModal(this)"
-                        data-mitra="{{ $order['mitra_name'] }}"
-                        data-menu="{{ $order['menu_name'] }}"
-                        data-action="{{ $cancelUrl }}"
-                    >
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"/>
-                            <line x1="15" y1="9" x2="9" y2="15"/>
-                            <line x1="9" y1="9" x2="15" y2="15"/>
-                        </svg>
-                        <span>Batalkan Pesanan</span>
-                    </button>
+                    @if ($canCancel)
+                        <button
+                            type="button"
+                            class="btl-btn-trigger"
+                            onclick="openCancelModal(this)"
+                            data-mitra="{{ $order['mitra_name'] }}"
+                            data-menu="{{ $order['menu_name'] }}"
+                            data-deadline="{{ $order['cancel_deadline_text'] ?? '' }}"
+                            data-action="{{ $cancelUrl }}"
+                        >
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="15" y1="9" x2="9" y2="15"/>
+                                <line x1="9" y1="9" x2="15" y2="15"/>
+                            </svg>
+                            <span>Batalkan Pesanan</span>
+                        </button>
+                    @else
+                        <button
+                            type="button"
+                            class="btl-btn-trigger is-disabled"
+                            disabled
+                            title="{{ $order['cancel_disabled_reason'] ?? 'Pesanan tidak dapat dibatalkan' }}"
+                        >
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"/>
+                                <line x1="15" y1="9" x2="9" y2="15"/>
+                                <line x1="9" y1="9" x2="15" y2="15"/>
+                            </svg>
+                            <span>Batalkan Pesanan</span>
+                        </button>
+                    @endif
                 </div>
+
+                @if ($canCancel && !empty($order['cancel_deadline_text']))
+                    <p class="btl-rule-note is-allowed">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                        <span>{{ $order['cancel_deadline_text'] }}</span>
+                    </p>
+                @elseif (!empty($order['cancel_disabled_reason']))
+                    <p class="btl-rule-note">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                        <span>{{ $order['cancel_disabled_reason'] }}</span>
+                    </p>
+                @endif
             </div>
         @endif
     </section>
@@ -460,6 +624,7 @@
                             <th>Nama Mitra</th>
                             <th>Tanggal</th>
                             <th>Total Belanja</th>
+                            <th>Status</th>
                             <th>Aksi</th>
                         </tr>
                     </thead>
@@ -469,6 +634,17 @@
                                 $menuNames = $ord->detailPesanan
                                     ->map(fn ($d) => ($d->menu->nama_makanan ?? 'Menu') . ' (' . $d->kuantitas . 'x)')
                                     ->implode(', ');
+
+                                $ordStatusLower = strtolower((string) $ord->status_pesanan);
+                                [$ordStatusLabel, $ordStatusClass] = match ($ordStatusLower) {
+                                    'menunggu pembayaran' => ['Menunggu Pembayaran', 'is-unpaid'],
+                                    'persiapan' => ['Persiapan', 'is-prep'],
+                                    'masak' => ['Sedang Dimasak', 'is-cook'],
+                                    'siap diambil' => ['Siap Diambil', 'is-ready'],
+                                    'selesai' => ['Selesai', 'is-done'],
+                                    'dibatalkan' => ['Dibatalkan', 'is-cancelled'],
+                                    default => [ucfirst($ordStatusLower), 'is-unpaid'],
+                                };
                             @endphp
                             <tr>
                                 <td><strong>{{ $idx + 1 }}</strong></td>
@@ -476,6 +652,9 @@
                                 <td>{{ $ord->umkm->nama_vendor ?? 'Mitra Plan2Eat' }}</td>
                                 <td>{{ $ord->tgl_mulai ? \Carbon\Carbon::parse($ord->tgl_mulai)->format('d M Y') : '-' }}</td>
                                 <td><strong>Rp {{ number_format((float) $ord->total_pembayaran, 0, ',', '.') }}</strong></td>
+                                <td>
+                                    <span class="lgn-status-pill {{ $ordStatusClass }}">{{ $ordStatusLabel }}</span>
+                                </td>
                                 <td>
                                     <form action="{{ route('pelanggan.pesanan-reorder', $ord->id_pesanan) }}" method="POST" style="margin: 0; display: inline-block;">
                                         @csrf
@@ -491,7 +670,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="6" style="text-align: center; color: #6B7280; padding: 28px 16px;">
+                                <td colspan="7" style="text-align: center; color: #6B7280; padding: 28px 16px;">
                                     Belum ada riwayat pesanan.
                                 </td>
                             </tr>

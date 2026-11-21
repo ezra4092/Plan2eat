@@ -7,6 +7,7 @@ use App\Models\Menu;
 use App\Models\Umkm;
 use App\Models\ProfilKesehatan;
 use App\Models\Flashsale;
+use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -201,7 +202,7 @@ class MenuController extends Controller
 
         $menu->delete();
 
-        return redirect()->route('umkm.menu')->with('success', 'Menu berhasil dihapus!');
+        return redirect()->route('umkm.menu')->with('deleted', 'Menu berhasil dihapus!');
     }
 
     /**
@@ -290,41 +291,58 @@ class MenuController extends Controller
             }
         }
 
-        // 4. Prioritaskan menu paketan (jenis_menu NOT NULL) terlebih dahulu
+        $nowWib = now('Asia/Jakarta');
+        $todayStr = $nowWib->toDateString();
+
+        // 4. Rekomendasi khusus makanan paketan (maksimal 5 menu, diacak setiap hari)
         $rekomendasiMenu = (clone $query)
             ->whereNotNull('jenis_menu')
-            ->orderBy('id_menu', 'desc')
-            ->take(6)
             ->get();
 
-        // Fallback: Jika menu paketan kosong/kurang dari 2, lengkapi dengan menu lainnya
-        if ($rekomendasiMenu->count() < 2) {
+        // Fallback: Jika hasil filter profil kurang dari 5, lengkapi dengan menu paketan aktif lainnya
+        if ($rekomendasiMenu->count() < 5) {
             $existingIds = $rekomendasiMenu->pluck('id_menu')->toArray();
 
-            $tambahanMenu = Menu::with(['umkm', 'jenisMenu'])
+            $tambahanPaket = Menu::with(['umkm', 'jenisMenu'])
+                ->whereNotNull('jenis_menu')
                 ->where('status', true)
                 ->where('stok_harian', '>', 0)
+                ->whereHas('umkm', function ($q): void {
+                    $q->terverifikasi()->buka();
+                })
                 ->whereNotIn('id_menu', $existingIds)
-                ->orderByRaw('CASE WHEN jenis_menu IS NOT NULL THEN 0 ELSE 1 END')
-                ->orderBy('id_menu', 'desc')
-                ->take(6 - $rekomendasiMenu->count())
                 ->get();
 
-            $rekomendasiMenu = $rekomendasiMenu->merge($tambahanMenu);
+            $rekomendasiMenu = $rekomendasiMenu->merge($tambahanPaket);
         }
 
+        $rekomendasiMenu = $rekomendasiMenu
+            ->sortBy(fn (Menu $menu): int => crc32($todayStr . '-paket-' . $menu->id_menu))
+            ->values()
+            ->take(5);
+
         // 5. Data flash sale hanya tampil saat jam promo (20:00 - 22:00 WIB)
-        $currentTime = now()->format('H:i:s');
+        //    Memilih maksimal 5 menu non-paketan dengan diskon 20% - 30%
+        $currentTime = $nowWib->format('H:i:s');
         $isPromoActive = ($currentTime >= '20:00:00' && $currentTime <= '22:00:00');
 
         if ($isPromoActive) {
+            Flashsale::ensureDailyFlashSales($todayStr);
+
             $flashSales = Flashsale::with(['menu.umkm', 'menu.jenisMenu'])
-                ->whereDate('tgl_flash_sale', now()->toDateString())
+                ->whereDate('tgl_flash_sale', $todayStr)
                 ->where('stok_sisa', '>', 0)
                 ->whereHas('menu', function ($q): void {
-                    $q->where('status', true);
+                    $q->whereNull('jenis_menu')
+                        ->where('status', true)
+                        ->whereHas('umkm', function ($u): void {
+                            $u->terverifikasi()->buka();
+                        });
                 })
-                ->get();
+                ->get()
+                ->sortBy(fn (Flashsale $fs): int => crc32($todayStr . '-fs-' . $fs->id_flash_sale))
+                ->values()
+                ->take(5);
 
             $mitraList = $flashSales->map(function ($item) {
                 return $item->menu?->umkm;
@@ -334,12 +352,17 @@ class MenuController extends Controller
             $mitraList = collect();
         }
 
+        $activeOrder = app(OrderService::class)->getActiveOrderCardForUser($idUser);
+        $userSaldo = (float) (Auth::user()?->saldo ?? 0);
+
         return view('pelanggan.beranda', compact(
             'rekomendasiMenu',
             'profilKesehatan',
             'flashSales',
             'mitraList',
-            'isPromoActive'
+            'isPromoActive',
+            'activeOrder',
+            'userSaldo'
         ));
     }
 

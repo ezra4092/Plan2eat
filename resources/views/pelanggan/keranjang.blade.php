@@ -469,20 +469,6 @@
     </div>
   </div>
 
-  @if(session('success'))
-    <div class="cart-alert cart-alert-success">
-      <i class="fa-solid fa-circle-check"></i>
-      <span>{{ session('success') }}</span>
-    </div>
-  @endif
-
-  @if(session('error'))
-    <div class="cart-alert cart-alert-danger">
-      <i class="fa-solid fa-triangle-exclamation"></i>
-      <span>{{ session('error') }}</span>
-    </div>
-  @endif
-
   @if(empty($cart['items']))
     <div class="cart-empty-box">
       <div class="cart-empty-icon">
@@ -555,7 +541,11 @@
               </div>
 
               <button type="button" class="cart-btn-del"
-                onclick="if(confirm('Hapus menu ini dari keranjang?')) document.getElementById('delete-item-{{ $index }}').submit();">
+                data-confirm="Hapus menu ini dari keranjang?"
+                data-confirm-title="Hapus Item Keranjang"
+                data-confirm-ok="Ya, Hapus"
+                data-confirm-danger="true"
+                data-confirm-form="delete-item-{{ $index }}">
                 <i class="fa-solid fa-trash-can"></i> Hapus
               </button>
             </div>
@@ -629,20 +619,33 @@
         @endforeach
 
         <!-- Pengaturan Jadwal Tanggal -->
+        @php
+          $isMealPlanCart = !empty($cart['id_plan']);
+          $minStartDate = $isMealPlanCart ? now('Asia/Jakarta')->addDay()->toDateString() : now('Asia/Jakarta')->toDateString();
+          $defaultStartDate = max($minStartDate, $cart['tgl_mulai'] ?? $minStartDate);
+        @endphp
+
+        @if($isMealPlanCart)
+          <div class="cart-condition-notice" style="margin-top: 14px;">
+            <i class="fa-solid fa-calendar-check"></i>
+            <strong>Pesanan Meal Plan:</strong> Jadwal pengantaran hanya dapat diatur minimal untuk esok hari (H+1). Pembatalan maksimal 6 jam setelah pembayaran berhasil.
+          </div>
+        @endif
+
         <div class="cart-date-row">
           <div>
-            <label for="tgl_mulai" class="cart-field-label">Tanggal Mulai Pengantaran</label>
+            <label for="tgl_mulai" class="cart-field-label">Tanggal Mulai Pengantaran{{ $isMealPlanCart ? ' (Min. Besok)' : '' }}</label>
             <input type="date" id="tgl_mulai" name="tgl_mulai" class="cart-date-input"
-              value="{{ $cart['tgl_mulai'] ?? now()->toDateString() }}"
-              min="{{ now()->toDateString() }}" required>
+              value="{{ $defaultStartDate }}"
+              min="{{ $minStartDate }}" required>
           </div>
 
-          @if($hasPaket)
+          @if($hasPaket || $isMealPlanCart)
             <div>
               <label for="tgl_selesai" class="cart-field-label">Tanggal Selesai Paket (Opsional)</label>
               <input type="date" id="tgl_selesai" name="tgl_selesai" class="cart-date-input"
-                value="{{ $cart['tgl_selesai'] ?? now()->addDays(2)->toDateString() }}"
-                min="{{ now()->toDateString() }}">
+                value="{{ $cart['tgl_selesai'] ?? now('Asia/Jakarta')->addDays(2)->toDateString() }}"
+                min="{{ $minStartDate }}">
             </div>
           @endif
         </div>

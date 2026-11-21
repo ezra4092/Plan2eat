@@ -2,6 +2,7 @@
 
 @section('title', 'Manajemen Menu - Plan2Eat')
 @section('nav_active', 'menu')
+@section('page_badge', 'Manajemen Menu')
 @section('body_class', 'page-menu-management')
 
 @php
@@ -44,35 +45,6 @@
      data-url-delete="{{ $urlDelete }}"
      data-url-stok="{{ $urlStok }}"
      data-url-flash="{{ $urlFlash }}">
-
-    {{-- Notifikasi Flash --}}
-    @if (session('success'))
-        <div style="background: #E8F5E9; border-left: 4px solid #2E7D32; color: #1B5E20; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; font-weight: 500;">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if (session('error'))
-        <div style="background: #FFEBEE; border-left: 4px solid #C62828; color: #B71C1C; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px; font-weight: 500;">
-            {{ session('error') }}
-        </div>
-    @endif
-    @if ($errors->any())
-        <div style="background: #FFEBEE; border-left: 4px solid #C62828; color: #B71C1C; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px; font-size: 14px;">
-            <ul style="margin: 0; padding-left: 20px;">
-                @foreach ($errors->all() as $err)
-                    <li>{{ $err }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
-    {{-- Kembali --}}
-    <div class="mm-back-row">
-        <a href="{{ $urlBeranda }}" class="mm-back-link">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
-            <span>Kembali ke Dashboard</span>
-        </a>
-    </div>
 
     {{-- Pencarian + Ringkasan --}}
     <div class="mm-toolbar">

@@ -66,10 +66,6 @@
         </a>
       </p>
 
-      @if (session('success'))
-        <p class="otp-success-msg">{{ session('success') }}</p>
-      @endif
-
       <form id="otpForm" action="{{ route('verify-otp') }}" method="POST" class="otp-form" novalidate>
         @csrf
 
@@ -83,10 +79,6 @@
           <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-box" aria-label="Digit 5">
           <input type="text" inputmode="numeric" pattern="[0-9]*" maxlength="1" class="otp-box" aria-label="Digit 6">
         </div>
-
-        @error('otp_code')
-          <p class="otp-error-msg">{{ $message }}</p>
-        @enderror
 
         <div class="otp-resend-row">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#414942" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -302,5 +294,6 @@ document.addEventListener('DOMContentLoaded', () => {
     syncOtpState(0);
 });
 </script>
+@include('partials.popup_notification')
 </body>
 </html>

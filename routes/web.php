@@ -8,6 +8,7 @@ use App\Http\Controllers\MealPlanController;
 // Controller berikut belum dibuat / masih dalam tahap pengembangan (lihat timeline)
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\FlashSaleController;
+use App\Http\Controllers\PembatalanController;
 use App\Http\Controllers\PesananController;
 // use App\Http\Controllers\PembayaranController;
 use App\Http\Controllers\UlasanController;
@@ -82,9 +83,7 @@ Route::group(['middleware' => ['auth']], function() {
     // ------------------------------------------
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
 
-    Route::get('/umkm/dashboard', function () {
-        return view('umkm.dashboard');
-    })->name('umkm.dashboard');
+    Route::get('/umkm/dashboard', [UmkmController::class, 'dashboard'])->name('umkm.dashboard');
 
     Route::get('/pelanggan/beranda', [MenuController::class, 'berandaPelanggan'])
         ->name('pelanggan.beranda');
@@ -136,6 +135,8 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/pelanggan/riwayat-pesanan', [PesananController::class, 'history'])->name('pelanggan.pesanan');
     Route::get('/pelanggan/pesanan/{id_pesanan}', [PesananController::class, 'show'])->name('pelanggan.pesanan-detail');
     Route::post('/pelanggan/pesanan/{id_pesanan}/pesan-lagi', [PesananController::class, 'pesanLagi'])->name('pelanggan.pesanan-reorder');
+    Route::post('/pelanggan/pesanan/{id_pesanan}/batal', [PembatalanController::class, 'batal'])->name('pelanggan.pesanan-batal');
+    Route::post('/pelanggan/meal-plan/{id_plan}/checkout', [PesananController::class, 'checkoutMealPlan'])->name('pelanggan.meal_plan-checkout');
 
     // --- Ulasan & Rating (Pelanggan) ---
     Route::get('/pelanggan/ulasan', [UlasanController::class, 'index'])->name('pelanggan.ulasan');
@@ -183,7 +184,7 @@ Route::group(['middleware' => ['auth']], function() {
     // --- Dashboard, Jadwal Masak & Laporan UMKM ---
     // Route::get('/umkm/jadwal-masak', [JadwalMasakController::class, 'index'])->name('umkm.jadwal_masak');
     Route::get('/umkm/laporan-keuangan', [LaporanKeuanganController::class, 'index'])->name('umkm.laporan_keuangan');
-    Route::put('/umkm/laporan-keuangan/metode-pembayaran', [LaporanKeuanganController::class, 'updateMetodePembayaran'])->name('umkm.laporan_keuangan-metode');
+    Route::post('/umkm/laporan-keuangan/cairkan', [LaporanKeuanganController::class, 'cairkanDana'])->name('umkm.laporan_keuangan-cairkan');
     Route::get('/umkm/laporan-keuangan/cetak', [LaporanKeuanganController::class, 'cetakLaporan'])->name('umkm.laporan_keuangan-cetak');
     // Route::post('/umkm/penutupan-harian', [PenutupanHarianController::class, 'store'])->name('umkm.penutupan_harian-create');
 

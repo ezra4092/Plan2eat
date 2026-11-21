@@ -1,26 +1,8 @@
-{{--
-    Halaman Manajemen Pesanan UMKM (Dapur Mitra)
-    Letak file : resources/views/umkm/manajemen_pesanan.blade.php
-    Route      : umkm.pesanan (GET), umkm.pesanan-status (PUT /umkm/pesanan/{id_pesanan}/status)
-                 (route yang masih di-comment jatuh ke '#', view tetap bisa dirender)
-
-    Data dari controller ($pesanan = collection/array), tiap item punya key:
-        id_pesanan, status_pesanan (persiapan|masak|diambil|selesai),
-        nama_pelanggan, lokasi (opsional, cth "Kos Oren"),
-        items => [ ['kuantitas' => 1, 'nama' => 'Ayam Goreng'], ... ]
-
-    Pemetaan status database -> tampilan:
-        persiapan = Step 1 "Prep"  / tab "Masuk"      -> tombol "Proses Masak"
-        masak     = Step 2 "Masak" / tab "Dimasak"    -> tombol "Panggil Kurir" + "Tandai Siap Kirim"
-        diambil   = Step 3 "Siap"  / tab "Siap Ambil" -> tombol "Konfirmasi Selesai"
-        selesai   = tidak ditampilkan lagi
-
-    Pratinjau tanpa controller: buka  /umkm/pesanan?step=1  |  ?step=2  |  ?step=3
---}}
 @extends('layouts.main')
 
 @section('title', 'Manajemen Pesanan - Plan2Eat')
 @section('nav_active', 'pesanan')
+@section('page_badge', 'Manajemen Pesanan')
 @section('body_class', 'page-order-management')
 
 @php
@@ -28,13 +10,12 @@
         ? ($param !== null ? route($name, $param) : route($name))
         : '#';
 
-    $urlBeranda = $safe('umkm.dashboard');
     $urlStatus  = $safe('umkm.pesanan-status', '__ID__');
 
     $stages = [
-        'persiapan'    => ['step' => 1, 'tab' => 'Masuk',      'badge' => 'is-red'],
-        'masak'        => ['step' => 2, 'tab' => 'Dimasak',    'badge' => 'is-dark'],
-        'siap diambil' => ['step' => 3, 'tab' => 'Siap Ambil', 'badge' => 'is-mint'],
+        'persiapan'    => ['step' => 1, 'tab' => 'Masuk',      'badge' => 'is-red',  'btn' => 'Proses Masak'],
+        'masak'        => ['step' => 2, 'tab' => 'Dimasak',    'badge' => 'is-dark', 'btn' => 'Siap Diambil'],
+        'siap diambil' => ['step' => 3, 'tab' => 'Siap Ambil', 'badge' => 'is-mint', 'btn' => 'Konfirmasi Selesai'],
     ];
 
     $orders = collect($pesanan ?? [])->map(fn ($p) => (object) $p)
@@ -62,12 +43,6 @@
 <div class="po-page"
      data-url-status="{{ $urlStatus }}"
      data-active="{{ $activeKey }}">
-
-    {{-- Kembali --}}
-    <a href="{{ $urlBeranda }}" class="po-back">
-        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
-        <span>Kembali ke Dashboard</span>
-    </a>
 
     {{-- ===== Alur Masak ===== --}}
     <section class="po-flow-card" aria-label="Alur masak">
@@ -113,18 +88,47 @@
 
         <div class="po-order-list">
             @foreach ($orders as $o)
+                @php
+                    $stageActionLabel = $stages[$o->status_pesanan]['btn'] ?? 'Proses';
+                    $noteText = trim((string) ($o->catatan ?? ''));
+                @endphp
                 <article class="po-order {{ $o->status_pesanan === $activeKey ? '' : 'is-hidden' }}"
                          data-id="{{ $o->id_pesanan }}" data-status="{{ $o->status_pesanan }}">
                     <div class="po-order-head">
-                        <span class="po-order-code">#P2E-{{ str_pad($o->id_pesanan, 4, '0', STR_PAD_LEFT) }}</span>
-                        <span class="po-order-divider"></span>
-                        <span class="po-order-name">{{ $o->nama_pelanggan }}@if (!empty($o->lokasi)) ({{ $o->lokasi }})@endif</span>
+                        <div class="po-order-head-left">
+                            <span class="po-order-code">#P2E-{{ str_pad($o->id_pesanan, 4, '0', STR_PAD_LEFT) }}</span>
+                            <span class="po-order-divider"></span>
+                            <span class="po-order-name">{{ $o->nama_pelanggan }}@if (!empty($o->lokasi)) ({{ $o->lokasi }})@endif</span>
+                        </div>
+                        <span class="po-order-schedule">{{ $o->jadwal ?? '-' }}</span>
                     </div>
+
                     <ul class="po-order-items">
                         @foreach (($o->items ?? []) as $it)
-                            <li>{{ data_get($it, 'kuantitas', 1) }}x {{ data_get($it, 'nama') }}</li>
+                            <li>
+                                <span>{{ data_get($it, 'kuantitas', 1) }}x {{ data_get($it, 'nama') }}</span>
+                                @if (!empty(data_get($it, 'waktu')))
+                                    <span class="po-item-time">{{ data_get($it, 'waktu') }}</span>
+                                @endif
+                            </li>
                         @endforeach
                     </ul>
+
+                    <div class="po-order-note">
+                        <span class="po-order-note-label">Catatan:</span>
+                        <span class="po-order-note-text {{ $noteText === '' ? 'is-empty' : '' }}">
+                            {{ $noteText !== '' ? $noteText : 'Tidak ada catatan' }}
+                        </span>
+                    </div>
+
+                    <div class="po-order-foot">
+                        <span class="po-order-meta">
+                            Rp {{ number_format((float) ($o->total_pembayaran ?? 0), 0, ',', '.') }} &middot; {{ $o->metode_pembayaran ?? '-' }}
+                        </span>
+                        <button type="button" class="po-order-btn" data-advance-single="{{ $o->id_pesanan }}">
+                            {{ $stageActionLabel }}
+                        </button>
+                    </div>
                 </article>
             @endforeach
         </div>
@@ -133,30 +137,26 @@
             Belum ada pesanan di tahap ini.
         </div>
 
-        {{-- Tombol aksi (satu set per tahap, yang tampil mengikuti step aktif) --}}
+        {{-- Tombol aksi massal (mengikuti step aktif) --}}
         <div id="poActions" class="{{ $count[$activeKey] > 0 ? '' : 'is-hidden' }}">
             <div class="po-actions {{ $step === 1 ? '' : 'is-hidden' }}" data-actions="1">
                 <button type="button" class="po-btn is-dark is-block" data-advance="1">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h20"/><path d="M20 12v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-8"/><path d="m4 8 16-4"/><path d="m8.86 6.78-.45-1.81a2 2 0 0 1 1.45-2.43l1.94-.48a2 2 0 0 1 2.43 1.46l.45 1.8"/></svg>
-                    Proses Masak
+                    Proses Masak Semua
                 </button>
             </div>
 
             <div class="po-actions {{ $step === 2 ? '' : 'is-hidden' }}" data-actions="2">
-                <!-- <button type="button" class="po-btn is-amber" id="btnKurir">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18.5" cy="17.5" r="3.5"/><circle cx="5.5" cy="17.5" r="3.5"/><circle cx="15" cy="5" r="1"/><path d="M12 17.5V14l-3-3 4-3 2 3h2"/></svg>
-                    Panggil Kurir
-                </button> -->
                 <button type="button" class="po-btn is-dark" data-advance="2">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 7 17l-5-5"/><path d="m22 10-7.5 7.5L13 16"/></svg>
-                    Siap Diambil
+                    Siap Diambil Semua
                 </button>
             </div>
 
             <div class="po-actions {{ $step === 3 ? '' : 'is-hidden' }}" data-actions="3">
                 <button type="button" class="po-btn is-dark is-block" data-advance="3">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m8.5 12.5 2.5 2.5 4.5-5"/></svg>
-                    Konfirmasi Selesai
+                    Konfirmasi Selesai Semua
                 </button>
             </div>
         </div>
@@ -171,9 +171,9 @@
     const urlTpl = root.dataset.urlStatus;
     const csrf = (document.querySelector('meta[name="csrf-token"]') || {}).content;
     const stages = {
-        persiapan: { step: 1, next: 'masak' },
-        masak: { step: 2, next: 'siap diambil' },
-        'siap diambil': { step: 3, next: 'selesai' }
+        persiapan:      { step: 1, next: 'masak',        btnLabel: 'Siap Diambil' },
+        masak:          { step: 2, next: 'siap diambil', btnLabel: 'Konfirmasi Selesai' },
+        'siap diambil': { step: 3, next: 'selesai',      btnLabel: '' }
     };
     const keys = Object.keys(stages);
     let active = root.dataset.active;
@@ -181,12 +181,14 @@
     const $  = (s) => root.querySelector(s);
     const $$ = (s) => Array.from(root.querySelectorAll(s));
 
-    function toast(msg, isError) {
-        const el = document.createElement('div');
-        el.className = 'po-toast' + (isError ? ' is-error' : '');
-        el.textContent = msg;
-        document.body.appendChild(el);
-        setTimeout(() => el.remove(), 2800);
+    function notify(msg, isError) {
+        if (typeof window.showAppPopup === 'function') {
+            window.showAppPopup({
+                type: isError ? 'error' : 'success',
+                title: isError ? 'Gagal Memperbarui' : 'Berhasil',
+                message: msg
+            });
+        }
     }
 
     function render() {
@@ -219,34 +221,54 @@
         $$('[data-actions]').forEach((a) => a.classList.toggle('is-hidden', Number(a.dataset.actions) !== step));
     }
 
-    async function advance(btn) {
-        const cards = $$('.po-order').filter((el) => el.dataset.status === active);
+    async function sendStatusUpdate(orderIds, toStatus) {
+        if (urlTpl === '#') return;
+        const responses = await Promise.all(orderIds.map((id) => fetch(urlTpl.replace('__ID__', id), {
+            method: 'POST',
+            credentials: 'same-origin',
+            headers: {
+                'X-CSRF-TOKEN': csrf,
+                'Accept': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            body: new URLSearchParams({ _method: 'PUT', status_pesanan: toStatus })
+        })));
+        if (responses.some((r) => !r.ok)) throw new Error('gagal');
+    }
+
+    async function advanceCards(cards, btn, stayOnTabIfRemaining) {
         if (!cards.length) return;
-        const to = stages[active].next;
+        const fromStatus = cards[0].dataset.status;
+        const to = stages[fromStatus].next;
+        const nextBtnLabel = stages[fromStatus].btnLabel;
         btn.disabled = true;
 
         try {
-            // Bila route umkm.pesanan-status sudah aktif, kirim PUT per pesanan.
-            if (urlTpl !== '#') {
-                const res = await Promise.all(cards.map((c) => fetch(urlTpl.replace('__ID__', c.dataset.id), {
-                    method: 'POST',
-                    credentials: 'same-origin',
-                    headers: {
-                        'X-CSRF-TOKEN': csrf,
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/x-www-form-urlencoded'
-                    },
-                    body: new URLSearchParams({ _method: 'PUT', status_pesanan: to })
-                })));
-                if (res.some((r) => !r.ok)) throw new Error('gagal');
+            await sendStatusUpdate(cards.map((c) => c.dataset.id), to);
+
+            cards.forEach((c) => {
+                if (to === 'selesai') {
+                    c.remove();
+                } else {
+                    c.dataset.status = to;
+                    const singleBtn = c.querySelector('[data-advance-single]');
+                    if (singleBtn && nextBtnLabel) {
+                        singleBtn.textContent = nextBtnLabel;
+                    }
+                }
+            });
+
+            if (to !== 'selesai') {
+                const remainingHere = $$('.po-order').filter((el) => el.dataset.status === active).length;
+                if (!stayOnTabIfRemaining || remainingHere === 0) {
+                    active = to;
+                }
             }
 
-            cards.forEach((c) => { if (to === 'selesai') c.remove(); else c.dataset.status = to; });
-            if (to !== 'selesai') active = to;
-            toast(to === 'selesai' ? 'Pesanan dikonfirmasi selesai.' : 'Status pesanan diperbarui.');
+            notify(to === 'selesai' ? 'Pesanan dikonfirmasi selesai.' : 'Status pesanan diperbarui.');
             render();
         } catch (e) {
-            toast('Gagal memperbarui status. Memuat ulang...', true);
+            notify('Gagal memperbarui status. Memuat ulang...', true);
             setTimeout(() => location.reload(), 1500);
         } finally {
             btn.disabled = false;
@@ -254,9 +276,14 @@
     }
 
     $$('.po-tab').forEach((t) => t.addEventListener('click', () => { active = t.dataset.tab; render(); }));
-    $$('[data-advance]').forEach((b) => b.addEventListener('click', () => advance(b)));
-    const btnKurir = $('#btnKurir');
-    if (btnKurir) btnKurir.addEventListener('click', () => toast('Permintaan kurir dikirim (fitur kurir belum terhubung).'));
+    $$('[data-advance]').forEach((b) => b.addEventListener('click', () => {
+        const cards = $$('.po-order').filter((el) => el.dataset.status === active);
+        advanceCards(cards, b, false);
+    }));
+    $$('[data-advance-single]').forEach((b) => b.addEventListener('click', () => {
+        const card = b.closest('.po-order');
+        if (card) advanceCards([card], b, true);
+    }));
 })();
 </script>
 @endpush

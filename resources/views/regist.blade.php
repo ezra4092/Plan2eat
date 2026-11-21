@@ -40,17 +40,6 @@
                 </p>
             </div>
 
-            {{-- Notifikasi Error Validasi --}}
-            @if ($errors->any())
-                <div class="auth-alert-error" role="alert">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             {{-- Form Registrasi --}}
             <form action="{{ route('register') }}" method="POST" class="auth-form">
                 @csrf
@@ -195,5 +184,6 @@
             });
         });
     </script>
+    @include('partials.popup_notification')
 </body>
 </html>

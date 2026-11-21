@@ -6,33 +6,27 @@
 @section('content')
 <div class="beranda-container">
 
+  <!-- Greeting Pelanggan -->
+  <div class="beranda-greeting">
+    <h1 class="beranda-greeting-title">Halo {{ auth()->user()->nama_lengkap ?? 'Pelanggan' }}, selamat datang kembali!</h1>
+  </div>
+
   <!-- Baris Atas: Hero Carousel & Status Pesanan (1 Kolom di Mobile, 2 Kolom di Desktop) -->
   <div class="beranda-top-grid">
     
     <!-- 1. Hero Card: Zero-Waste Kitchen Carousel -->
     <section class="hero-carousel-card" id="heroCarousel">
-      <div class="hero-card-header">
-        <div class="badge-zero-waste">
-          <img src="{{ asset('img/icon-15.svg') }}" alt="Zero Waste">
-          <span>Zero-Waste Kitchen</span>
-        </div>
-        <button type="button" class="btn-skip-hero" id="btnSkipHero">Lewati</button>
-      </div>
-
       <div class="hero-visual-box">
-        <div class="hero-visual-img abaxudesdkzwhaeb" style="background-image: url('{{ asset('img/hero-zero-waste.jpg') }}');"></div>
+        <div class="hero-visual-img abaxudesdkzwhaeb" id="heroVisualImg" style="background-image: url('https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80');"></div>
         <div class="hero-visual-gradient"></div>
-
-        <!-- Floating Badge Kiri Atas -->
-        <div class="badge-circular">
-          <img src="{{ asset('img/icon-12.svg') }}" alt="100% Circular">
-          <span>100% Circular</span>
-        </div>
 
         <!-- Info Bawah Banner -->
         <div class="hero-visual-caption">
-          <div class="caption-icon-circle">
-            <img src="{{ asset('img/icon-17.svg') }}" alt="Resep">
+          <div class="caption-icon-circle" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#16442B" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+              <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+            </svg>
           </div>
           <div class="caption-text-group">
             <span class="caption-subtitle" id="heroSubtitle">Minggu Ini</span>
@@ -49,18 +43,125 @@
       </div>
     </section>
 
-    <!-- 2. Section Status Pesanan (Inactive Order Card) -->
-    <section class="order-status-card">
-      <div class="order-status-content">
-        <p class="order-empty-text">Anda belum membuat pesanan</p>
-          <form action="{{ route('pelanggan.mitra') }}" method="GET">
-           <button type="submit" class="btn-add-order">
-            <img src="{{ asset('img/vector-5.svg') }}" alt="Tambah">
-             <span>Tambahkan Pesanan</span>
-            </button>
-          </form>
-      </div>
-    </section>
+    <!-- 2. Kolom Kanan: Card Saldo + Section Status Pesanan -->
+    <div class="beranda-status-col">
+      <!-- Card Info Saldo Pelanggan (Just Info, Tanpa Button) -->
+      <section class="beranda-saldo-card" aria-label="Informasi Saldo Pelanggan">
+        <div class="beranda-saldo-left">
+          <span class="beranda-saldo-icon" aria-hidden="true">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+              <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
+            </svg>
+          </span>
+          <div class="beranda-saldo-text">
+            <span class="beranda-saldo-label">Saldo Plan2Eat</span>
+            <strong class="beranda-saldo-amount">Rp {{ number_format((float) ($userSaldo ?? 0), 0, ',', '.') }}</strong>
+          </div>
+        </div>
+        <span class="beranda-saldo-note">Dana refund &amp; saldo aktif</span>
+      </section>
+
+      <!-- Section Status Pesanan -->
+      @if (!empty($activeOrder))
+        @php
+          $step = (int) ($activeOrder['progress_step'] ?? 1);
+          $progressPercent = $step <= 1 ? 0 : ($step === 2 ? 50 : 100);
+        @endphp
+        <section class="order-status-card is-active-beranda">
+          <div class="lgn-schedule-pill">
+            <span class="lgn-green-dot"></span>
+            <span>{{ $activeOrder['schedule_label'] }}</span>
+          </div>
+
+          <div class="lgn-order-product">
+            <img
+              src="{{ $activeOrder['image'] }}"
+              alt="{{ $activeOrder['menu_name'] }}"
+              class="lgn-product-thumb"
+              onerror="this.src='https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80';"
+            >
+            <div class="lgn-product-info">
+              <div class="lgn-vendor-row">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 9l1.5-5h15L21 9"/>
+                  <path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/>
+                  <path d="M5 12v8h14v-8"/>
+                </svg>
+                <span>{{ $activeOrder['mitra_name'] }}</span>
+              </div>
+              <h3 class="lgn-dish-title">{{ $activeOrder['menu_name'] }}</h3>
+              <p class="lgn-dish-meta">{{ $activeOrder['portion_detail'] }}</p>
+              <span class="lgn-today-badge">{{ $activeOrder['badge_text'] }}</span>
+            </div>
+          </div>
+
+          <div class="lgn-progress-box">
+            <div class="lgn-progress-head">
+              <span class="lgn-progress-title">Progress</span>
+              <span class="lgn-progress-status">{{ $activeOrder['progress_label'] }}</span>
+            </div>
+
+            <div class="lgn-stepper" style="--lgn-progress: {{ $progressPercent }};">
+              <div class="lgn-stepper-track">
+                <span class="lgn-stepper-fill"></span>
+              </div>
+
+              <div class="lgn-step {{ $step >= 1 ? 'is-done' : '' }}">
+                <span class="lgn-step-circle">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </span>
+                <span class="lgn-step-label">Prep</span>
+              </div>
+
+              <div class="lgn-step {{ $step >= 2 ? 'is-done' : '' }}">
+                <span class="lgn-step-circle">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </span>
+                <span class="lgn-step-label">Masak</span>
+              </div>
+
+              <div class="lgn-step {{ $step >= 3 ? 'is-done' : '' }}">
+                <span class="lgn-step-circle">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </span>
+                <span class="lgn-step-label">Siap</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="lgn-contact-wrap">
+            <a href="{{ $activeOrder['detail_url'] }}" class="lgn-btn-contact">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+              </svg>
+              <span>Lihat Detail Pesanan</span>
+            </a>
+          </div>
+        </section>
+      @else
+        <section class="order-status-card">
+          <div class="order-status-content">
+            <p class="order-empty-text">Anda belum membuat pesanan</p>
+            <form action="{{ route('pelanggan.mitra') }}" method="GET">
+              <button type="submit" class="btn-add-order">
+                <img src="{{ asset('img/vector-5.svg') }}" alt="Tambah">
+                <span>Tambahkan Pesanan</span>
+              </button>
+            </form>
+          </div>
+        </section>
+      @endif
+    </div>
   </div>
 
   <!-- SECTION FLASH SALE (Promo Harian Jam 20:00 - 22:00) -->
@@ -74,14 +175,14 @@
         </div>
         <div class="fs-header-text">
           <h2>FLASH SALE MALAM</h2>
-          <p>Promo hemat harian setiap pukul 20:00 - 22:00 WIB</p>
+          <p>Setiap pukul 20:00 - 22:00 WIB</p>
         </div>
       </div>
 
       <div class="fs-countdown-box">
         <div class="fs-status-pill">
           <span class="fs-pulse-dot"></span>
-          <span id="fsStatusLabel">{{ ($isPromoActive ?? false) ? 'Sedang Berlangsung' : 'Dimulai Pukul 20:00' }}</span>
+          <span id="fsStatusLabel">{{ ($isPromoActive ?? false) ? 'Berlangsung' : 'Mulai 20:00' }}</span>
         </div>
         <div class="fs-timer-display" id="fsTimerDisplay">
           <span class="fs-timer-unit" id="timerHours">00</span>
@@ -96,13 +197,9 @@
     @if ($isPromoActive ?? false)
       <!-- Filter Tab Mitra Pilihan Pelanggan -->
       <div class="fs-mitra-filter-row">
-        <div class="fs-mitra-filter-label">
-          <i class="fa-solid fa-store" style="color: #16442B;"></i>
-          <span>Pilih Mitra:</span>
-        </div>
         <div class="fs-mitra-chips" role="tablist">
           <button type="button" class="fs-mitra-chip active" data-mitra="all">
-            Semua Mitra ({{ $flashSales->count() }})
+            Semua ({{ $flashSales->count() }})
           </button>
           @foreach ($mitraList as $mitra)
             @php
@@ -137,33 +234,25 @@
           @endphp
 
           <article class="fs-card" data-mitra="{{ $idUmkm }}">
-            <!-- Visual Media & Badges -->
+            <!-- Visual Media (Bersih: Hanya Foto + Pita Diskon) -->
             <div class="fs-card-media">
               <img src="{{ $fotoUrl }}" alt="{{ $nama }}" class="fs-card-img" loading="lazy" onerror="this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80';">
-              
-              <!-- Badge Mitra di Kiri Atas -->
-              <div class="fs-card-vendor-badge" title="{{ $vendor }}">
-                <i class="fa-solid fa-store"></i>
-                <span>{{ $vendor }}</span>
-              </div>
 
-              <!-- Pita Diskon di Kanan Atas -->
               @if ($persenDiskon > 0)
                 <div class="fs-card-ribbon">
                   {{ $persenDiskon }}%
                   <span>OFF</span>
                 </div>
               @endif
-
-              <!-- Tag Ekstra di Bawah Foto -->
-              <div class="fs-card-tag-special">
-                <i class="fa-solid fa-tag"></i>
-                <span>Zero-Waste Promo</span>
-              </div>
             </div>
 
             <!-- Card Body Detail Informasi Promo -->
             <div class="fs-card-body">
+              <span class="fs-card-vendor-name" title="{{ $vendor }}">
+                <i class="fa-solid fa-store" aria-hidden="true"></i>
+                <span>{{ $vendor }}</span>
+              </span>
+
               <h3 class="fs-card-title" title="{{ $nama }}">{{ $nama }}</h3>
               
               <div class="fs-pricing-group">
@@ -172,10 +261,10 @@
               </div>
 
               <!-- Progress Bar Stok / Terjual -->
-              <div class="fs-stock-capsule">
-                <div class="fs-stock-fill {{ $stokSisa <= 5 ? 'is-low' : '' }}" style="width: {{ max(18, $persenTerjual) }}%;"></div>
+              <div class="fs-stock-capsule {{ $stokSisa <= 5 ? 'is-low-bg' : '' }}">
+                <div class="fs-stock-fill {{ $stokSisa <= 5 ? 'is-low' : '' }}" style="width: {{ max(22, $persenTerjual) }}%;"></div>
                 <span class="fs-stock-text">
-                  {{ $stokSisa <= 5 ? 'STOK TERBATAS • SISA ' . $stokSisa : $terjual . ' TERJUAL' }}
+                  {{ $stokSisa <= 5 ? 'Sisa ' . $stokSisa . ' porsi' : $terjual . ' terjual' }}
                 </span>
               </div>
 
@@ -205,15 +294,17 @@
 
   <!-- 3. Section Rekomendasi Paket Sehat -->
   <section class="recommended-section">
-    <div class="section-heading">
-      <h2 class="section-title">Rekomendasi Paket Sehat</h2>
-      <p class="section-subtitle">
-        @if(!empty($profilKesehatan?->jenis_diet))
-          Dikurasi khusus untuk preferensi diet {{ $profilKesehatan->jenis_diet }} Anda
-        @else
-          Dikurasi khusus berdasarkan preferensi nutrisi Anda
-        @endif
-      </p>
+    <div class="recommended-header-row">
+      <div class="section-heading">
+        <h2 class="section-title">Rekomendasi Paket Sehat</h2>
+      </div>
+
+      <a href="{{ route('pelanggan.mitra') }}" class="beranda-see-mitra-link">
+        <span>Lihat semua mitra UMKM</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </a>
     </div>
 
     <div class="vendor-cards-list">
@@ -247,30 +338,13 @@
             <div class="vendor-media-bottom">
               <div class="vendor-title-group">
                 <p class="vendor-location">{{ $menu->umkm->nama_vendor ?? 'Mitra Dapur Plan2Eat' }} &bull; Bogor</p>
-                <h3 class="vendor-package-name">{{ $menu->nama_makanan }}</h3>
+                
               </div>
-              <span class="badge-eco-blur">Eco Packaging</span>
             </div>
           </div>
 
           <div class="vendor-card-body">
-            <div class="nutrition-tags">
-              @if($menu->jenisMenu)
-                <span class="tag-pill tag-green">{{ $menu->jenisMenu->nama }}</span>
-              @else
-                <span class="tag-pill tag-green">Menu Satuan</span>
-              @endif
-
-              @if(!empty($profilKesehatan?->jenis_diet))
-                <span class="tag-pill tag-amber">Sesuai {{ $profilKesehatan->jenis_diet }}</span>
-              @else
-                <span class="tag-pill tag-amber">Bahan Segar Lokal</span>
-              @endif
-
-              <span class="tag-pill tag-neutral">{{ number_format($menu->kandungan_kalori, 0, ',', '.') }} kkal/menu</span>
-              <span class="tag-pill tag-neutral">Tersedia {{ $menu->stok_harian }} porsi</span>
-            </div>
-
+            <h3 class="vendor-package-name" style="color: black">{{ $menu->nama_makanan }}</h3>
             <p class="vendor-description">
               {{ $menu->deskripsi_makanan }}
             </p>
@@ -308,29 +382,59 @@
 <script>
   document.addEventListener('DOMContentLoaded', function () {
     const slides = [
-      { subtitle: 'Minggu Ini', title: '12 Resep Nol Sampah' },
-      { subtitle: 'Dampak Lingkungan', title: 'Hemat 3.4 kg Limbah Kemasan' },
-      { subtitle: 'Petani Lokal Bogor', title: '100% Bahan Segar Organik' }
+      {
+        subtitle: 'Minggu Ini',
+        title: '12 Resep Nol Sampah',
+        image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=900&q=80'
+      },
+      {
+        subtitle: 'Dampak Lingkungan',
+        title: 'Hemat 3.4 kg Limbah Kemasan',
+        image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?auto=format&fit=crop&w=900&q=80'
+      },
+      {
+        subtitle: 'Petani Lokal Bogor',
+        title: '100% Bahan Segar Organik',
+        image: 'https://images.unsplash.com/photo-1490645935967-10de6ba17061?auto=format&fit=crop&w=900&q=80'
+      }
     ];
 
     const dots = document.querySelectorAll('#heroCarousel .dot');
     const subtitleEl = document.getElementById('heroSubtitle');
     const titleEl = document.getElementById('heroTitle');
+    const visualImgEl = document.getElementById('heroVisualImg');
     const skipBtn = document.getElementById('btnSkipHero');
     const carouselCard = document.getElementById('heroCarousel');
+    let currentSlideIdx = 0;
+
+    function goToSlide(idx) {
+      currentSlideIdx = idx % slides.length;
+      dots.forEach((d, i) => d.classList.toggle('active', i === currentSlideIdx));
+      if (subtitleEl) subtitleEl.textContent = slides[currentSlideIdx].subtitle;
+      if (titleEl) titleEl.textContent = slides[currentSlideIdx].title;
+      if (visualImgEl) {
+        visualImgEl.style.backgroundImage = "url('" + slides[currentSlideIdx].image + "')";
+      }
+    }
+
+    let heroAutoTimer = setInterval(function () {
+      goToSlide(currentSlideIdx + 1);
+    }, 3000);
 
     dots.forEach((dot) => {
       dot.addEventListener('click', () => {
         const idx = parseInt(dot.dataset.slide, 10);
-        dots.forEach(d => d.classList.remove('active'));
-        dot.classList.add('active');
-        subtitleEl.textContent = slides[idx].subtitle;
-        titleEl.textContent = slides[idx].title;
+        goToSlide(idx);
+        clearInterval(heroAutoTimer);
+        heroAutoTimer = setInterval(function () {
+          goToSlide(currentSlideIdx + 1);
+        }, 3000);
       });
     });
 
     if (skipBtn && carouselCard) {
       skipBtn.addEventListener('click', () => {
+        clearInterval(heroAutoTimer);
         carouselCard.style.display = 'none';
       });
     }
@@ -351,14 +455,14 @@
 
       if (currentH < 20) {
         target.setHours(20, 0, 0, 0);
-        if (statusLabel) statusLabel.textContent = 'Dimulai Pukul 20:00';
+        if (statusLabel) statusLabel.textContent = 'Mulai 20:00';
       } else if (currentH < 22) {
         target.setHours(22, 0, 0, 0);
-        if (statusLabel) statusLabel.textContent = 'Sedang Berlangsung';
+        if (statusLabel) statusLabel.textContent = 'Berlangsung';
       } else {
         target.setDate(target.getDate() + 1);
         target.setHours(20, 0, 0, 0);
-        if (statusLabel) statusLabel.textContent = 'Dimulai Besok 20:00';
+        if (statusLabel) statusLabel.textContent = 'Besok 20:00';
       }
 
       const diff = Math.max(0, Math.floor((target - now) / 1000));

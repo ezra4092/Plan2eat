@@ -30,14 +30,10 @@
   <header class="cmn-header-row">
     <div class="cmn-header-left">
       <h1 class="cmn-page-title">Daftar Menu Katering</h1>
-      <p class="cmn-page-subtitle">Porsi terukur siap makan</p>
     </div>
 
     <div class="cmn-header-right">
       <span class="cmn-mitra-name">{{ $storeName }}</span>
-      @if($isVerified)
-        <span class="cmn-mitra-verified">MITRA RESMI</span>
-      @endif
     </div>
   </header>
 
@@ -80,6 +76,7 @@
             alt="{{ $menuName }}"
             class="cmn-card-img"
             loading="lazy"
+            onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80';"
           >
 
           {{-- Pill Kalori (Kiri Atas) --}}

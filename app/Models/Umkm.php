@@ -31,7 +31,6 @@ class Umkm extends Model
         'catatan',
         'rating',
         'saldo',
-        'metode_pembayaran',
     ];
 
     protected function casts(): array
@@ -39,18 +38,15 @@ class Umkm extends Model
         return [
             'rating' => 'decimal:2',
             'saldo' => 'decimal:2',
-            'metode_pembayaran' => 'array',
         ];
     }
 
     /**
-     * Mengecek apakah UMKM berstatus terverifikasi ('disetujui' atau boolean true).
+     * Mengecek apakah UMKM berstatus terverifikasi ('disetujui').
      */
     public function isTerverifikasi(): bool
     {
-        $val = strtolower((string) $this->status_verifikasi);
-
-        return in_array($val, ['disetujui', 'true', '1'], true) || $this->status_verifikasi === true;
+        return strtolower((string) $this->status_verifikasi) === 'disetujui';
     }
 
     public function user(): BelongsTo
@@ -69,11 +65,11 @@ class Umkm extends Model
     }
 
     /**
-     * Scope UMKM yang sudah terverifikasi (mendukung nilai 'disetujui' maupun boolean).
+     * Scope UMKM yang sudah terverifikasi (status_verifikasi = 'disetujui').
      */
     public function scopeTerverifikasi(Builder $query): Builder
     {
-        return $query->whereRaw("LOWER(CAST(status_verifikasi AS TEXT)) IN ('disetujui', 'true', '1')");
+        return $query->whereRaw("LOWER(CAST(status_verifikasi AS TEXT)) = 'disetujui'");
     }
 
     /**

@@ -63,13 +63,6 @@
                 $totalMenunggu = $totalMitra - $totalAktif - $totalDitangguhkan;
             @endphp
 
-            @if(session('success'))
-                <div class="mm-toast is-success" role="alert">{{ session('success') }}</div>
-            @endif
-            @if($errors->any())
-                <div class="mm-toast is-error" role="alert">{{ $errors->first() }}</div>
-            @endif
-
             <div class="admin-dashboard">
                 {{-- Header Judul --}}
                 <div class="umkm-mgmt-title-row">
@@ -250,7 +243,7 @@
                                                     data-alamat="{{ $item->alamat_lengkap }}"
                                                     data-deskripsi="{{ $item->deskripsi_toko ?? 'Tidak ada deskripsi toko.' }}"
                                                     data-jam="{{ substr($item->jam_buka ?? '08:00', 0, 5) }} - {{ substr($item->jam_tutup ?? '20:00', 0, 5) }} WIB"
-                                                    data-pembayaran="{{ $item->metode_pembayaran ?? '-' }}"
+                                                    data-pembayaran="Dikelola via Plan2Eat (QRIS / Transfer / Tunai)"
                                                     data-status="{{ $rawStatus }}"
                                                     data-catatan="{{ $item->catatan ?? '' }}">
                                                 Tinjau
@@ -463,5 +456,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+@include('partials.popup_notification')
 </body>
 </html>

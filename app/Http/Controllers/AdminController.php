@@ -128,7 +128,7 @@ class AdminController extends Controller
         // Pastikan primary key tabel ulasan kamu bernama 'id_ulasan'
         DB::table('ulasan')->where('id_ulasan', $id_ulasan)->delete();
         
-        return back()->with('success', 'Ulasan tidak pantas berhasil dihapus.');
+        return back()->with('deleted', 'Ulasan tidak pantas berhasil dihapus.');
     }
 
     public function transaksi()
@@ -167,6 +167,6 @@ class AdminController extends Controller
         $user = User::findOrFail($id_user);
         $user->delete(); // Ini akan cascade delete UMKM dan pesanan sesuai migrasi kamu
 
-        return back()->with('success', 'Pengguna berhasil dihapus permanen.');
+        return back()->with('deleted', 'Pengguna berhasil dihapus permanen.');
     }
 }

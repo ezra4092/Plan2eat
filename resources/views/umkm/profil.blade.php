@@ -6,27 +6,6 @@
 
 @section('content')
 <div class="mp-page-container">
-    {{-- Notifikasi Flash & Error Validasi --}}
-    @if (session('success'))
-        <div style="background: #ECFDF5; border-left: 4px solid #10B981; color: #065F46; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 13.5px; font-weight: 600;">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if (session('error'))
-        <div style="background: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 13.5px; font-weight: 600;">
-            {{ session('error') }}
-        </div>
-    @endif
-    @if ($errors->any())
-        <div style="background: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 13.5px;">
-            <ul style="margin: 0; padding-left: 20px;">
-                @foreach ($errors->all() as $err)
-                    <li>{{ $err }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     <form id="mitraProfileMainForm" action="{{ route('umkm.profil-update', $umkm->id_umkm) }}" method="POST" enctype="multipart/form-data" class="mp-main-form">
         @csrf
         @method('PUT')
@@ -295,113 +274,10 @@
                 </section>
             </div>
 
-            {{-- KOLOM KANAN: METODE PEMBAYARAN + TOMBOL SIMPAN & KELUAR --}}
+            {{-- KOLOM KANAN: TOMBOL SIMPAN & KELUAR --}}
             <div class="mp-col-stack">
-                {{-- 3. METODE PEMBAYARAN --}}
-                @php
-                    $rawPayments = old('metode_pembayaran', $umkm->metode_pembayaran ?? ['QRIS']);
-                    if (is_string($rawPayments)) {
-                        $decoded = json_decode($rawPayments, true);
-                        $activePayments = is_array($decoded) ? $decoded : [$rawPayments];
-                    } else {
-                        $activePayments = (array) $rawPayments;
-                    }
-                    $activeCount = count($activePayments);
-                @endphp
-
+                {{-- 3. INFO PEMBAYARAN TERPUSAT --}}
                 <section class="mp-section-block">
-                    <div class="mp-section-header-between">
-                        <div class="mp-section-header">
-                            <span class="mp-section-icon">
-                                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="2" y="5" width="20" height="14" rx="2"/>
-                                    <line x1="2" y1="10" x2="22" y2="10"/>
-                                </svg>
-                            </span>
-                            <h2 class="mp-section-title">Metode Pembayaran</h2>
-                        </div>
-
-                        <span class="mp-pill-3-aktif" id="paymentActiveCountBadge">
-                            <span class="dot"></span>
-                            <span id="paymentActiveCountText">{{ $activeCount }} Aktif</span>
-                        </span>
-                    </div>
-
-                    <div class="mp-payment-wrapper-card">
-                        {{-- Header Accordion QRIS Merchant --}}
-                        <button type="button" id="btnTogglePaymentAccordion" class="mp-payment-accordion-head" aria-expanded="true">
-                            <div class="mp-payment-head-left">
-                                <span class="mp-qris-logo-box">QRIS</span>
-                                <div class="mp-payment-head-text">
-                                    <div class="mp-payment-head-title">
-                                        <span>Metode Pembayaran Dapur</span>
-                                        <span class="mp-pill-utama">Utama</span>
-                                    </div>
-                                    <span class="mp-payment-head-sub">{{ $umkm->nama_vendor }} &bull; Multi-Metode</span>
-                                </div>
-                            </div>
-                            <svg id="paymentChevronIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="18 15 12 9 6 15"/>
-                            </svg>
-                        </button>
-
-                        {{-- Body Pilihan Metode Pembayaran (Multi-Pilih Checkbox JSON) --}}
-                        <div id="paymentAccordionBody" class="mp-payment-body">
-                            <span class="mp-payment-caps">PILIH METODE PEMBAYARAN AKTIF (BISA LEBIH DARI SATU)</span>
-
-                            <div class="mp-payment-options-list">
-                                {{-- Opsi 1: QRIS --}}
-                                @php $hasQris = in_array('QRIS', $activePayments) || in_array('qris', $activePayments); @endphp
-                                <label class="mp-payment-option {{ $hasQris ? 'is-selected' : '' }}">
-                                    <div class="mp-option-left">
-                                        <input type="checkbox" name="metode_pembayaran[]" value="QRIS" class="mp-payment-checkbox" {{ $hasQris ? 'checked' : '' }} hidden>
-                                        <span class="mp-custom-radio"></span>
-                                        <div class="mp-option-info">
-                                            <div class="mp-option-title-row">
-                                                <strong>QRIS</strong>
-                                                <span class="mp-pill-aktif-mini">{{ $hasQris ? 'Aktif' : 'Nonaktif' }}</span>
-                                            </div>
-                                            <span class="mp-option-sub">QRIS Statis &amp; Dinamis ({{ $umkm->nama_vendor }})</span>
-                                        </div>
-                                    </div>
-                                </label>
-
-                                {{-- Opsi 2: Transfer Bank --}}
-                                @php $hasTransfer = in_array('Transfer Bank', $activePayments) || in_array('bca', $activePayments); @endphp
-                                <label class="mp-payment-option {{ $hasTransfer ? 'is-selected' : '' }}">
-                                    <div class="mp-option-left">
-                                        <input type="checkbox" name="metode_pembayaran[]" value="Transfer Bank" class="mp-payment-checkbox" {{ $hasTransfer ? 'checked' : '' }} hidden>
-                                        <span class="mp-custom-radio"></span>
-                                        <div class="mp-option-info">
-                                            <div class="mp-option-title-row">
-                                                <strong>Transfer Bank</strong>
-                                                <span class="mp-account-num">BCA / Mandiri</span>
-                                            </div>
-                                            <span class="mp-option-sub">a/n {{ $umkm->nama_vendor }}</span>
-                                        </div>
-                                    </div>
-                                </label>
-
-                                {{-- Opsi 3: Tunai --}}
-                                @php $hasTunai = in_array('Tunai', $activePayments) || in_array('gopay', $activePayments); @endphp
-                                <label class="mp-payment-option {{ $hasTunai ? 'is-selected' : '' }}">
-                                    <div class="mp-option-left">
-                                        <input type="checkbox" name="metode_pembayaran[]" value="Tunai" class="mp-payment-checkbox" {{ $hasTunai ? 'checked' : '' }} hidden>
-                                        <span class="mp-custom-radio"></span>
-                                        <div class="mp-option-info">
-                                            <div class="mp-option-title-row">
-                                                <strong>Tunai / COD</strong>
-                                                <span class="mp-account-num">Bayar di Tempat</span>
-                                            </div>
-                                            <span class="mp-option-sub">a/n <span class="sync-owner-name">{{ $user->nama_lengkap }}</span></span>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                        </div>
-                    </div>
-
-                    {{-- Info Banner Pencairan Saldo --}}
                     <div class="mp-cream-note-box">
                         <span class="mp-note-icon">
                             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -411,7 +287,7 @@
                             </svg>
                         </span>
                         <p class="mp-note-text">
-                            Pencairan saldo pesanan katering dan donasi zero-waste akan disalurkan otomatis ke metode pembayaran aktif terpilih.
+                            Seluruh pembayaran pelanggan dikelola melalui Plan2Eat dengan potongan biaya admin 5% dan dapat dicairkan langsung dari halaman <strong>Keuangan</strong>.
                         </p>
                     </div>
                 </section>
@@ -623,7 +499,11 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             } catch (err) {
                 applyStoreStatusUI(isCurrentlyOpen);
-                alert('Gagal menyimpan status buka toko ke database.');
+                window.showAppPopup({
+                    type: 'error',
+                    title: 'Gagal Menyimpan',
+                    message: 'Gagal menyimpan status buka toko ke database.'
+                });
             } finally {
                 btnToggleStoreOpen.disabled = false;
             }
@@ -700,7 +580,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const newDesc = modalDeskripsiToko.value.trim();
 
             if (!newVendor || !newOwner || !newEmail || !newAddress) {
-                alert('Mohon lengkapi Nama Warung, Nama Pemilik, Email, dan Alamat Lengkap.');
+                window.showAppPopup({
+                    type: 'error',
+                    title: 'Data Belum Lengkap',
+                    message: 'Mohon lengkapi Nama Warung, Nama Pemilik, Email, dan Alamat Lengkap.'
+                });
                 return;
             }
 
@@ -797,7 +681,11 @@ document.addEventListener('DOMContentLoaded', function () {
             const anyChecked = Array.from(paymentCheckboxes).some(item => item.checked);
             if (!anyChecked) {
                 cb.checked = true;
-                alert('Minimal harus ada 1 metode pembayaran yang aktif.');
+                window.showAppPopup({
+                    type: 'error',
+                    title: 'Perhatian',
+                    message: 'Minimal harus ada 1 metode pembayaran yang aktif.'
+                });
             }
             updatePaymentUI();
         });

@@ -64,22 +64,6 @@
       </div>
     </section>
 
-    @if (session('success'))
-      <div style="background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; padding: 12px 16px; border-radius: 12px; font-size: 13px; margin-bottom: 16px;">
-        {{ session('success') }}
-      </div>
-    @endif
-
-    @if ($errors->any())
-      <div class="auth-alert-error" role="alert" style="margin-bottom: 16px;">
-        <ul>
-          @foreach ($errors->all() as $error)
-            <li>{{ $error }}</li>
-          @endforeach
-        </ul>
-      </div>
-    @endif
-
     {{-- Form Card Sage Green: 1. Profil Warung --}}
     <form action="{{ route('umkm.pendaftaran-store') }}" method="POST" class="mitra-form-wrapper">
       @csrf
@@ -202,5 +186,6 @@
   </div>
 </main>
 
+@include('partials.popup_notification')
 </body>
 </html>

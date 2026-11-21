@@ -10,10 +10,6 @@
 
     <h2>Monitoring & Moderasi Ulasan</h2>
 
-    @if(session('success'))
-        <div style="color: green; margin-bottom: 10px;">{{ session('success') }}</div>
-    @endif
-
     <!-- FILTER RATING RENDAH -->
     <form action="{{ route('admin.ulasan') }}" method="GET" style="margin-bottom: 15px;">
         <label>Filter Ulasan: </label>
@@ -44,14 +40,14 @@
                 <td>{{ \Carbon\Carbon::parse($ulasan->timestamp)->format('d M Y') }}</td>
                 <td>
                     <!-- Tombol Hapus Ulasan -->
-                    <form action="{{ route('admin.ulasan.delete', $ulasan->id_ulasan) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus ulasan ini secara permanen?');">
+                    <form action="{{ route('admin.ulasan.delete', $ulasan->id_ulasan) }}" method="POST" style="display:inline;" data-confirm="Hapus ulasan ini secara permanen?" data-confirm-title="Hapus Ulasan" data-confirm-ok="Ya, Hapus" data-confirm-danger="true">
                         @csrf
                         @method('DELETE')
                         <button type="submit" style="color: red; margin-bottom: 5px;">Hapus Ulasan</button>
                     </form>
                     <br>
                     <!-- Tombol Suspend UMKM (Gunakan route suspend pengguna) -->
-                    <form action="{{ route('admin.pengguna.suspend', $ulasan->id_user_umkm) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin {{ $ulasan->is_suspended ? 'mengaktivasi' : 'menangguhkan' }} UMKM ini karena rating rendah?');">
+                    <form action="{{ route('admin.pengguna.suspend', $ulasan->id_user_umkm) }}" method="POST" style="display:inline;" data-confirm="Yakin ingin {{ $ulasan->is_suspended ? 'mengaktivasi' : 'menangguhkan' }} UMKM ini karena rating rendah?" data-confirm-title="Konfirmasi Status UMKM" data-confirm-danger="{{ $ulasan->is_suspended ? 'false' : 'true' }}">
                         @csrf
                         @method('PATCH')
                         <button type="submit" style="color: {{ $ulasan->is_suspended ? 'green' : 'orange' }};">
@@ -67,5 +63,6 @@
             @endforelse
         </tbody>
     </table>
+    @include('partials.popup_notification')
 </body>
 </html>

@@ -25,10 +25,15 @@ class MealPlanController extends Controller
 
     public function store(Request $request)
     {
+        $tomorrow = now('Asia/Jakarta')->addDay()->toDateString();
+
         $request->validate([
             'judul_plan' => 'required|string|max:255',
-            'tanggal_mulai' => 'required|date',
+            'tanggal_mulai' => 'required|date|after_or_equal:' . $tomorrow,
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+        ], [
+            'tanggal_mulai.after_or_equal' => 'Pemesanan Meal Plan hanya dapat diatur minimal untuk esok hari (H+1).',
+            'tanggal_selesai.after_or_equal' => 'Tanggal selesai tidak boleh sebelum tanggal mulai.',
         ]);
 
         MealPlan::create([
@@ -61,7 +66,7 @@ class MealPlanController extends Controller
         // Pastikan relasi onDelete cascade diaktifkan di tabel database
         $mealPlan->delete(); 
 
-        return redirect()->route('pelanggan.meal_plan')->with('success', 'Meal Plan berhasil dihapus.');
+        return redirect()->route('pelanggan.meal_plan')->with('deleted', 'Meal Plan berhasil dihapus.');
     }
 
     // --- FUNGSI DETAIL ---
@@ -69,15 +74,16 @@ class MealPlanController extends Controller
     {
         // 1. Ambil data meal plan-nya dulu untuk mendapatkan batas tanggal
         $mealPlan = MealPlan::where('id_user', Auth::id())->findOrFail($id_plan);
+        $tomorrow = now('Asia/Jakarta')->addDay()->toDateString();
+        $minJadwal = max($mealPlan->tanggal_mulai->toDateString(), $tomorrow);
 
-        // 2. Tambahkan validasi batas tanggal (after_or_equal & before_or_equal)
+        // 2. Tambahkan validasi batas tanggal (minimal H+1 dan dalam rentang plan)
         $request->validate([
             'id_menu'      => 'required|exists:menu,id_menu', 
-            'jadwal_makan' => 'required|date|after_or_equal:' . $mealPlan->tanggal_mulai->toDateString() . '|before_or_equal:' . $mealPlan->tanggal_selesai->toDateString(),
+            'jadwal_makan' => 'required|date|after_or_equal:' . $minJadwal . '|before_or_equal:' . $mealPlan->tanggal_selesai->toDateString(),
             'waktu_makan'  => 'required|string|max:255',
         ], [
-            // (Opsional) Pesan error jika user memaksa memasukkan tanggal yang salah
-            'jadwal_makan.after_or_equal' => 'Jadwal makan tidak boleh sebelum tanggal mulai plan.',
+            'jadwal_makan.after_or_equal' => 'Jadwal makan hanya dapat diatur minimal untuk esok hari (H+1) dan tidak boleh sebelum tanggal mulai plan.',
             'jadwal_makan.before_or_equal' => 'Jadwal makan tidak boleh melewati tanggal selesai plan.'
         ]);
 
@@ -100,7 +106,7 @@ class MealPlanController extends Controller
         
         $detail->delete();
 
-        return redirect()->route('pelanggan.meal_plan')->with('success', 'Menu berhasil dihapus dari jadwal.');
+        return redirect()->route('pelanggan.meal_plan')->with('deleted', 'Menu berhasil dihapus dari jadwal.');
     }
 
     public function updateDetail(Request $request, $id_detail_plan)

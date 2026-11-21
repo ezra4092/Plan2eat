@@ -27,5 +27,6 @@
             @endforeach
         </tbody>
     </table>
+    @include('partials.popup_notification')
 </body>
 </html>

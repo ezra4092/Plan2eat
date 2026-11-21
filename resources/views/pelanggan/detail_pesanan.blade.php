@@ -289,6 +289,21 @@
       </div>
     @endforeach
 
+    @php
+      $subtotalDetail = $pesanan->detailPesanan->sum('subtotal');
+      $biayaAdminDetail = (float) ($pesanan->biaya_admin ?? max(0, (float) $pesanan->total_pembayaran - $subtotalDetail));
+    @endphp
+    <div style="border-top: 1px dashed #E5E7EB; padding-top: 10px; margin-top: 6px; display: flex; flex-direction: column; gap: 5px; font-size: 13px; color: #4B5563;">
+      <div style="display: flex; justify-content: space-between;">
+        <span>Subtotal Menu</span>
+        <strong>Rp {{ number_format($subtotalDetail, 0, ',', '.') }}</strong>
+      </div>
+      <div style="display: flex; justify-content: space-between;">
+        <span>Biaya Admin (5%)</span>
+        <strong>Rp {{ number_format($biayaAdminDetail, 0, ',', '.') }}</strong>
+      </div>
+    </div>
+
     <div class="detail-total-row">
       <span style="font-size: 14px; font-weight: 700; color: #374151;">Total Pembayaran</span>
       <span class="detail-total-amount">Rp {{ number_format($pesanan->total_pembayaran, 0, ',', '.') }}</span>

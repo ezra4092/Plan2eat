@@ -109,27 +109,6 @@
 @endphp
 
 <div class="customer-profile-container">
-    {{-- Notifikasi Flash & Error Validasi --}}
-    @if (session('success'))
-        <div style="background: #ECFDF5; border-left: 4px solid #10B981; color: #065F46; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 13.5px; font-weight: 600;">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if (session('error'))
-        <div style="background: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 13.5px; font-weight: 600;">
-            {{ session('error') }}
-        </div>
-    @endif
-    @if ($errors->any())
-        <div style="background: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px; font-size: 13.5px;">
-            <ul style="margin: 0; padding-left: 20px;">
-                @foreach ($errors->all() as $err)
-                    <li>{{ $err }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     <form id="healthProfileForm" action="{{ $formAction }}" method="POST" enctype="multipart/form-data" class="customer-profile-form">
         @csrf
         @if ($profil)
@@ -286,6 +265,23 @@
                                     <polyline points="22 4 12 14.01 9 11.01"/>
                                 </svg>
                             </span>
+                        </div>
+
+                        {{-- Saldo Akun Pelanggan --}}
+                        <div class="account-info-row">
+                            <div class="account-row-left">
+                                <span class="account-row-icon is-mint">
+                                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/>
+                                        <path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/>
+                                    </svg>
+                                </span>
+                                <div class="account-row-text">
+                                    <span class="account-mini-label">SALDO AKUN</span>
+                                    <span class="account-main-value">Rp {{ number_format((float) ($user->saldo ?? 0), 0, ',', '.') }}</span>
+                                </div>
+                            </div>
+                            <span class="badge-wa-connected">Aktif</span>
                         </div>
                     </div>
                 </section>
@@ -636,9 +632,15 @@ document.addEventListener('DOMContentLoaded', function () {
     if (btnResetHealthProfile) {
         btnResetHealthProfile.addEventListener('click', function () {
             if (resetForm) {
-                if (confirm('Apakah Anda yakin ingin mereset seluruh data profil kesehatan Anda?')) {
-                    resetForm.submit();
-                }
+                window.openConfirmPopup({
+                    title: 'Reset Profil Kesehatan',
+                    message: 'Apakah Anda yakin ingin mereset seluruh data profil kesehatan Anda?',
+                    confirmText: 'Ya, Reset',
+                    isDanger: true,
+                    onConfirm: function () {
+                        resetForm.submit();
+                    }
+                });
                 return;
             }
 

@@ -50,6 +50,7 @@
             alt="{{ $mitra->nama_vendor }}"
             class="mtr-store-thumb"
             loading="lazy"
+            onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80';"
           >
 
           <div class="mtr-store-info">
@@ -91,7 +92,7 @@
             @endphp
             <div class="mtr-menu-mini">
               <div class="mtr-menu-mini-thumb">
-                <img src="{{ $fotoMenuUrl }}" alt="{{ $menu->nama_makanan }}" loading="lazy">
+                <img src="{{ $fotoMenuUrl }}" alt="{{ $menu->nama_makanan }}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=240&q=80';">
               </div>
               <span class="mtr-menu-mini-price">{{ number_format((int) $menu->harga_normal, 0, ',', '.') }}</span>
               <span class="mtr-menu-mini-name" title="{{ $menu->nama_makanan }}">{{ $menu->nama_makanan }}</span>

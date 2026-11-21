@@ -14,16 +14,6 @@
 @endphp
 
 <div class="uls-page">
-    {{-- Tombol Kembali --}}
-    <div class="uls-back-row">
-        <a href="{{ url()->previous() }}" class="uls-back-link">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/>
-            </svg>
-            <span>Kembali</span>
-        </a>
-    </div>
-
     {{-- Hero Banner --}}
     <section class="uls-hero-card">
         <div class="uls-hero-top">
@@ -52,38 +42,6 @@
             </div>
         </div>
     </section>
-
-    {{-- Alert Session & Error Validasi --}}
-    @if(session('success'))
-        <div class="uls-alert is-success" role="alert">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>
-            </svg>
-            <span>{{ session('success') }}</span>
-        </div>
-    @endif
-
-    @if(session('error'))
-        <div class="uls-alert is-error" role="alert">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <span>{{ session('error') }}</span>
-        </div>
-    @endif
-
-    @if($errors->any())
-        <div class="uls-alert is-error" role="alert">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
-            </svg>
-            <ul>
-                @foreach($errors->all() as $error)
-                    <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
 
     {{-- Filter Tabs --}}
     @if($totalPesanan > 0)
@@ -121,8 +79,6 @@
                         </div>
                         <div class="uls-order-meta">
                             <div class="uls-order-id-row">
-                                <span>ID #{{ $pesanan->id_pesanan }}</span>
-                                <span>•</span>
                                 <span>{{ \Carbon\Carbon::parse($pesanan->tgl_selesai)->format('d M Y, H:i') }}</span>
                             </div>
                             <h2 class="uls-vendor-name">{{ $pesanan->umkm->nama_vendor ?? 'UMKM Tidak Diketahui' }}</h2>
@@ -248,109 +204,6 @@
                                 <img src="{{ asset('storage/' . $pesanan->ulasan->foto_ulasan) }}" alt="Foto Ulasan Pesanan #{{ $pesanan->id_pesanan }}" class="uls-review-photo">
                             </div>
                         @endif
-
-                        <div class="uls-review-actions">
-                            <button type="button" class="uls-btn-edit" onclick="toggleEdit({{ $pesanan->ulasan->id_ulasan }})">
-                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-                                </svg>
-                                <span>Edit Ulasan</span>
-                            </button>
-
-                            <form id="delete-form-{{ $pesanan->ulasan->id_ulasan }}" action="{{ route('pelanggan.ulasan-delete', $pesanan->ulasan->id_ulasan) }}" method="POST" style="margin:0;">
-                                @csrf
-                                @method('DELETE')
-                                <button type="button" class="uls-btn-delete" onclick="openDeleteModal({{ $pesanan->ulasan->id_ulasan }})">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                                        <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-                                    </svg>
-                                    <span>Hapus</span>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    {{-- Form Edit Tersembunyi --}}
-                    <div class="uls-edit-drawer" id="edit-form-{{ $pesanan->ulasan->id_ulasan }}">
-                        <div class="uls-edit-header">
-                            <h3 class="uls-edit-title">Perbarui Ulasanmu</h3>
-                        </div>
-
-                        <form action="{{ route('pelanggan.ulasan-update', $pesanan->ulasan->id_ulasan) }}" method="POST" enctype="multipart/form-data" class="uls-form">
-                            @csrf
-                            @method('PUT')
-
-                            {{-- Edit Rating --}}
-                            <div class="uls-field-group">
-                                <label class="uls-label">
-                                    <span>Edit Rating</span>
-                                    <span class="optional">Wajib</span>
-                                </label>
-                                <div class="uls-star-box" data-star-picker>
-                                    <div class="uls-stars-group">
-                                        @for($i = 1; $i <= 5; $i++)
-                                            <label class="uls-star-btn {{ $i <= $pesanan->ulasan->rating ? 'is-active' : '' }}" data-star-value="{{ $i }}" title="{{ $i }} Bintang">
-                                                <input
-                                                    type="radio"
-                                                    name="rating"
-                                                    value="{{ $i }}"
-                                                    class="uls-star-radio"
-                                                    {{ $pesanan->ulasan->rating == $i ? 'checked' : '' }}
-                                                    required
-                                                >
-                                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                                                </svg>
-                                            </label>
-                                        @endfor
-                                    </div>
-                                    <span class="uls-rating-caption has-value" data-star-label>{{ $pesanan->ulasan->rating }} / 5 Bintang</span>
-                                </div>
-                            </div>
-
-                            {{-- Edit Teks Ulasan --}}
-                            <div class="uls-field-group">
-                                <label class="uls-label">
-                                    <span>Edit Ulasan</span>
-                                    <span class="optional">Opsional</span>
-                                </label>
-                                <div class="uls-textarea-wrap">
-                                    <textarea name="ulasan" class="uls-textarea" placeholder="Tulis ulasan terbarumu...">{{ $pesanan->ulasan->ulasan }}</textarea>
-                                </div>
-                            </div>
-
-                            {{-- Ganti Foto --}}
-                            <div class="uls-field-group">
-                                <label class="uls-label">
-                                    <span>Ganti Foto</span>
-                                    <span class="optional">Biarkan kosong jika tidak diganti</span>
-                                </label>
-                                <div class="uls-upload-zone">
-                                    <input type="file" name="foto_ulasan" accept="image/jpeg,image/png,image/jpg" class="uls-file-input" data-photo-input>
-                                    <div class="uls-upload-icon">
-                                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
-                                        </svg>
-                                    </div>
-                                    <div class="uls-upload-text">
-                                        <strong>Pilih foto baru (Opsional)</strong>
-                                        <span>Format JPG/PNG maksimal 2MB</span>
-                                    </div>
-                                </div>
-                                <div class="uls-preview-box" data-photo-preview>
-                                    <div class="uls-preview-left">
-                                        <img src="" alt="Preview Foto Baru" class="uls-preview-thumb">
-                                        <span class="uls-preview-name"></span>
-                                    </div>
-                                    <button type="button" class="uls-btn-clear-file" data-clear-photo>Hapus</button>
-                                </div>
-                            </div>
-
-                            <div class="uls-edit-btn-row">
-                                <button type="button" class="uls-btn-cancel" onclick="toggleEdit({{ $pesanan->ulasan->id_ulasan }})">Batal</button>
-                                <button type="submit" class="uls-btn-save-edit">Simpan Perubahan</button>
-                            </div>
-                        </form>
                     </div>
                 @endif
             </article>

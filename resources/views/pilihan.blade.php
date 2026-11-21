@@ -178,14 +178,6 @@
                 <p>Pilih jenis akun yang ingin Anda daftarkan terlebih dahulu</p>
             </div>
 
-            @if ($errors->any())
-                <div class="pilihan-alert-error" role="alert">
-                    @foreach ($errors->all() as $error)
-                        <div>{{ $error }}</div>
-                    @endforeach
-                </div>
-            @endif
-
             <form id="pilihanRoleForm" action="{{ route('register.form') }}" method="GET">
                 <input type="hidden" name="role" id="selectedRoleInput" value="">
 
@@ -256,7 +248,11 @@
             card.addEventListener('click', function () {
                 const role = this.dataset.role;
                 if (role !== 'pelanggan' && role !== 'umkm') {
-                    alert('Role pendaftaran tidak valid. Silakan pilih Pelanggan atau UMKM.');
+                    window.showAppPopup({
+                        type: 'error',
+                        title: 'Pilihan Tidak Valid',
+                        message: 'Role pendaftaran tidak valid. Silakan pilih Pelanggan atau UMKM.'
+                    });
                     return;
                 }
                 document.getElementById('selectedRoleInput').value = role;
@@ -264,5 +260,6 @@
             });
         });
     </script>
+    @include('partials.popup_notification')
 </body>
 </html>

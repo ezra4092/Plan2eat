@@ -1355,7 +1355,9 @@ body {
   }
 
   .hero-visual-box {
-    height: 230px;
+    height: auto;
+    min-height: 240px;
+    flex: 1;
   }
 
   .order-status-card {
@@ -1381,7 +1383,7 @@ body {
   }
 
   .hero-visual-box {
-    height: 250px;
+    min-height: 260px;
   }
 }
 
@@ -3028,7 +3030,9 @@ body {
   }
 
   .hero-visual-box {
-    height: 230px;
+    height: auto;
+    min-height: 240px;
+    flex: 1;
   }
 
   .order-status-card {
@@ -3171,7 +3175,7 @@ body {
   }
 
   .hero-visual-box {
-    height: 250px;
+    min-height: 260px;
   }
 }
 
@@ -7863,12 +7867,38 @@ body {
 
 @media (max-width: 640px) {
   .fs-cards-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 10px;
   }
   .flash-sale-section {
-    padding: 18px 14px;
+    padding: 14px 12px;
     border-radius: 18px;
+  }
+  .fs-header-banner {
+    padding: 14px;
+    gap: 10px;
+  }
+  .fs-header-text h2 {
+    font-size: 16px;
+  }
+  .fs-header-text p {
+    font-size: 11.5px;
+  }
+  .fs-countdown-box {
+    width: 100%;
+    justify-content: space-between;
+    padding: 8px 12px;
+  }
+  .fs-card-body {
+    padding: 10px;
+    gap: 6px;
+  }
+  .fs-card-title {
+    font-size: 12.5px;
+    min-height: 34px;
+  }
+  .fs-price-discount {
+    font-size: 15px;
   }
 }
 
@@ -7910,27 +7940,28 @@ body {
   transform: scale(1.06);
 }
 
-/* Badge Mitra (Top Left) */
-.fs-card-vendor-badge {
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  background: rgba(255, 255, 255, 0.94);
-  backdrop-filter: blur(4px);
-  padding: 3px 8px;
-  border-radius: 999px;
-  font-size: 10.5px;
-  font-weight: 700;
-  color: #16442B;
+/* Nama Mitra Rapi di Dalam Card Body */
+.fs-card-vendor-name {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
-  max-width: calc(100% - 60px);
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #5C6860;
+  min-width: 0;
+  max-width: 100%;
+}
+
+.fs-card-vendor-name i {
+  color: #16442B;
+  font-size: 10px;
+  flex-shrink: 0;
+}
+
+.fs-card-vendor-name span {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  z-index: 2;
 }
 
 /* Discount Ribbon Bookmark (Top Right - Sesuai Contoh Foto, Warna Amber/Emas Plan2Eat) */
@@ -8017,40 +8048,51 @@ body {
   font-family: 'Plus Jakarta Sans', sans-serif;
 }
 
-/* Progress Bar / Kapsul Stok (Sesuai Referensi Foto) */
+/* Progress Bar / Kapsul Stok (Kontras & Anti Terpotong di Mobile) */
 .fs-stock-capsule {
   position: relative;
   width: 100%;
-  height: 18px;
-  background: #FEE2E2;
+  height: 20px;
+  background: #E5E7EB;
   border-radius: 999px;
   overflow: hidden;
   display: flex;
   align-items: center;
+  justify-content: center;
   margin-top: auto;
 }
 
+.fs-stock-capsule.is-low-bg {
+  background: #FDE68A;
+}
+
 .fs-stock-fill {
-  height: 100%;
-  background: linear-gradient(90deg, #10B981 0%, #059669 100%);
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  background: #10B981;
   border-radius: 999px;
   transition: width 0.4s ease;
 }
 
 .fs-stock-fill.is-low {
-  background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%);
+  background: #F59E0B;
 }
 
 .fs-stock-text {
-  position: absolute;
+  position: relative;
+  z-index: 1;
   width: 100%;
+  padding: 0 8px;
   text-align: center;
-  font-size: 9.5px;
+  font-size: 10.5px;
   font-weight: 800;
-  color: #FFFFFF;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
-  text-transform: uppercase;
-  letter-spacing: 0.3px;
+  color: #111827;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  letter-spacing: 0.2px;
   pointer-events: none;
 }
 
@@ -8337,16 +8379,25 @@ body {
 .po-order {
   background-color: #F7F3E1;
   border-radius: 14px;
-  padding: 14px 16px;
+  padding: 15px 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 .po-order-head {
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  min-width: 0;
+}
+.po-order-head-left {
+  display: flex;
+  align-items: center;
   gap: 10px;
   min-width: 0;
+  flex-wrap: wrap;
 }
 .po-order-code {
   font-family: var(--font-sans);
@@ -8357,16 +8408,22 @@ body {
 }
 .po-order-divider {
   width: 1.5px;
-  height: 18px;
-  background-color: var(--black);
+  height: 16px;
+  background-color: #9CA3AF;
   flex-shrink: 0;
 }
 .po-order-name {
   font-family: var(--font-sans);
-  font-weight: 500;
+  font-weight: 600;
   font-size: 14px;
   color: var(--black);
   min-width: 0;
+}
+.po-order-schedule {
+  font-family: var(--font-inter);
+  font-size: 12.5px;
+  color: #555D56;
+  white-space: nowrap;
 }
 .po-order-items {
   list-style: none;
@@ -8374,11 +8431,80 @@ body {
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
+  font-family: var(--font-inter);
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: #374151;
+}
+.po-order-items li {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+}
+.po-item-time {
+  font-size: 12px;
+  color: #6B7280;
+  white-space: nowrap;
+}
+.po-order-note {
+  border-top: 1px dashed #D6D1BD;
+  padding-top: 8px;
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
   font-family: var(--font-inter);
   font-size: 13px;
-  line-height: 1.6;
-  color: #4D554E;
+  line-height: 1.45;
+}
+.po-order-note-label {
+  font-weight: 600;
+  color: #16442B;
+  white-space: nowrap;
+}
+.po-order-note-text {
+  color: #1F2937;
+  word-break: break-word;
+}
+.po-order-note-text.is-empty {
+  color: #7A827B;
+  font-style: italic;
+}
+.po-order-foot {
+  border-top: 1px solid #E5E0CC;
+  padding-top: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.po-order-meta {
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: #16442B;
+}
+.po-order-btn {
+  border: 1px solid #16442B;
+  background-color: #FFFFFF;
+  color: #16442B;
+  border-radius: 10px;
+  padding: 6px 12px;
+  font-family: var(--font-sans);
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+.po-order-btn:hover {
+  background-color: #16442B;
+  color: #FFFFFF;
+}
+.po-order-btn:disabled {
+  opacity: 0.6;
+  cursor: progress;
 }
 
 .po-empty {
@@ -8474,7 +8600,7 @@ body {
 
 /* Desktop lebar (>= 1280px) */
 @media (min-width: 1280px) {
-  .po-order-list { grid-template-columns: repeat(3, 1fr); }
+  .po-order-list { grid-template-columns: repeat(2, 1fr); }
 }
 
 /* ==========================================================================
@@ -8582,6 +8708,8 @@ body {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  min-width: 0;
+  overflow: hidden;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -8814,7 +8942,7 @@ body {
 
   .mtr-cards-grid {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 22px;
   }
 
@@ -8849,7 +8977,7 @@ body {
 /* Desktop Layar Lebar (>= 1280px) */
 @media (min-width: 1280px) {
   .mtr-cards-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -10305,6 +10433,96 @@ body {
   color: #DCECE3;
 }
 
+/* Split Cards: Saldo Milik UMKM & Saldo Tertahan + Tombol Cairkan Dana */
+.keu-split-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.keu-sub-card {
+  background-color: #FAF7EB;
+  border-radius: 15px;
+  padding: 13px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.keu-sub-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #55615A;
+}
+
+.keu-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.keu-dot.is-green {
+  background-color: #16442B;
+}
+
+.keu-dot.is-brown {
+  background-color: #6B5B45;
+}
+
+.keu-sub-amount {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  font-weight: 800;
+  color: #142219;
+  line-height: 1.25;
+}
+
+.keu-sub-note {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  color: #6C7870;
+}
+
+.keu-btn-disburse {
+  width: 100%;
+  height: 44px;
+  border: none;
+  border-radius: 13px;
+  background-color: #16442B;
+  color: #FFFFFF;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(22, 68, 43, 0.22);
+  transition: background-color 0.2s ease, transform 0.12s ease;
+}
+
+.keu-btn-disburse:hover:not(:disabled) {
+  background-color: #0F3520;
+}
+
+.keu-btn-disburse:active:not(:disabled) {
+  transform: scale(0.99);
+}
+
+.keu-btn-disburse:disabled {
+  background-color: #CBD5CE;
+  color: #5B6860;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+
 /* 4. Kartu Metode Pembayaran */
 .keu-payment-card {
   background-color: #FAF7EB;
@@ -10862,19 +11080,14 @@ body {
     grid-row: 1;
   }
 
-  .keu-area-payment {
+  .keu-area-admin {
     grid-column: 1;
     grid-row: 2;
   }
 
-  .keu-area-admin {
-    grid-column: 1;
-    grid-row: 3;
-  }
-
   .keu-area-log {
     grid-column: 2;
-    grid-row: 1 / span 3;
+    grid-row: 1 / span 2;
   }
 }
 
@@ -10899,6 +11112,10 @@ body {
 }
 
 @media (max-width: 480px) {
+  .keu-split-cards {
+    grid-template-columns: 1fr;
+  }
+
   .keu-balance-value {
     font-size: 28px;
   }
@@ -16183,5 +16400,277 @@ body {
     grid-template-columns: 1.55fr 1fr;
     gap: 20px;
     align-items: stretch;
+  }
+}
+
+/* ==========================================================================
+   HEADER ACCOUNT DROPDOWN & BERANDA STATUS/SALDO CARD
+   ========================================================================== */
+.header-account-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.header-account-trigger {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.header-account-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  width: min(250px, calc(100vw - 24px));
+  background-color: #FFFFFF;
+  border-radius: 14px;
+  border: 1px solid #E5E7EB;
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.16);
+  z-index: 1200;
+  overflow: hidden;
+  text-align: left;
+}
+
+.header-account-dropdown.is-hidden {
+  display: none;
+}
+
+.header-dropdown-head {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 14px 16px;
+  background-color: #FAFAFA;
+}
+
+.header-dropdown-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background-color: #D6E2D9;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+  border: 1.5px solid #C8E6C9;
+}
+
+.header-dropdown-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.header-dropdown-meta strong {
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #1F2937;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-dropdown-meta span {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  color: #6B7280;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.header-dropdown-divider {
+  height: 1px;
+  background-color: #E5E7EB;
+}
+
+.header-dropdown-list {
+  display: flex;
+  flex-direction: column;
+  padding: 6px;
+  gap: 2px;
+}
+
+.header-dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+  border-radius: 9px;
+  border: none;
+  background: transparent;
+  font-family: var(--font-inter);
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease;
+  text-align: left;
+}
+
+.header-dropdown-item:hover {
+  background-color: #F3F6F4;
+  color: #16442B;
+}
+
+.header-dropdown-item.is-logout:hover {
+  background-color: #FEF2F2;
+  color: #B91C1C;
+}
+
+/* Beranda Right Column: Card Saldo & Status Pesanan */
+.beranda-status-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.beranda-saldo-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E5E9E4;
+  border-radius: 18px;
+  padding: 14px 18px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.beranda-saldo-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.beranda-saldo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background-color: #E8F5E9;
+  color: #16442B;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.beranda-saldo-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.beranda-saldo-label {
+  font-family: var(--font-inter);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #6B7280;
+}
+
+.beranda-saldo-amount {
+  font-family: var(--font-sans);
+  font-size: 18px;
+  font-weight: 800;
+  color: #16442B;
+  line-height: 1.2;
+}
+
+.beranda-saldo-note {
+  font-family: var(--font-inter);
+  font-size: 11px;
+  font-weight: 600;
+  color: #15803D;
+  background-color: #ECFDF5;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.order-status-card.is-active-beranda {
+  background-color: #E6F4EC;
+  border: 1px solid #CBE7D5;
+  align-items: stretch;
+  justify-content: flex-start;
+  padding: 18px;
+  gap: 14px;
+  flex: 1;
+}
+
+.order-status-card:not(.is-active-beranda) {
+  flex: 1;
+}
+
+@media (max-width: 575px) {
+  .order-status-card.is-active-beranda {
+    padding: 16px;
+  }
+
+  .beranda-saldo-card {
+    padding: 13px 14px;
+  }
+}
+
+/* Greeting & Lihat Semua Mitra UMKM di Beranda Pelanggan */
+.beranda-greeting {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.beranda-greeting-title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 21px;
+  font-weight: 800;
+  color: #16442B;
+  line-height: 1.3;
+}
+
+.hero-visual-img {
+  transition: background-image 0.55s ease-in-out;
+}
+
+.recommended-header-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.beranda-see-mitra-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-sans);
+  font-size: 13px;
+  font-weight: 700;
+  color: #16442B;
+  text-decoration: none;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background-color: #E8F5E9;
+  border: 1px solid #C8E6C9;
+  white-space: nowrap;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.beranda-see-mitra-link:hover {
+  background-color: #D1EDE0;
+  color: #0F301E;
+}
+
+@media (max-width: 575px) {
+  .beranda-greeting-title {
+    font-size: 18px;
   }
 }

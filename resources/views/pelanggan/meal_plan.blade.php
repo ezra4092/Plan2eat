@@ -291,7 +291,9 @@
 @section('content')
 @php
     $urlLangganan = Route::has('pelanggan.langganan') ? route('pelanggan.langganan') : url('/pesanan/langganan');
-    $prefillDate = request('tanggal', now()->toDateString());
+    $tomorrowDate = now('Asia/Jakarta')->addDay()->toDateString();
+    $requestedTanggal = (string) request('tanggal', $tomorrowDate);
+    $prefillDate = $requestedTanggal >= $tomorrowDate ? $requestedTanggal : $tomorrowDate;
 @endphp
 
 <div class="mpl-page-wrap">
@@ -317,22 +319,6 @@
         </a>
     </section>
 
-    {{-- Notifikasi Flash & Error --}}
-    @if (session('success'))
-        <div style="background: #ECFDF5; border-left: 4px solid #10B981; color: #065F46; padding: 12px 16px; border-radius: 12px; font-size: 13.5px; font-weight: 600;">
-            {{ session('success') }}
-        </div>
-    @endif
-    @if ($errors->any())
-        <div style="background: #FEF2F2; border-left: 4px solid #EF4444; color: #991B1B; padding: 12px 16px; border-radius: 12px; font-size: 13.5px;">
-            <ul style="margin: 0; padding-left: 20px;">
-                @foreach ($errors->all() as $err)
-                    <li>{{ $err }}</li>
-                @endforeach
-            </ul>
-        </div>
-    @endif
-
     {{-- Card 1: Form Buat Meal Plan Baru --}}
     <section class="mpl-card">
         <div class="mpl-card-header">
@@ -349,12 +335,12 @@
                 <input type="text" id="judul_plan_new" name="judul_plan" class="mpl-input" placeholder="Contoh: Diet Sehat Minggu Ini" value="{{ old('judul_plan') }}" required>
             </div>
             <div class="mpl-field-group">
-                <label class="mpl-label" for="tanggal_mulai_new">Tanggal Mulai</label>
-                <input type="date" id="tanggal_mulai_new" name="tanggal_mulai" class="mpl-input" value="{{ old('tanggal_mulai', $prefillDate) }}" required>
+                <label class="mpl-label" for="tanggal_mulai_new">Tanggal Mulai (Minimal Besok)</label>
+                <input type="date" id="tanggal_mulai_new" name="tanggal_mulai" class="mpl-input" min="{{ $tomorrowDate }}" value="{{ old('tanggal_mulai', $prefillDate) }}" required>
             </div>
             <div class="mpl-field-group">
                 <label class="mpl-label" for="tanggal_selesai_new">Tanggal Selesai</label>
-                <input type="date" id="tanggal_selesai_new" name="tanggal_selesai" class="mpl-input" value="{{ old('tanggal_selesai', \Carbon\Carbon::parse($prefillDate)->addDays(6)->toDateString()) }}" required>
+                <input type="date" id="tanggal_selesai_new" name="tanggal_selesai" class="mpl-input" min="{{ $tomorrowDate }}" value="{{ old('tanggal_selesai', \Carbon\Carbon::parse($prefillDate)->addDays(6)->toDateString()) }}" required>
             </div>
             <button type="submit" class="mpl-btn-primary">
                 <i class="fa-solid fa-floppy-disk"></i>
@@ -391,7 +377,11 @@
                 </div>
                 <button type="submit" class="mpl-btn-soft" style="align-self: end; height: 41px;">Update Plan</button>
                 <button type="button" class="mpl-btn-danger" style="align-self: end; height: 41px;"
-                    onclick="if(confirm('Hapus seluruh Meal Plan ini beserta jadwalnya?')) document.getElementById('delete-plan-{{ $plan->id_plan }}').submit();">
+                    data-confirm="Hapus seluruh Meal Plan ini beserta jadwalnya?"
+                    data-confirm-title="Hapus Meal Plan"
+                    data-confirm-ok="Ya, Hapus"
+                    data-confirm-danger="true"
+                    data-confirm-form="delete-plan-{{ $plan->id_plan }}">
                     Hapus
                 </button>
             </form>
@@ -403,9 +393,20 @@
 
             {{-- Bagian Kelola Menu Harian --}}
             <div class="mpl-detail-panel">
-                <h3 style="font-family: var(--font-sans); font-size: 14.5px; font-weight: 800; color: #16442B; margin: 0 0 12px;">
-                    Jadwal &amp; Menu Makanan
-                </h3>
+                <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 12px;">
+                    <h3 style="font-family: var(--font-sans); font-size: 14.5px; font-weight: 800; color: #16442B; margin: 0;">
+                        Jadwal &amp; Menu Makanan
+                    </h3>
+                    @if ($plan->detailMealPlan->isNotEmpty())
+                        <form action="{{ route('pelanggan.meal_plan-checkout', $plan->id_plan) }}" method="POST" style="margin: 0;">
+                            @csrf
+                            <button type="submit" class="mpl-btn-primary" style="padding: 8px 16px; font-size: 12.5px;">
+                                <i class="fa-solid fa-bag-shopping"></i>
+                                <span>Pesan Meal Plan Ini (Min. Besok)</span>
+                            </button>
+                        </form>
+                    @endif
+                </div>
 
                 {{-- Tambah Menu ke Plan ini --}}
                 <form action="{{ route('pelanggan.meal_plan_detail-create', $plan->id_plan) }}" method="POST" class="mpl-add-detail-grid">
@@ -421,11 +422,15 @@
                     </div>
 
                     <div class="mpl-field-group">
-                        <label class="mpl-label">Tanggal Makan</label>
+                        <label class="mpl-label">Tanggal Makan (Min. Besok)</label>
+                        @php
+                            $planMinDate = max(\Carbon\Carbon::parse($plan->tanggal_mulai)->format('Y-m-d'), $tomorrowDate);
+                            $planMaxDate = \Carbon\Carbon::parse($plan->tanggal_selesai)->format('Y-m-d');
+                        @endphp
                         <input type="date" name="jadwal_makan" class="mpl-input"
-                            min="{{ \Carbon\Carbon::parse($plan->tanggal_mulai)->format('Y-m-d') }}"
-                            max="{{ \Carbon\Carbon::parse($plan->tanggal_selesai)->format('Y-m-d') }}"
-                            value="{{ $prefillDate >= \Carbon\Carbon::parse($plan->tanggal_mulai)->format('Y-m-d') && $prefillDate <= \Carbon\Carbon::parse($plan->tanggal_selesai)->format('Y-m-d') ? $prefillDate : \Carbon\Carbon::parse($plan->tanggal_mulai)->format('Y-m-d') }}"
+                            min="{{ $planMinDate }}"
+                            max="{{ $planMaxDate }}"
+                            value="{{ $prefillDate >= $planMinDate && $prefillDate <= $planMaxDate ? $prefillDate : $planMinDate }}"
                             required>
                     </div>
 
@@ -479,7 +484,7 @@
                                             <form action="{{ route('pelanggan.meal_plan_detail-delete', $detail->id_detail_plan) }}" method="POST" style="margin: 0;">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" onclick="return confirm('Hapus menu dari jadwal ini?')" class="mpl-btn-danger" style="padding: 5px 10px; font-size: 12px;">
+                                                <button type="submit" data-confirm="Hapus menu dari jadwal ini?" data-confirm-title="Hapus Menu Jadwal" data-confirm-ok="Ya, Hapus" data-confirm-danger="true" class="mpl-btn-danger" style="padding: 5px 10px; font-size: 12px;">
                                                     Hapus
                                                 </button>
                                             </form>

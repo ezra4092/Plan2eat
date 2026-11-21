@@ -21,11 +21,14 @@ class Pesanan extends Model
         'id_plan',
         'status_pesanan',
         'total_pembayaran',
+        'biaya_admin',
+        'dana_dicairkan',
         'tgl_mulai',
         'tgl_selesai',
         'metode_pembayaran',
         'metode_pengiriman',
         'jadwal_pengiriman',
+        'waktu_pembayaran',
         'catatan',
     ];
 
@@ -35,7 +38,10 @@ class Pesanan extends Model
             'tgl_mulai' => 'datetime',
             'tgl_selesai' => 'datetime',
             'jadwal_pengiriman' => 'datetime',
+            'waktu_pembayaran' => 'datetime',
             'total_pembayaran' => 'decimal:2',
+            'biaya_admin' => 'decimal:2',
+            'dana_dicairkan' => 'boolean',
         ];
     }
 

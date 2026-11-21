@@ -130,7 +130,7 @@ class ProfilKesehatanController extends Controller
 
         return redirect()
             ->route('pelanggan.profil_kesehatan')
-            ->with('success', 'Profil kesehatan berhasil direset!');
+            ->with('deleted', 'Profil kesehatan berhasil direset!');
     }
 
     /**

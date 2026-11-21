@@ -36,14 +36,74 @@
               <span class="brand-logo-text">Plan2Eat</span>
             </a>
 
+            @php
+              $headerUser = auth()->user();
+              $headerRole = strtolower((string) ($headerUser?->role ?? session('role', 'pelanggan')));
+              $headerProfileUrl = match ($headerRole) {
+                  'umkm' => Route::has('umkm.profil') ? route('umkm.profil') : url('/umkm/profil'),
+                  'admin' => Route::has('admin.dashboard') ? route('admin.dashboard') : url('/admin/dashboard'),
+                  default => Route::has('pelanggan.profil_kesehatan') ? route('pelanggan.profil_kesehatan') : url('/pelanggan/profil-kesehatan'),
+              };
+              $headerRawFoto = $headerUser?->foto;
+              $headerAvatarUrl = $headerRawFoto
+                  ? (str_starts_with($headerRawFoto, 'http') ? $headerRawFoto : asset('storage/' . $headerRawFoto))
+                  : asset('img/profile.jpg');
+              $headerUserName = $headerUser?->nama_lengkap ?? 'Pengguna';
+              $headerUserEmail = $headerUser?->email ?? '';
+            @endphp
+
             <div class="header-user-actions">
-              <button type="button" class="btn-notification" aria-label="Notifikasi">
+              <!-- <button type="button" class="btn-notification" aria-label="Notifikasi">
                 <img src="{{ asset('img/icon-14.svg') }}" alt="Notifikasi">
-              </button>
-              <a href="{{ url('/profil') }}" class="profile-avatar-link" aria-label="Profil Pengguna">
-                <span class="desktop-user-name">Nandana</span>
-                <div class="profile-avatar" style="background-image: url('{{ asset('img/profile.jpg') }}');"></div>
-              </a>
+              </button> -->
+
+              <div class="header-account-wrap" id="headerAccountWrap">
+                <button
+                  type="button"
+                  id="headerAccountBtn"
+                  class="profile-avatar-link header-account-trigger"
+                  aria-label="Menu Akun Pengguna"
+                  aria-expanded="false"
+                  aria-haspopup="true"
+                >
+                  <span class="desktop-user-name">{{ $headerUserName }}</span>
+                  <div class="profile-avatar" style="background-image: url('{{ $headerAvatarUrl }}');"></div>
+                </button>
+
+                <div class="header-account-dropdown is-hidden" id="headerAccountDropdown" role="menu">
+                  <div class="header-dropdown-head">
+                    <div class="header-dropdown-avatar" style="background-image: url('{{ $headerAvatarUrl }}');"></div>
+                    <div class="header-dropdown-meta">
+                      <strong>{{ $headerUserName }}</strong>
+                      <span>{{ $headerUserEmail }}</span>
+                    </div>
+                  </div>
+
+                  <div class="header-dropdown-divider"></div>
+
+                  <div class="header-dropdown-list">
+                    <a href="{{ $headerProfileUrl }}" class="header-dropdown-item" role="menuitem">
+                      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                        <circle cx="12" cy="7" r="4"/>
+                      </svg>
+                      <span>Profil</span>
+                    </a>
+
+                    <form action="{{ route('logout') }}" method="POST" style="margin: 0;">
+                      @csrf
+                      <button type="submit" class="header-dropdown-item is-logout" role="menuitem">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                          <polyline points="16 17 21 12 16 7"/>
+                          <line x1="21" y1="12" x2="9" y2="12"/>
+                        </svg>
+                        <span>Logout</span>
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
 
@@ -71,7 +131,40 @@
     </div>
   </div>
 
+  @include('partials.popup_notification')
   @stack('modals')
   @stack('scripts')
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const accountWrap = document.getElementById('headerAccountWrap');
+      const accountBtn = document.getElementById('headerAccountBtn');
+      const accountDropdown = document.getElementById('headerAccountDropdown');
+
+      if (!accountWrap || !accountBtn || !accountDropdown) return;
+
+      function setAccountDropdown(open) {
+        accountDropdown.classList.toggle('is-hidden', !open);
+        accountBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      }
+
+      accountBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        const isClosed = accountDropdown.classList.contains('is-hidden');
+        setAccountDropdown(isClosed);
+      });
+
+      document.addEventListener('click', function (e) {
+        if (!accountWrap.contains(e.target)) {
+          setAccountDropdown(false);
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          setAccountDropdown(false);
+        }
+      });
+    });
+  </script>
 </body>
 </html>

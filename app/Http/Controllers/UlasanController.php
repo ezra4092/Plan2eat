@@ -118,6 +118,6 @@ class UlasanController extends Controller
 
         $ulasan->delete();
 
-        return back()->with('success', 'Ulasan berhasil dihapus.');
+        return back()->with('deleted', 'Ulasan berhasil dihapus.');
     }
 }

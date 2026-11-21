@@ -31,22 +31,6 @@
                 <p class="subtitle">Silakan masukkan detail Anda untuk masuk</p>
             </div>
 
-            @if (session('success'))
-                <div style="background: #ECFDF5; border: 1px solid #A7F3D0; color: #065F46; padding: 12px 14px; border-radius: 12px; font-size: 13px; margin-bottom: 14px;">
-                    {{ session('success') }}
-                </div>
-            @endif
-
-            @if ($errors->any())
-                <div class="auth-alert-error" role="alert" style="margin-bottom: 14px;">
-                    <ul>
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
-
             <!-- Form Login -->
             <form class="auth-form" action="{{ route('login') }}" method="POST">
                 @csrf
@@ -112,16 +96,16 @@
             </form>
 
             <!-- Divider -->
-            <div class="divider-margin">
+            <!-- <div class="divider-margin">
                 <div class="divider">
                     <div class="horizontal-divider"></div>
                     <span class="text">atau masuk dengan</span>
                     <div class="horizontal-divider"></div>
                 </div>
-            </div>
+            </div> -->
 
             <!-- Social Sign-In (Google) -->
-            <div class="social-sign-in-grid">
+            <!-- <div class="social-sign-in-grid">
                 <a href="{{ url('auth/google') }}" class="button-google">
                     <svg class="SVG" width="18" height="18" viewBox="0 0 24 24">
                         <path fill="#4285F4" d="M23.745 12.27c0-.79-.07-1.54-.19-2.27h-11.3v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82Z"/>
@@ -131,7 +115,7 @@
                     </svg>
                     <span class="text-2">Google</span>
                 </a>
-            </div>
+            </div> -->
 
             <!-- Footer Register Link -->
             <div class="container-wrapper">
@@ -143,47 +127,7 @@
         </div>
     </main>
 
-    <!-- SweetAlert2 Notification -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    @if (session('error'))
-    <script>
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer);
-                toast.addEventListener('mouseleave', Swal.resumeTimer);
-            }
-        });
-        Toast.fire({
-            icon: 'error',
-            title: 'Email atau Password salah. Silahkan login kembali'
-        });
-    </script>
-    @endif
-
-    @if (session('forgot-pw'))
-    <script>
-        const Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-                toast.addEventListener('mouseenter', Swal.stopTimer);
-                toast.addEventListener('mouseleave', Swal.resumeTimer);
-            }
-        });
-        Toast.fire({
-            icon: 'success',
-            title: 'Password berhasil diganti'
-        });
-    </script>
-    @endif
+    @include('partials.popup_notification')
 
     <script>
         document.querySelectorAll('.btn-toggle-pass').forEach(function (btn) {

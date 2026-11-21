@@ -20,7 +20,7 @@ class FlashSaleController extends Controller
      */
     public function berandaPelanggan(Request $request): View|JsonResponse
     {
-        $now = Carbon::now();
+        $now = Carbon::now('Asia/Jakarta');
         $startTime = '20:00:00';
         $endTime = '22:00:00';
         $currentTime = $now->format('H:i:s');
@@ -28,12 +28,19 @@ class FlashSaleController extends Controller
         $selectedMitra = $request->query('mitra', 'all');
 
         if ($isPromoActive) {
-            // Ambil data flash sale dengan relasi menu dan umkm hanya saat jam promo aktif (20:00 - 22:00)
+            $todayStr = $now->toDateString();
+            Flashsale::ensureDailyFlashSales($todayStr);
+
+            // Ambil maksimal 5 menu non-paketan dengan relasi menu dan umkm saat jam promo aktif (20:00 - 22:00)
             $query = Flashsale::with(['menu.umkm', 'menu.jenisMenu'])
-                ->whereDate('tgl_flash_sale', $now->toDateString())
+                ->whereDate('tgl_flash_sale', $todayStr)
                 ->where('stok_sisa', '>', 0)
                 ->whereHas('menu', function ($q): void {
-                    $q->where('status', true);
+                    $q->whereNull('jenis_menu')
+                        ->where('status', true)
+                        ->whereHas('umkm', function ($u): void {
+                            $u->terverifikasi()->buka();
+                        });
                 });
 
             // Filter berdasarkan mitra yang dipilih pelanggan
@@ -47,12 +54,16 @@ class FlashSaleController extends Controller
                 });
             }
 
-            $flashSales = $query->orderBy('id_flash_sale', 'desc')->get();
+            $flashSales = $query->orderBy('id_flash_sale', 'desc')->take(5)->get();
 
             // Ambil daftar mitra unik yang memiliki menu flash sale untuk tombol filter mitra
             $allFlashSales = Flashsale::with('menu.umkm')
-                ->whereDate('tgl_flash_sale', $now->toDateString())
+                ->whereDate('tgl_flash_sale', $todayStr)
                 ->where('stok_sisa', '>', 0)
+                ->whereHas('menu', function ($q): void {
+                    $q->whereNull('jenis_menu')->where('status', true);
+                })
+                ->take(5)
                 ->get();
 
             $mitraList = $allFlashSales->map(function ($fs) {
@@ -180,6 +191,6 @@ class FlashSaleController extends Controller
         $flashSale = Flashsale::findOrFail($id_flash_sale);
         $flashSale->delete();
 
-        return back()->with('success', 'Promo Flash Sale berhasil dihapus!');
+        return back()->with('deleted', 'Promo Flash Sale berhasil dihapus!');
     }
 }

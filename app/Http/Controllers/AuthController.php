@@ -314,7 +314,6 @@ class AuthController extends Controller
                     'status_verifikasi' => 'menunggu',
                     'rating' => 0,
                     'saldo' => 0,
-                    'metode_pembayaran' => ['QRIS', 'Tunai'],
                 ]
             );
         });

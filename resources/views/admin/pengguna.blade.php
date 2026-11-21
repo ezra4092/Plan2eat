@@ -12,10 +12,6 @@
 
     <h2>Data Pengguna (Konsumen & UMKM)</h2>
 
-    @if(session('success'))
-        <div style="color: green; margin-bottom: 10px;">{{ session('success') }}</div>
-    @endif
-
     <table border="1" cellpadding="10" cellspacing="0" width="100%">
         <thead>
             <tr>
@@ -42,14 +38,14 @@
                 <td>{{ $user->is_suspended ?? false ? 'Ditangguhkan' : 'Aktif' }}</td>
                 <td>
                     <!-- Tombol Suspend/Aktivasi -->
-                    <form action="{{ route('admin.pengguna.suspend', $user->id_user) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin {{ $user->is_suspended ?? false ? 'mengaktivasi' : 'menangguhkan' }} akun ini?');">
+                    <form action="{{ route('admin.pengguna.suspend', $user->id_user) }}" method="POST" style="display:inline;" data-confirm="Yakin ingin {{ $user->is_suspended ?? false ? 'mengaktivasi' : 'menangguhkan' }} akun ini?" data-confirm-title="Konfirmasi Status Akun" data-confirm-danger="{{ ($user->is_suspended ?? false) ? 'false' : 'true' }}">
                         @csrf
                         @method('PATCH')
                         <button type="submit">{{ $user->is_suspended ?? false ? 'Aktivasi' : 'Suspend' }}</button>
                     </form>
 
                     <!-- Tombol Hapus -->
-                    <form action="{{ route('admin.pengguna.delete', $user->id_user) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin hapus pengguna ini secara permanen?');">
+                    <form action="{{ route('admin.pengguna.delete', $user->id_user) }}" method="POST" style="display:inline;" data-confirm="Yakin hapus pengguna ini secara permanen?" data-confirm-title="Hapus Pengguna" data-confirm-ok="Ya, Hapus" data-confirm-danger="true">
                         @csrf
                         @method('DELETE')
                         <button type="submit" style="color: red;">Hapus</button>
@@ -59,5 +55,6 @@
             @endforeach
         </tbody>
     </table>
+    @include('partials.popup_notification')
 </body>
 </html>

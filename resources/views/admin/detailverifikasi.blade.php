@@ -104,13 +104,6 @@
                     : 'https://placehold.co/800x500/FAF8F0/16442B?text=Foto+Tempat+Usaha+%2F+Dapur';
             @endphp
 
-            @if(session('success'))
-                <div class="mm-toast is-success" role="alert">{{ session('success') }}</div>
-            @endif
-            @if($errors->any())
-                <div class="mm-toast is-error" role="alert">{{ $errors->first() }}</div>
-            @endif
-
             <div class="admin-dashboard umkm-detail-page">
                 {{-- Tombol Kembali --}}
                 <div class="umkm-back-row">
@@ -544,5 +537,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 </script>
+@include('partials.popup_notification')
 </body>
 </html>

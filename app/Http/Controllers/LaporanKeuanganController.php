@@ -8,13 +8,14 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class LaporanKeuanganController extends Controller
 {
     /**
-     * Menampilkan halaman Keuangan UMKM (saldo, metode pembayaran, dan log transaksi masuk).
+     * Menampilkan halaman Keuangan UMKM (Total Saldo, Saldo Milik UMKM, Saldo Tertahan, tombol Cairkan Dana, dan Log Uang Masuk).
      */
     public function index(Request $request): View|RedirectResponse
     {
@@ -35,14 +36,25 @@ class LaporanKeuanganController extends Controller
             ->orderBy('tgl_mulai', 'desc')
             ->get();
 
-        $totalSaldoAktif = (float) ($umkm->saldo ?? 0);
-        $activePayments = $this->normalizePaymentMethods($umkm->metode_pembayaran);
+        $saldoUmkm = (float) ($umkm->saldo ?? 0);
+
+        $pesananTertahan = Pesanan::with('detailPesanan')
+            ->where('id_umkm', $umkm->id_umkm)
+            ->whereNotIn('status_pesanan', ['dibatalkan', 'menunggu pembayaran'])
+            ->where('dana_dicairkan', false)
+            ->get();
+
+        $saldoTertahan = (float) $pesananTertahan->sum(fn (Pesanan $order): float => $this->calculateUmkmNetAmount($order));
+        $jumlahPesananTertahan = $pesananTertahan->count();
+        $totalSaldo = $saldoUmkm + $saldoTertahan;
 
         return view('umkm.keuangan', compact(
             'umkm',
             'pesanan',
-            'totalSaldoAktif',
-            'activePayments',
+            'saldoUmkm',
+            'saldoTertahan',
+            'jumlahPesananTertahan',
+            'totalSaldo',
             'tglAwal',
             'tglAkhir',
             'status'
@@ -50,9 +62,9 @@ class LaporanKeuanganController extends Controller
     }
 
     /**
-     * Memperbarui daftar metode pembayaran aktif milik UMKM.
+     * Mencairkan seluruh saldo tertahan dari pesanan yang valid menjadi saldo milik UMKM.
      */
-    public function updateMetodePembayaran(Request $request): RedirectResponse
+    public function cairkanDana(): RedirectResponse
     {
         $umkm = $this->getAuthenticatedUmkm();
 
@@ -60,21 +72,45 @@ class LaporanKeuanganController extends Controller
             return back()->with('error', 'Data UMKM tidak ditemukan.');
         }
 
-        $validated = $request->validate([
-            'metode_pembayaran' => ['required', 'array', 'min:1'],
-            'metode_pembayaran.*' => ['required', 'string', 'in:QRIS,Transfer Bank,Tunai'],
-        ], [
-            'metode_pembayaran.required' => 'Pilih minimal satu metode pembayaran.',
-            'metode_pembayaran.min' => 'Pilih minimal satu metode pembayaran.',
-        ]);
+        $nominalCair = 0.0;
 
-        $umkm->update([
-            'metode_pembayaran' => array_values(array_unique($validated['metode_pembayaran'])),
-        ]);
+        $disbursed = DB::transaction(function () use ($umkm, &$nominalCair): bool {
+            $umkmLocked = Umkm::lockForUpdate()->findOrFail($umkm->id_umkm);
+
+            $heldOrders = Pesanan::with('detailPesanan')
+                ->where('id_umkm', $umkmLocked->id_umkm)
+                ->whereNotIn('status_pesanan', ['dibatalkan', 'menunggu pembayaran'])
+                ->where('dana_dicairkan', false)
+                ->lockForUpdate()
+                ->get();
+
+            if ($heldOrders->isEmpty()) {
+                return false;
+            }
+
+            $nominalCair = (float) $heldOrders->sum(fn (Pesanan $order): float => $this->calculateUmkmNetAmount($order));
+
+            if ($nominalCair <= 0) {
+                return false;
+            }
+
+            Pesanan::whereIn('id_pesanan', $heldOrders->pluck('id_pesanan'))
+                ->update(['dana_dicairkan' => true]);
+
+            $umkmLocked->increment('saldo', $nominalCair);
+
+            return true;
+        });
+
+        if (! $disbursed) {
+            return redirect()
+                ->route('umkm.laporan_keuangan')
+                ->with('error', 'Tidak ada saldo tertahan yang dapat dicairkan saat ini.');
+        }
 
         return redirect()
             ->route('umkm.laporan_keuangan')
-            ->with('success', 'Metode pembayaran berhasil diperbarui.');
+            ->with('success', 'Dana sebesar Rp ' . number_format($nominalCair, 0, ',', '.') . ' berhasil dicairkan ke saldo UMKM Anda!');
     }
 
     /**
@@ -123,7 +159,6 @@ class LaporanKeuanganController extends Controller
             // BOM UTF-8 agar karakter dan format kolom terbaca rapi di Microsoft Excel
             fwrite($file, "\xEF\xBB\xBF");
 
-            // Blok Header Informasi Laporan UMKM
             fputcsv($file, ['================================================================================']);
             fputcsv($file, ['PLAN2EAT - LAPORAN KEUANGAN MITRA UMKM']);
             fputcsv($file, ['================================================================================']);
@@ -132,11 +167,10 @@ class LaporanKeuanganController extends Controller
             fputcsv($file, ['Tanggal Dicetak', now('Asia/Jakarta')->locale('id')->translatedFormat('d F Y, H:i') . ' WIB']);
             fputcsv($file, ['Periode Data', $periodeLabel]);
             fputcsv($file, ['Filter Status', $statusLabel]);
-            fputcsv($file, ['Total Saldo Toko', 'Rp ' . number_format((float) ($umkm->saldo ?? 0), 0, ',', '.')]);
-            fputcsv($file, ['Metode Pembayaran', implode(', ', $this->normalizePaymentMethods($umkm->metode_pembayaran))]);
+            fputcsv($file, ['Saldo Milik UMKM', 'Rp ' . number_format((float) ($umkm->saldo ?? 0), 0, ',', '.')]);
+            fputcsv($file, ['Sistem Pembayaran', 'Terpusat melalui Plan2Eat (Potongan Biaya Admin 5%)']);
             fputcsv($file, []);
 
-            // Header Tabel Transaksi
             fputcsv($file, [
                 'No',
                 'ID Pesanan',
@@ -145,36 +179,35 @@ class LaporanKeuanganController extends Controller
                 'Total Porsi',
                 'Metode Pembayaran',
                 'Status Pesanan',
-                'Total (Rp)',
+                'Status Dana',
+                'Pendapatan Bersih UMKM (Rp)',
             ]);
 
-            $totalPendapatanSelesai = 0;
+            $totalSudahCair = 0;
             $totalTertahan = 0;
             $totalKeseluruhan = 0;
 
             if ($pesanan->isEmpty()) {
-                fputcsv($file, ['-', '-', '-', 'Belum ada data transaksi pada periode ini', '0', '-', '-', '0']);
+                fputcsv($file, ['-', '-', '-', 'Belum ada data transaksi pada periode ini', '0', '-', '-', '-', '0']);
             } else {
                 foreach ($pesanan as $index => $p) {
-                    $isFlashSale = $p->detailPesanan->contains(function ($detail): bool {
-                        return ! is_null($detail->id_flash_sale);
-                    });
+                    $isFlashSale = $p->detailPesanan->contains(fn ($detail): bool => ! is_null($detail->id_flash_sale));
+                    $totalPorsi = max(1, (int) $p->detailPesanan->sum('kuantitas'));
 
-                    $totalPorsi = (int) $p->detailPesanan->sum('kuantitas');
-                    if ($totalPorsi === 0) {
-                        $totalPorsi = 1;
-                    }
-
-                    $nominal = (float) $p->total_pembayaran;
+                    $netAmount = $this->calculateUmkmNetAmount($p);
                     $statusLower = strtolower((string) $p->status_pesanan);
 
-                    if ($statusLower === 'selesai') {
-                        $totalPendapatanSelesai += $nominal;
-                    } elseif (in_array($statusLower, ['menunggu pembayaran', 'persiapan', 'masak', 'siap diambil'], true)) {
-                        $totalTertahan += $nominal;
+                    if ($statusLower === 'dibatalkan' || $statusLower === 'menunggu pembayaran') {
+                        $danaLabel = 'Tidak Masuk Saldo';
+                    } elseif ($p->dana_dicairkan) {
+                        $danaLabel = 'Sudah Dicairkan';
+                        $totalSudahCair += $netAmount;
+                        $totalKeseluruhan += $netAmount;
+                    } else {
+                        $danaLabel = 'Saldo Tertahan';
+                        $totalTertahan += $netAmount;
+                        $totalKeseluruhan += $netAmount;
                     }
-
-                    $totalKeseluruhan += $nominal;
 
                     fputcsv($file, [
                         $index + 1,
@@ -184,23 +217,37 @@ class LaporanKeuanganController extends Controller
                         $totalPorsi . ' Porsi',
                         $p->metode_pembayaran ?: '-',
                         strtoupper((string) $p->status_pesanan),
-                        number_format($nominal, 0, ',', '.'),
+                        $danaLabel,
+                        number_format($netAmount, 0, ',', '.'),
                     ]);
                 }
             }
 
-            // Blok Ringkasan Keuangan di Bagian Bawah Tabel
             fputcsv($file, []);
-            fputcsv($file, ['', '', '', '', '', '', 'RINGKASAN LAPORAN', '']);
-            fputcsv($file, ['', '', '', '', '', '', 'Total Jumlah Transaksi', $pesanan->count() . ' Transaksi']);
-            fputcsv($file, ['', '', '', '', '', '', 'Total Pendapatan (Selesai)', 'Rp ' . number_format($totalPendapatanSelesai, 0, ',', '.')]);
-            fputcsv($file, ['', '', '', '', '', '', 'Total Pesanan Berjalan', 'Rp ' . number_format($totalTertahan, 0, ',', '.')]);
-            fputcsv($file, ['', '', '', '', '', '', 'TOTAL KESELURUHAN NOMINAL', 'Rp ' . number_format($totalKeseluruhan, 0, ',', '.')]);
+            fputcsv($file, ['', '', '', '', '', '', '', 'RINGKASAN LAPORAN', '']);
+            fputcsv($file, ['', '', '', '', '', '', '', 'Total Jumlah Transaksi', $pesanan->count() . ' Transaksi']);
+            fputcsv($file, ['', '', '', '', '', '', '', 'Total Dana Sudah Dicairkan', 'Rp ' . number_format($totalSudahCair, 0, ',', '.')]);
+            fputcsv($file, ['', '', '', '', '', '', '', 'Total Saldo Tertahan', 'Rp ' . number_format($totalTertahan, 0, ',', '.')]);
+            fputcsv($file, ['', '', '', '', '', '', '', 'TOTAL PENDAPATAN BERSIH', 'Rp ' . number_format($totalKeseluruhan, 0, ',', '.')]);
 
             fclose($file);
         };
 
         return response()->stream($callback, 200, $headers);
+    }
+
+    /**
+     * Menghitung nominal bersih milik UMKM (di luar biaya admin 5% Plan2Eat).
+     */
+    private function calculateUmkmNetAmount(Pesanan $order): float
+    {
+        if ((float) ($order->biaya_admin ?? 0) > 0) {
+            return max(0.0, (float) $order->total_pembayaran - (float) $order->biaya_admin);
+        }
+
+        $detailSubtotal = (float) $order->detailPesanan->sum('subtotal');
+
+        return $detailSubtotal > 0 ? $detailSubtotal : (float) $order->total_pembayaran;
     }
 
     /**
@@ -242,26 +289,5 @@ class LaporanKeuanganController extends Controller
         }
 
         return $query;
-    }
-
-    /**
-     * Menormalisasi kolom metode_pembayaran UMKM menjadi array string.
-     *
-     * @return array<int, string>
-     */
-    private function normalizePaymentMethods(mixed $rawPayments): array
-    {
-        if (is_string($rawPayments)) {
-            $decoded = json_decode($rawPayments, true);
-            $payments = is_array($decoded) ? $decoded : [$rawPayments];
-        } elseif (is_array($rawPayments)) {
-            $payments = $rawPayments;
-        } else {
-            $payments = [];
-        }
-
-        $filtered = array_values(array_filter(array_map('strval', $payments)));
-
-        return empty($filtered) ? ['QRIS'] : $filtered;
     }
 }
