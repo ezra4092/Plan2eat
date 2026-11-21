@@ -206,6 +206,7 @@ Route::group(['middleware' => ['auth']], function() {
     Route::get('/pengaturan', function() { return "Halaman Pengaturan Belum Dibuat"; })->name('pengaturan');
     Route::get('/ulasan', [AdminController::class, 'ulasan'])->name('ulasan');
     Route::get('/transaksi', [AdminController::class, 'transaksi'])->name('transaksi');
+    Route::delete('/ulasan/{id_ulasan}', [AdminController::class, 'hapusUlasan'])->name('ulasan.delete');
 
 });
 });

@@ -90,17 +90,45 @@ class AdminController extends Controller
         return view('admin.pengguna', compact('users'));
     }
 
-    public function ulasan()
+    /**
+     * Halaman Daftar Ulasan (Monitoring & Moderasi)
+     */
+    public function ulasan(Request $request)
     {
-        $detailUlasan = DB::table('ulasan')
+        $query = DB::table('ulasan')
             ->join('users', 'ulasan.id_user', '=', 'users.id_user')
             ->join('pesanan', 'ulasan.id_pesanan', '=', 'pesanan.id_pesanan')
             ->join('umkm', 'pesanan.id_umkm', '=', 'umkm.id_umkm')
-            ->select('ulasan.*', 'users.nama_lengkap as nama_pengguna', 'umkm.nama_vendor')
-            ->orderBy('ulasan.timestamp', 'desc')
-            ->get();
+            // Join ke users lagi khusus untuk akun si UMKM (untuk cek status suspend)
+            ->join('users as umkm_user', 'umkm.id_user', '=', 'umkm_user.id_user') 
+            ->select(
+                'ulasan.*', 
+                'users.nama_lengkap as nama_pengguna', 
+                'umkm.nama_vendor',
+                'umkm.id_user as id_user_umkm', // Ambil ID User UMKM untuk fitur suspend
+                'umkm_user.is_suspended' // Cek apakah akun UMKM sedang disuspend
+            )
+            ->orderBy('ulasan.timestamp', 'desc');
+
+        // Filter Rating Rendah (Bintang 1 sampai 3)
+        if ($request->input('filter') == 'rendah') {
+            $query->where('ulasan.rating', '<=', 3);
+        }
+
+        $detailUlasan = $query->get();
 
         return view('admin.ulasan', compact('detailUlasan'));
+    }
+
+    /**
+     * Fungsi Hapus Ulasan Tidak Pantas
+     */
+    public function hapusUlasan($id_ulasan)
+    {
+        // Pastikan primary key tabel ulasan kamu bernama 'id_ulasan'
+        DB::table('ulasan')->where('id_ulasan', $id_ulasan)->delete();
+        
+        return back()->with('success', 'Ulasan tidak pantas berhasil dihapus.');
     }
 
     public function transaksi()

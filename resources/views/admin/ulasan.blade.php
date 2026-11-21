@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
-<head><title>Daftar Ulasan</title></head>
+<head><title>Monitoring Ulasan</title></head>
 <body>
     <nav>
         <a href="{{ route('admin.dashboard') }}">Dashboard</a> | 
@@ -8,7 +8,21 @@
         <a href="{{ route('admin.pengguna') }}">Data Master (Pengguna)</a>
     </nav>
 
-    <h2>Daftar Semua Ulasan</h2>
+    <h2>Monitoring & Moderasi Ulasan</h2>
+
+    @if(session('success'))
+        <div style="color: green; margin-bottom: 10px;">{{ session('success') }}</div>
+    @endif
+
+    <!-- FILTER RATING RENDAH -->
+    <form action="{{ route('admin.ulasan') }}" method="GET" style="margin-bottom: 15px;">
+        <label>Filter Ulasan: </label>
+        <select name="filter" onchange="this.form.submit()">
+            <option value="semua" {{ request('filter') != 'rendah' ? 'selected' : '' }}>Semua Rating</option>
+            <option value="rendah" {{ request('filter') == 'rendah' ? 'selected' : '' }}>Rating Rendah (Komplain / <= 3 Bintang)</option>
+        </select>
+    </form>
+
     <table border="1" cellpadding="10" cellspacing="0" width="100%">
         <thead>
             <tr>
@@ -17,18 +31,40 @@
                 <th>Rating</th>
                 <th>Isi Ulasan</th>
                 <th>Tanggal</th>
+                <th>Aksi</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($detailUlasan as $ulasan)
+            @forelse($detailUlasan as $ulasan)
             <tr>
                 <td><strong>{{ $ulasan->nama_pengguna }}</strong></td>
                 <td>{{ $ulasan->nama_vendor }}</td>
                 <td>⭐ {{ $ulasan->rating }}</td>
                 <td>{{ $ulasan->ulasan }}</td>
                 <td>{{ \Carbon\Carbon::parse($ulasan->timestamp)->format('d M Y') }}</td>
+                <td>
+                    <!-- Tombol Hapus Ulasan -->
+                    <form action="{{ route('admin.ulasan.delete', $ulasan->id_ulasan) }}" method="POST" style="display:inline;" onsubmit="return confirm('Hapus ulasan ini secara permanen?');">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" style="color: red; margin-bottom: 5px;">Hapus Ulasan</button>
+                    </form>
+                    <br>
+                    <!-- Tombol Suspend UMKM (Gunakan route suspend pengguna) -->
+                    <form action="{{ route('admin.pengguna.suspend', $ulasan->id_user_umkm) }}" method="POST" style="display:inline;" onsubmit="return confirm('Yakin ingin {{ $ulasan->is_suspended ? 'mengaktivasi' : 'menangguhkan' }} UMKM ini karena rating rendah?');">
+                        @csrf
+                        @method('PATCH')
+                        <button type="submit" style="color: {{ $ulasan->is_suspended ? 'green' : 'orange' }};">
+                            {{ $ulasan->is_suspended ? 'Aktivasi UMKM' : 'Suspend UMKM' }}
+                        </button>
+                    </form>
+                </td>
             </tr>
-            @endforeach
+            @empty
+            <tr>
+                <td colspan="6" align="center">Tidak ada ulasan ditemukan.</td>
+            </tr>
+            @endforelse
         </tbody>
     </table>
 </body>
