@@ -66,7 +66,7 @@
     {{-- Kembali --}}
     <a href="{{ $urlBeranda }}" class="po-back">
         <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m12 19-7-7 7-7"/></svg>
-        <span>Kembali ke Beranda</span>
+        <span>Kembali ke Dashboard</span>
     </a>
 
     {{-- ===== Alur Masak ===== --}}

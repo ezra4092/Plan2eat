@@ -1,6 +1,6 @@
 @extends('layouts.main')
 
-@section('title', 'Ulasan Pesanan Saya — Plan2Eat')
+@section('title', 'Ulasan — Plan2Eat')
 
 @section('nav')
     @include('layouts.nav')
