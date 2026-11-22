@@ -344,11 +344,16 @@ class PesananController extends Controller
      */
     public function show(int|string $id_pesanan): View
     {
-        $userId = Auth::id() ?? 2;
+        $userId = Auth::id();
 
-        $pesanan = Pesanan::with(['umkm', 'detailPesanan.menu', 'detailPesanan.flashSale'])
-            ->where('id_pesanan', $id_pesanan)
-            ->firstOrFail();
+        $query = Pesanan::with(['umkm', 'detailPesanan.menu', 'detailPesanan.flashSale'])
+            ->where('id_pesanan', $id_pesanan);
+
+        if ($userId) {
+            $query->where('id_user', $userId);
+        }
+
+        $pesanan = $query->firstOrFail();
 
         return view('pelanggan.detail_pesanan', compact('pesanan'));
     }

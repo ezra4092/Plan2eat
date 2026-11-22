@@ -26,7 +26,7 @@
         .pilihan-wrapper {
             width: 100%;
             max-width: 720px;
-            background: F8F3EA;
+            background: #F8F2E7;
             border-radius: 28px;
             padding: 36px 28px;
             box-shadow: 0 12px 36px rgba(5, 55, 31, 0.08);

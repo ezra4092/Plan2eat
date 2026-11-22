@@ -13,7 +13,7 @@
 <div class="app-layout">
 
     {{-- Sidebar / Bottom Navigation --}}
-    @include('admin.nav')
+    @include('layouts.nav', ['role' => 'admin', 'activeMenu' => 'umkm'])
 
     {{-- Area Konten Utama --}}
     <div class="app-content-wrapper">

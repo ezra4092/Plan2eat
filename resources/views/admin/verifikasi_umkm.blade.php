@@ -1,461 +1,434 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mitra UMKM - Manajemen Usaha | Plan2Eat Admin</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ asset('css/style.css') }}">
-</head>
-<body class="app-shell admin-shell">
-<div class="app-layout">
+@extends('layouts.main', ['activeMenu' => 'umkm'])
 
-    {{-- Sidebar / Bottom Navigation --}}
-    @include('admin.nav')
+@section('title', 'Verifikasi UMKM - Plan2Eat Admin')
+@section('page_badge', 'Verifikasi UMKM')
 
-    {{-- Area Konten Utama --}}
-    <div class="app-content-wrapper">
-        {{-- Topbar Breadcrumb & User --}}
-        <header class="app-header admin-header">
-            <div class="admin-header-inner">
-                <div class="admin-header-left">
-                    <span class="admin-mobile-logo-badge mobile-only-brand" aria-hidden="true">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.4">
-                            <circle cx="12" cy="12" r="8"/>
-                            <path d="M12 8c2.2 0 4 1.8 4 4s-1.8 4-4 4"/>
-                        </svg>
-                    </span>
-                    <nav class="admin-breadcrumb" aria-label="Breadcrumb">
-                        <span class="breadcrumb-parent">Admin</span>
-                        <span class="breadcrumb-sep">/</span>
-                        <span class="breadcrumb-parent">Mitra UMKM</span>
-                        <span class="breadcrumb-sep">/</span>
-                        <span class="breadcrumb-current">Manajemen Usaha</span>
-                    </nav>
-                </div>
+@section('content')
+@php
+  $collection = collect($umkmList ?? []);
+  $totalPendaftar = $collection->count();
+  $totalMenunggu = $collection->filter(fn ($u) => strtolower((string) $u->status_verifikasi) === 'menunggu')->count();
+  $totalDisetujui = $collection->filter(fn ($u) => strtolower((string) $u->status_verifikasi) === 'disetujui')->count();
+  $totalDitolak = $collection->filter(fn ($u) => strtolower((string) $u->status_verifikasi) === 'ditolak')->count();
+@endphp
 
-                <div class="admin-header-right">
-                    <button type="button" class="btn-notification admin-notif-btn" aria-label="Notifikasi">
-                        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/>
-                            <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-                        </svg>
-                    </button>
-                    <div class="admin-user-chip">
-                        <span class="admin-greeting-text">Halo, Admin</span>
-                        <span class="admin-initial-avatar">
-                            {{ strtoupper(substr(auth()->user()->nama_lengkap ?? 'A', 0, 1)) }}
-                        </span>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        {{-- Main Content --}}
-        <main class="app-main-content admin-main-content">
-            @php
-                $collection = collect($umkmList ?? []);
-                $totalMitra = $collection->count();
-                $totalAktif = $collection->where('status_verifikasi', 'disetujui')->count();
-                $totalDitangguhkan = $collection->where('status_verifikasi', 'ditolak')->count();
-                $totalMenunggu = $totalMitra - $totalAktif - $totalDitangguhkan;
-            @endphp
-
-            <div class="admin-dashboard">
-                {{-- Header Judul --}}
-                <div class="umkm-mgmt-title-row">
-                    <h1 class="admin-page-title">Mitra UMKM</h1>
-                    <span class="umkm-mgmt-subtitle">Kelola mitra dan profil usaha.</span>
-                </div>
-
-                {{-- Sub-navigasi Tab --}}
-                <div class="umkm-subtabs" role="tablist">
-                    <button type="button" class="umkm-subtab is-active" data-subtab="usaha">Manajemen Usaha</button>
-                    <button type="button" class="umkm-subtab" data-subtab="menu">Menu &amp; Paket</button>
-                    <button type="button" class="umkm-subtab" data-subtab="transaksi">Transaksi</button>
-                </div>
-
-                {{-- Search & Filter Pills --}}
-                <div class="umkm-filter-toolbar">
-                    <div class="umkm-search-pill">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <circle cx="11" cy="11" r="8"/>
-                            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                        </svg>
-                        <input type="search" id="umkmSearchInput" placeholder="Cari nama usaha..." aria-label="Cari nama usaha">
-                    </div>
-
-                    <div class="umkm-status-chips" role="group" aria-label="Filter status mitra">
-                        <button type="button" class="umkm-chip is-active" data-filter="semua">Semua</button>
-                        <button type="button" class="umkm-chip" data-filter="aktif">Aktif</button>
-                        <button type="button" class="umkm-chip" data-filter="menunggu">Menunggu verifikasi</button>
-                        <button type="button" class="umkm-chip" data-filter="ditangguhkan">Ditangguhkan</button>
-                    </div>
-                </div>
-
-                {{-- 4 Kartu KPI --}}
-                <section class="admin-kpi-grid" aria-label="Ringkasan Mitra UMKM">
-                    <div class="admin-kpi-card">
-                        <div class="admin-kpi-top">
-                            <span class="admin-kpi-label">Total mitra</span>
-                            <span class="admin-kpi-icon" aria-hidden="true">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M3 9l1.5-5h15L21 9"/>
-                                    <path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/>
-                                    <path d="M5 12v8h14v-8"/>
-                                </svg>
-                            </span>
-                        </div>
-                        <span class="admin-kpi-value">{{ number_format($totalMitra, 0, ',', '.') }}</span>
-                    </div>
-
-                    <div class="admin-kpi-card">
-                        <div class="admin-kpi-top">
-                            <span class="admin-kpi-label">Aktif</span>
-                            <span class="admin-kpi-icon" aria-hidden="true">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="9"/>
-                                    <polyline points="9 12 11 14 15 10"/>
-                                </svg>
-                            </span>
-                        </div>
-                        <span class="admin-kpi-value">{{ number_format($totalAktif, 0, ',', '.') }}</span>
-                    </div>
-
-                    <div class="admin-kpi-card">
-                        <div class="admin-kpi-top">
-                            <span class="admin-kpi-label">Menunggu verifikasi</span>
-                            <span class="admin-kpi-icon" aria-hidden="true">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="9"/>
-                                    <polyline points="12 7 12 12 15 14"/>
-                                </svg>
-                            </span>
-                        </div>
-                        <span class="admin-kpi-value">{{ number_format($totalMenunggu, 0, ',', '.') }}</span>
-                    </div>
-
-                    <div class="admin-kpi-card">
-                        <div class="admin-kpi-top">
-                            <span class="admin-kpi-label">Ditangguhkan</span>
-                            <span class="admin-kpi-icon" aria-hidden="true">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <circle cx="12" cy="12" r="9"/>
-                                    <line x1="12" y1="8" x2="12" y2="12"/>
-                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
-                                </svg>
-                            </span>
-                        </div>
-                        <span class="admin-kpi-value">{{ number_format($totalDitangguhkan, 0, ',', '.') }}</span>
-                    </div>
-                </section>
-
-                {{-- Panel Daftar Mitra UMKM --}}
-                <section class="admin-panel-card">
-                    <div class="admin-panel-head">
-                        <h2 class="admin-panel-title">Daftar mitra UMKM</h2>
-                        <span class="admin-pagination-info" id="umkmTotalText">{{ $totalMitra }} data</span>
-                    </div>
-
-                    <div class="admin-table-responsive">
-                        <table class="admin-report-table umkm-mgmt-table">
-                            <thead>
-                                <tr>
-                                    <th>Usaha</th>
-                                    <th>Lokasi</th>
-                                    <th>Kategori</th>
-                                    <th>Rating</th>
-                                    <th>Pesanan bulan ini</th>
-                                    <th>Status</th>
-                                    <th>Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody id="umkmTableBody">
-                                @forelse($collection as $item)
-                                    @php
-                                        $rawStatus = strtolower($item->status_verifikasi ?? 'menunggu');
-                                        if ($rawStatus === 'disetujui') {
-                                            $filterKey = 'aktif';
-                                            $statusLabel = 'Aktif';
-                                            $badgeClass = 'is-active';
-                                        } elseif ($rawStatus === 'ditolak') {
-                                            $filterKey = 'ditangguhkan';
-                                            $statusLabel = 'Ditangguhkan';
-                                            $badgeClass = 'is-suspended';
-                                        } else {
-                                            $filterKey = 'menunggu';
-                                            $statusLabel = 'Menunggu verifikasi';
-                                            $badgeClass = 'is-pending';
-                                        }
-
-                                        $words = preg_split('/\s+/', trim($item->nama_vendor ?? 'UM'));
-                                        $initials = strtoupper(
-                                            substr($words[0] ?? 'U', 0, 1) .
-                                            substr($words[1] ?? ($words[0] ?? 'M'), 0, 1)
-                                        );
-
-                                        $ownerName = $item->user->nama_lengkap ?? 'Pemilik Mitra';
-                                        $ownerEmail = $item->user->email ?? '-';
-                                        $kategori = $item->kategori ?? 'Katering Sehat';
-                                        $rating = isset($item->rating) && $item->rating > 0
-                                            ? number_format((float) $item->rating, 1, ',', '.')
-                                            : '—';
-                                        $pesananBulanIni = $item->pesanan_bulan_ini ?? ($item->pesanan_count ?? 0);
-                                        $actionUrl = Route::has('admin.umkm-verifikasi')
-                                            ? route('admin.umkm-verifikasi', $item->id_umkm)
-                                            : url('/admin/umkm/' . $item->id_umkm . '/verifikasi');
-                                    @endphp
-                                    <tr class="umkm-row"
-                                        data-status="{{ $filterKey }}"
-                                        data-search="{{ strtolower(($item->nama_vendor ?? '') . ' ' . $ownerName . ' ' . ($item->alamat_lengkap ?? '')) }}">
-                                        <td>
-                                            <div class="umkm-vendor-cell">
-                                                <span class="umkm-monogram">{{ $initials }}</span>
-                                                <div class="umkm-vendor-info">
-                                                    <strong>{{ $item->nama_vendor }}</strong>
-                                                    <span>Pemilik: {{ $ownerName }}</span>
-                                                </div>
-                                            </div>
-                                        </td>
-                                        <td class="umkm-location-cell">{{ $item->alamat_lengkap }}</td>
-                                        <td>{{ $kategori }}</td>
-                                        <td>
-                                            <span class="umkm-rating-cell">
-                                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                                                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-                                                </svg>
-                                                {{ $rating }}
-                                            </span>
-                                        </td>
-                                        <td>{{ number_format((int) $pesananBulanIni, 0, ',', '.') }}</td>
-                                        <td>
-                                            <span class="umkm-status-pill {{ $badgeClass }}">{{ $statusLabel }}</span>
-                                        </td>
-                                        <td>
-                                            <button type="button"
-                                                    class="btn-tinjau-umkm"
-                                                    data-action="{{ $actionUrl }}"
-                                                    data-nama="{{ $item->nama_vendor }}"
-                                                    data-pemilik="{{ $ownerName }}"
-                                                    data-email="{{ $ownerEmail }}"
-                                                    data-alamat="{{ $item->alamat_lengkap }}"
-                                                    data-deskripsi="{{ $item->deskripsi_toko ?? 'Tidak ada deskripsi toko.' }}"
-                                                    data-jam="{{ substr($item->jam_buka ?? '08:00', 0, 5) }} - {{ substr($item->jam_tutup ?? '20:00', 0, 5) }} WIB"
-                                                    data-pembayaran="Dikelola via Plan2Eat (QRIS / Transfer / Tunai)"
-                                                    data-status="{{ $rawStatus }}"
-                                                    data-catatan="{{ $item->catatan ?? '' }}">
-                                                Tinjau
-                                            </button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr id="umkmEmptyServerRow">
-                                        <td colspan="7" class="text-center" style="padding: 28px 14px; color: #717972;">
-                                            Belum ada data mitra UMKM terdaftar.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                                <tr id="umkmNoMatchRow" class="is-hidden">
-                                    <td colspan="7" class="text-center" style="padding: 28px 14px; color: #717972;">
-                                        Tidak ada mitra UMKM yang sesuai dengan pencarian atau filter.
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    {{-- Footer Pagination --}}
-                    <div class="admin-table-footer">
-                        <span class="admin-pagination-info" id="umkmShowingInfo">
-                            Menampilkan {{ $totalMitra > 0 ? '1–' . $totalMitra : '0' }} dari {{ $totalMitra }}
-                        </span>
-                        <div class="admin-pagination-nav" aria-label="Navigasi Halaman">
-                            <button type="button" class="page-arrow-btn" aria-label="Sebelumnya">&lsaquo;</button>
-                            <button type="button" class="page-num-btn is-active">1</button>
-                            <button type="button" class="page-num-btn">2</button>
-                            <button type="button" class="page-num-btn">3</button>
-                            <span class="page-ellipsis">...</span>
-                            <button type="button" class="page-arrow-btn" aria-label="Berikutnya">&rsaquo;</button>
-                        </div>
-                    </div>
-                </section>
-            </div>
-        </main>
+<div class="aum-page">
+  <header class="aum-page-header">
+    <div class="aum-title-row">
+      <h1 class="aum-page-title">Verifikasi UMKM</h1>
+      <p class="aum-page-subtitle">Tinjau pendaftaran mitra dapur catering baru sebelum disetujui masuk ke sistem.</p>
     </div>
+  </header>
+
+  <div class="aum-toolbar-row">
+    <div class="aum-search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+      </svg>
+      <input type="text" id="vuSearchInput" class="aum-search-input" placeholder="Cari nama usaha, pemilik, atau lokasi...">
+    </div>
+
+    <div class="aum-filter-chips" role="group" aria-label="Filter status verifikasi">
+      <button type="button" class="aum-chip is-active" data-vu-filter="menunggu">Menunggu ({{ $totalMenunggu }})</button>
+      <button type="button" class="aum-chip" data-vu-filter="ditolak">Ditolak ({{ $totalDitolak }})</button>
+      <button type="button" class="aum-chip" data-vu-filter="disetujui">Disetujui ({{ $totalDisetujui }})</button>
+      <button type="button" class="aum-chip" data-vu-filter="all">Semua ({{ $totalPendaftar }})</button>
+    </div>
+  </div>
+
+  <div class="aum-kpi-grid-4">
+    <article class="aum-kpi-card">
+      <div class="aum-kpi-top">
+        <span class="aum-kpi-label">Menunggu verifikasi</span>
+        <span class="aum-kpi-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </span>
+      </div>
+      <div class="aum-kpi-value">{{ $totalMenunggu }}</div>
+    </article>
+
+    <article class="aum-kpi-card">
+      <div class="aum-kpi-top">
+        <span class="aum-kpi-label">Disetujui</span>
+        <span class="aum-kpi-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </span>
+      </div>
+      <div class="aum-kpi-value">{{ $totalDisetujui }}</div>
+    </article>
+
+    <article class="aum-kpi-card">
+      <div class="aum-kpi-top">
+        <span class="aum-kpi-label">Ditolak</span>
+        <span class="aum-kpi-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+        </span>
+      </div>
+      <div class="aum-kpi-value">{{ $totalDitolak }}</div>
+    </article>
+
+    <article class="aum-kpi-card">
+      <div class="aum-kpi-top">
+        <span class="aum-kpi-label">Total pendaftar</span>
+        <span class="aum-kpi-icon" aria-hidden="true">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l2-5h14l2 5"/><path d="M5 12v8h14v-8"/></svg>
+        </span>
+      </div>
+      <div class="aum-kpi-value">{{ $totalPendaftar }}</div>
+    </article>
+  </div>
+
+  <div class="aum-panel-card">
+    <div class="aum-panel-head">
+      <h2 class="aum-panel-title">Daftar Pengajuan Mitra UMKM</h2>
+      <span class="aum-panel-count" id="vuCountLabel">{{ $totalMenunggu }} data</span>
+    </div>
+
+    <div class="aum-table-responsive">
+      <table class="aum-table" id="vuTable">
+        <thead>
+          <tr>
+            <th>Usaha</th>
+            <th>Lokasi</th>
+            <th>Jam Buka</th>
+            <th>Tanggal Daftar</th>
+            <th>Status</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody>
+          @forelse ($collection as $u)
+            @php
+              $statusLower = strtolower((string) ($u->status_verifikasi ?? 'menunggu'));
+              $words = preg_split('/\s+/', trim((string) $u->nama_vendor)) ?: ['UM'];
+              $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : substr($words[0], 1, 1)));
+              $statusBadgeClass = match ($statusLower) {
+                  'disetujui' => 'is-active',
+                  'ditolak'   => 'is-suspended',
+                  default     => 'is-pending',
+              };
+              $statusLabel = match ($statusLower) {
+                  'disetujui' => 'Disetujui',
+                  'ditolak'   => 'Ditolak',
+                  default     => 'Menunggu',
+              };
+              $tglDaftar = $u->created_at
+                  ? \Carbon\Carbon::parse($u->created_at)->translatedFormat('d M Y')
+                  : '-';
+
+              $payload = [
+                  'id' => $u->id_umkm,
+                  'initials' => $initials !== '' ? $initials : 'UM',
+                  'nama_vendor' => $u->nama_vendor,
+                  'pemilik' => $u->user?->nama_lengkap ?? '-',
+                  'email' => $u->user?->email ?? '-',
+                  'no_hp' => $u->user?->no_hp ?? '-',
+                  'alamat' => $u->alamat_lengkap ?? '-',
+                  'deskripsi' => $u->deskripsi_toko ?: 'Belum ada deskripsi usaha.',
+                  'jam' => substr((string) ($u->jam_buka ?? '07:00'), 0, 5) . ' - ' . substr((string) ($u->jam_tutup ?? '21:00'), 0, 5) . ' WIB',
+                  'tgl_daftar' => $tglDaftar,
+                  'status' => $statusLower,
+                  'status_label' => $statusLabel,
+                  'catatan' => $u->catatan ?? '',
+                  'foto_toko' => $u->foto_toko ? (str_starts_with((string) $u->foto_toko, 'http') ? $u->foto_toko : asset('storage/' . $u->foto_toko)) : null,
+                  'update_url' => route('admin.umkm-verifikasi', $u->id_umkm),
+              ];
+            @endphp
+            <tr data-search="{{ strtolower($u->nama_vendor . ' ' . ($u->user?->nama_lengkap ?? '') . ' ' . ($u->alamat_lengkap ?? '')) }}"
+                data-status="{{ $statusLower }}"
+                style="{{ $statusLower !== 'menunggu' ? 'display: none;' : '' }}">
+              <td>
+                <div class="aum-biz-cell">
+                  <span class="aum-initials-badge">{{ $initials }}</span>
+                  <div class="aum-biz-text">
+                    <strong>{{ $u->nama_vendor }}</strong>
+                    <span>Pemilik: {{ $u->user?->nama_lengkap ?? '-' }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>{{ \Illuminate\Support\Str::limit($u->alamat_lengkap ?? '-', 44) }}</td>
+              <td>{{ substr((string) ($u->jam_buka ?? '07:00'), 0, 5) }} - {{ substr((string) ($u->jam_tutup ?? '21:00'), 0, 5) }}</td>
+              <td>{{ $tglDaftar }}</td>
+              <td>
+                <span class="aum-status-pill {{ $statusBadgeClass }}">
+                  {{ $statusLabel }}
+                </span>
+              </td>
+              <td>
+                <button type="button"
+                        class="aum-btn-tinjau"
+                        data-open-vu-tinjau='@json($payload)'>
+                  Tinjau
+                </button>
+              </td>
+            </tr>
+          @empty
+            <tr id="vuDbEmptyRow">
+              <td colspan="6" style="text-align: center; padding: 28px; color: #6B7280;">
+                Belum ada pengajuan UMKM terdaftar.
+              </td>
+            </tr>
+          @endforelse
+          <tr id="vuFilterEmptyRow" style="{{ $totalMenunggu > 0 || $collection->isEmpty() ? 'display: none;' : '' }}">
+            <td colspan="6" style="text-align: center; padding: 28px; color: #6B7280;">
+              Tidak ada pengajuan UMKM pada status ini.
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </div>
 
-{{-- Modal Tinjau & Verifikasi UMKM (Terhubung ke VerifikasiUmkmController@update) --}}
-<div id="tinjauUmkmModal" class="mp-modal-backdrop is-hidden" role="dialog" aria-modal="true" aria-labelledby="modalTinjauTitle">
-    <div class="mp-modal-card">
-        <div class="mp-modal-header">
-            <div class="mp-modal-title-group">
-                <div class="mp-modal-icon-badge" aria-hidden="true">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M3 9l1.5-5h15L21 9"/>
-                        <path d="M5 12v8h14v-8"/>
-                    </svg>
-                </div>
-                <div>
-                    <h3 id="modalTinjauTitle" class="mp-modal-title">Tinjau Mitra UMKM</h3>
-                    <p id="modalVendorSub" class="mp-modal-subtitle">Verifikasi kelayakan usaha mitra</p>
-                </div>
+{{-- =========================================================================
+     MODAL 1: TINJAU INFORMASI UMKM & TOMBOL SETUJUI / BATALKAN
+     ========================================================================= --}}
+<div class="aum-modal-backdrop is-hidden" id="vuTinjauModal" role="dialog" aria-modal="true" aria-labelledby="vuModalTitle">
+  <div class="aum-modal-box dm-modal-wide">
+    <div class="aum-modal-header">
+      <button type="button" class="aum-modal-back" data-vu-close="vuTinjauModal" aria-label="Tutup">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <h3 class="aum-modal-title" id="vuModalTitle">Tinjau Pendaftaran Mitra UMKM</h3>
+      <span class="aum-modal-spacer"></span>
+    </div>
+
+    <div class="dm-modal-body">
+      <div class="aum-detail-card">
+        <div class="aum-biz-hero-row">
+          <div class="aum-hero-initials" id="vuDetInitials">UM</div>
+          <div class="aum-hero-biz-meta">
+            <div class="aum-hero-title-line">
+              <h2 id="vuDetNama">-</h2>
+              <span class="aum-status-pill is-pending" id="vuDetStatusPill">Menunggu</span>
             </div>
-            <button type="button" id="closeTinjauModal" class="mp-modal-close-btn" aria-label="Tutup dialog">&times;</button>
+            <div class="aum-hero-sub-line">
+              <span>Pemilik: <strong id="vuDetPemilik">-</strong></span>
+              <span>&middot;</span>
+              <span>Daftar: <span id="vuDetTanggal">-</span></span>
+            </div>
+          </div>
         </div>
 
-        <hr class="mp-modal-divider">
+        <div class="aum-soft-line"></div>
+        <h4 class="aum-sub-heading">Informasi Usaha</h4>
 
-        <form id="formVerifikasiUmkm" method="POST" action="">
-            @csrf
-            @method('PUT')
+        <div class="aum-info-two-col">
+          <div class="aum-info-field">
+            <span>Email Pemilik</span>
+            <strong id="vuDetEmail">-</strong>
+          </div>
+          <div class="aum-info-field">
+            <span>Nomor Telepon</span>
+            <strong id="vuDetPhone">-</strong>
+          </div>
+          <div class="aum-info-field">
+            <span>Jam Operasional</span>
+            <strong id="vuDetJam">-</strong>
+          </div>
+          <div class="aum-info-field">
+            <span>Alamat Usaha</span>
+            <strong id="vuDetAlamat">-</strong>
+          </div>
+        </div>
 
-            <div class="mp-modal-body">
-                <div class="umkm-modal-detail-box">
-                    <div class="umkm-detail-pair">
-                        <span>Nama Usaha</span>
-                        <strong id="detailNamaVendor">-</strong>
-                    </div>
-                    <div class="umkm-detail-pair">
-                        <span>Pemilik &amp; Email</span>
-                        <strong id="detailPemilik">-</strong>
-                    </div>
-                    <div class="umkm-detail-pair">
-                        <span>Jam Operasional</span>
-                        <strong id="detailJam">-</strong>
-                    </div>
-                    <div class="umkm-detail-pair">
-                        <span>Metode Pembayaran</span>
-                        <strong id="detailPembayaran">-</strong>
-                    </div>
-                    <div class="umkm-detail-pair is-full">
-                        <span>Alamat Lengkap</span>
-                        <strong id="detailAlamat">-</strong>
-                    </div>
-                    <div class="umkm-detail-pair is-full">
-                        <span>Deskripsi Toko</span>
-                        <p id="detailDeskripsi">-</p>
-                    </div>
-                </div>
+        <div class="aum-desc-cream-box" style="margin-top: 12px;">
+          <span class="aum-caps-label">Deskripsi Usaha</span>
+          <p id="vuDetDeskripsi">-</p>
+        </div>
 
-                <div class="mp-modal-field">
-                    <label class="mp-modal-label">Keputusan Verifikasi</label>
-                    <div class="umkm-decision-grid">
-                        <label class="umkm-decision-option is-approve">
-                            <input type="radio" name="status_verifikasi" value="disetujui" required>
-                            <span>Setujui (Aktifkan)</span>
-                        </label>
-                        <label class="umkm-decision-option is-reject">
-                            <input type="radio" name="status_verifikasi" value="ditolak" required>
-                            <span>Tolak / Tangguhkan</span>
-                        </label>
-                    </div>
-                </div>
+        <div id="vuFotoWrap" style="margin-top: 12px; display: none;">
+          <span class="aum-caps-label" style="display: block; margin-bottom: 6px;">Foto Tempat Usaha</span>
+          <img id="vuFotoImg" src="" alt="Foto Usaha" style="width: 100%; max-height: 210px; object-fit: cover; border-radius: 12px; border: 1px solid #E5E0CE;">
+        </div>
 
-                <div class="mp-modal-field">
-                    <label for="inputCatatanVerifikasi" class="mp-modal-label">Catatan Admin (Opsional)</label>
-                    <div class="mp-modal-textarea-wrap">
-                        <textarea id="inputCatatanVerifikasi" name="catatan" rows="3" class="mp-modal-textarea" placeholder="Tambahkan catatan persetujuan atau alasan penolakan..."></textarea>
-                    </div>
-                </div>
-            </div>
+        <div id="vuCatatanWrap" class="aum-suspended-reason" style="margin-top: 12px; display: none;">
+          <strong style="font-size: 12.5px; color: #991B1B;">Catatan Penolakan Sebelumnya:</strong>
+          <p id="vuCatatanText" style="margin-top: 4px;"></p>
+        </div>
+      </div>
 
-            <div class="mp-modal-footer" style="margin-top: 14px;">
-                <button type="button" id="cancelTinjauModal" class="mp-modal-btn-cancel">Batal</button>
-                <button type="submit" class="mp-modal-btn-confirm">Simpan Keputusan</button>
-            </div>
+      <div class="aum-suspend-btn-row">
+        <button type="button" id="vuOpenRejectBtn" class="aum-modal-btn-danger-soft">
+          Batalkan / Tolak
+        </button>
+
+        <form id="vuApproveForm" method="POST" action="#" style="margin: 0;">
+          @csrf
+          @method('PUT')
+          <input type="hidden" name="status_verifikasi" value="disetujui">
+          <button type="submit" class="aum-btn-approve-solid">
+            Disetujui
+          </button>
         </form>
+      </div>
     </div>
+  </div>
 </div>
 
+{{-- =========================================================================
+     MODAL 2: DIALOG CATATAN PENOLAKAN (saat klik Batalkan / Tolak)
+     ========================================================================= --}}
+<div class="aum-modal-backdrop is-hidden" id="vuRejectModal" role="dialog" aria-modal="true" aria-labelledby="vuRejectTitle">
+  <div class="aum-modal-box" style="max-width: 480px;">
+    <div class="aum-modal-header">
+      <button type="button" class="aum-modal-back" data-vu-close="vuRejectModal" aria-label="Tutup">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <h3 class="aum-modal-title" id="vuRejectTitle">Alasan Pembatalan / Penolakan</h3>
+      <span class="aum-modal-spacer"></span>
+    </div>
+
+    <div class="dm-modal-body">
+      <form id="vuRejectForm" method="POST" action="#">
+        @csrf
+        @method('PUT')
+        <input type="hidden" name="status_verifikasi" value="ditolak">
+
+        <div class="aum-suspend-field">
+          <label for="vuRejectReasonInput">Catatan kenapa pendaftaran tidak disetujui:</label>
+          <textarea
+            id="vuRejectReasonInput"
+            name="catatan"
+            rows="4"
+            placeholder="Contoh: Alamat usaha kurang lengkap atau deskripsi menu tidak sesuai standar katering..."
+            required
+          ></textarea>
+        </div>
+
+        <p class="aum-suspend-question">Apakah Anda yakin ingin membatalkan / menolak pendaftaran mitra ini?</p>
+
+        <div class="aum-suspend-btn-row">
+          <button type="button" class="aum-modal-btn-cancel" data-vu-close="vuRejectModal">Kembali</button>
+          <button type="submit" class="aum-modal-btn-danger-soft">Kirim Penolakan</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+@endsection
+
+@push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('umkmSearchInput');
-    const chips = document.querySelectorAll('.umkm-chip');
-    const rows = document.querySelectorAll('.umkm-row');
-    const noMatchRow = document.getElementById('umkmNoMatchRow');
-    const showingInfo = document.getElementById('umkmShowingInfo');
-    const totalText = document.getElementById('umkmTotalText');
-    const totalAll = rows.length;
-    let activeFilter = 'semua';
+  const table = document.getElementById('vuTable');
+  const searchInput = document.getElementById('vuSearchInput');
+  const countEl = document.getElementById('vuCountLabel');
+  const filterEmptyRow = document.getElementById('vuFilterEmptyRow');
+  const chips = document.querySelectorAll('[data-vu-filter]');
+  let currentFilter = 'menunggu';
 
-    function applyFilter() {
-        const keyword = (searchInput.value || '').toLowerCase().trim();
-        let visibleCount = 0;
+  function applyFilter() {
+    if (!table) return;
+    const q = (searchInput ? searchInput.value : '').trim().toLowerCase();
+    let visible = 0;
 
-        rows.forEach(row => {
-            const matchStatus = activeFilter === 'semua' || row.dataset.status === activeFilter;
-            const matchText = !keyword || (row.dataset.search || '').includes(keyword);
-            const show = matchStatus && matchText;
+    table.querySelectorAll('tbody tr[data-search]').forEach(function (tr) {
+      const matchSearch = q === '' || (tr.dataset.search || '').includes(q);
+      const matchStatus = currentFilter === 'all' || (tr.dataset.status || '') === currentFilter;
+      const show = matchSearch && matchStatus;
+      tr.style.display = show ? '' : 'none';
+      if (show) visible++;
+    });
 
-            row.classList.toggle('is-hidden', !show);
-            if (show) visibleCount++;
-        });
+    if (countEl) countEl.textContent = visible + ' data';
+    if (filterEmptyRow) filterEmptyRow.style.display = visible === 0 ? '' : 'none';
+  }
 
-        if (noMatchRow) {
-            noMatchRow.classList.toggle('is-hidden', visibleCount > 0 || totalAll === 0);
-        }
-        if (totalText) totalText.textContent = visibleCount + ' data';
-        if (showingInfo) {
-            showingInfo.textContent = visibleCount > 0
-                ? `Menampilkan 1–${visibleCount} dari ${totalAll}`
-                : `Menampilkan 0 dari ${totalAll}`;
-        }
+  if (searchInput) searchInput.addEventListener('input', applyFilter);
+  chips.forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      chips.forEach((c) => c.classList.remove('is-active'));
+      chip.classList.add('is-active');
+      currentFilter = chip.dataset.vuFilter || 'menunggu';
+      applyFilter();
+    });
+  });
+
+  function openModal(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.remove('is-hidden');
+      document.body.style.overflow = 'hidden';
     }
-
-    chips.forEach(chip => {
-        chip.addEventListener('click', () => {
-            chips.forEach(c => c.classList.remove('is-active'));
-            chip.classList.add('is-active');
-            activeFilter = chip.dataset.filter;
-            applyFilter();
-        });
-    });
-
-    if (searchInput) {
-        searchInput.addEventListener('input', applyFilter);
+  }
+  function closeModal(id) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.classList.add('is-hidden');
+      document.body.style.overflow = '';
     }
+  }
 
-    // Modal Tinjau UMKM
-    const modal = document.getElementById('tinjauUmkmModal');
-    const form = document.getElementById('formVerifikasiUmkm');
-    const catatanInput = document.getElementById('inputCatatanVerifikasi');
-
-    document.querySelectorAll('.btn-tinjau-umkm').forEach(btn => {
-        btn.addEventListener('click', () => {
-            form.action = btn.dataset.action;
-            document.getElementById('detailNamaVendor').textContent = btn.dataset.nama;
-            document.getElementById('detailPemilik').textContent = `${btn.dataset.pemilik} (${btn.dataset.email})`;
-            document.getElementById('detailJam').textContent = btn.dataset.jam;
-            document.getElementById('detailPembayaran').textContent = btn.dataset.pembayaran;
-            document.getElementById('detailAlamat').textContent = btn.dataset.alamat;
-            document.getElementById('detailDeskripsi').textContent = btn.dataset.deskripsi;
-            catatanInput.value = btn.dataset.catatan || '';
-
-            const currentStatus = btn.dataset.status;
-            form.querySelectorAll('input[name="status_verifikasi"]').forEach(radio => {
-                radio.checked = (radio.value === currentStatus);
-            });
-
-            modal.classList.remove('is-hidden');
-        });
+  document.querySelectorAll('[data-vu-close]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      closeModal(btn.dataset.vuClose);
     });
+  });
 
-    function closeModal() {
-        modal.classList.add('is-hidden');
-    }
+  document.querySelectorAll('.aum-modal-backdrop').forEach(function (backdrop) {
+    backdrop.addEventListener('click', function (e) {
+      if (e.target === backdrop) {
+        backdrop.classList.add('is-hidden');
+        document.body.style.overflow = '';
+      }
+    });
+  });
 
-    document.getElementById('closeTinjauModal')?.addEventListener('click', closeModal);
-    document.getElementById('cancelTinjauModal')?.addEventListener('click', closeModal);
-    modal?.addEventListener('click', (e) => {
-        if (e.target === modal) closeModal();
+  let activeUpdateUrl = '#';
+  let activeCatatan = '';
+
+  document.querySelectorAll('[data-open-vu-tinjau]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      const d = JSON.parse(btn.dataset.openVuTinjau || '{}');
+      activeUpdateUrl = d.update_url || '#';
+      activeCatatan = d.catatan || '';
+
+      document.getElementById('vuDetInitials').textContent = d.initials || 'UM';
+      document.getElementById('vuDetNama').textContent = d.nama_vendor || '-';
+      document.getElementById('vuDetPemilik').textContent = d.pemilik || '-';
+      document.getElementById('vuDetTanggal').textContent = d.tgl_daftar || '-';
+      document.getElementById('vuDetEmail').textContent = d.email || '-';
+      document.getElementById('vuDetPhone').textContent = d.no_hp || '-';
+      document.getElementById('vuDetJam').textContent = d.jam || '-';
+      document.getElementById('vuDetAlamat').textContent = d.alamat || '-';
+      document.getElementById('vuDetDeskripsi').textContent = d.deskripsi || '-';
+
+      const pill = document.getElementById('vuDetStatusPill');
+      pill.textContent = d.status_label || 'Menunggu';
+      pill.className = 'aum-status-pill ' + (d.status === 'disetujui' ? 'is-active' : (d.status === 'ditolak' ? 'is-suspended' : 'is-pending'));
+
+      const fotoWrap = document.getElementById('vuFotoWrap');
+      const fotoImg = document.getElementById('vuFotoImg');
+      if (d.foto_toko) {
+        fotoImg.src = d.foto_toko;
+        fotoWrap.style.display = 'block';
+      } else {
+        fotoWrap.style.display = 'none';
+      }
+
+      const catatanWrap = document.getElementById('vuCatatanWrap');
+      const catatanText = document.getElementById('vuCatatanText');
+      if (d.catatan) {
+        catatanText.textContent = d.catatan;
+        catatanWrap.style.display = 'block';
+      } else {
+        catatanWrap.style.display = 'none';
+      }
+
+      document.getElementById('vuApproveForm').action = activeUpdateUrl;
+      openModal('vuTinjauModal');
     });
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && !modal.classList.contains('is-hidden')) closeModal();
-    });
+  });
+
+  document.getElementById('vuOpenRejectBtn')?.addEventListener('click', function () {
+    document.getElementById('vuRejectForm').action = activeUpdateUrl;
+    const reasonInput = document.getElementById('vuRejectReasonInput');
+    reasonInput.value = activeCatatan;
+    closeModal('vuTinjauModal');
+    openModal('vuRejectModal');
+    setTimeout(() => reasonInput.focus(), 60);
+  });
 });
 </script>
-@include('partials.popup_notification')
-</body>
-</html>
+@endpush

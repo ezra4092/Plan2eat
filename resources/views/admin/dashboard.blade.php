@@ -82,8 +82,11 @@
         ],
     ];
 
-    $umkmIndexUrl   = Route::has('admin.umkm.index') ? route('admin.umkm.index') : url('/admin/umkm');
-    $laporanIndexUrl = Route::has('admin.laporan.index') ? route('admin.laporan.index') : url('/admin/laporan');
+    $umkmIndexUrl   = Route::has('admin.umkm') ? route('admin.umkm') : url('/admin/umkm');
+    $laporanIndexUrl = Route::has('admin.laporan') ? route('admin.laporan') : url('/admin/laporan');
+    $activePeriode = $periode ?? request('periode', 'Bulan Ini');
+    $chartMax = max(1, (float) ($chartMaxJt ?? 50));
+    $yStep = $chartMax / 5;
 @endphp
 
 @section('content')
@@ -105,22 +108,21 @@
                         <line x1="8" y1="2" x2="8" y2="6"/>
                         <line x1="3" y1="10" x2="21" y2="10"/>
                     </svg>
-                    <span id="admPeriodLabel">{{ request('periode', 'Bulan Ini') }}</span>
+                    <span id="admPeriodLabel">{{ $activePeriode }}</span>
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="6 9 12 15 18 9"/>
                     </svg>
                 </button>
 
                 <div class="adm-period-dropdown is-hidden" id="admPeriodMenu">
-                    <a href="{{ request()->fullUrlWithQuery(['periode' => 'Hari Ini']) }}" class="adm-period-option">Hari Ini</a>
-                    <a href="{{ request()->fullUrlWithQuery(['periode' => 'Minggu Ini']) }}" class="adm-period-option">Minggu Ini</a>
-                    <a href="{{ request()->fullUrlWithQuery(['periode' => 'Bulan Ini']) }}" class="adm-period-option is-selected">Bulan Ini</a>
-                    <a href="{{ request()->fullUrlWithQuery(['periode' => '6 Bulan Terakhir']) }}" class="adm-period-option">6 Bulan Terakhir</a>
+                    @foreach (['Hari Ini', 'Minggu Ini', 'Bulan Ini', '6 Bulan Terakhir'] as $optPeriode)
+                        <a href="{{ request()->fullUrlWithQuery(['periode' => $optPeriode]) }}" class="adm-period-option {{ $activePeriode === $optPeriode ? 'is-selected' : '' }}">{{ $optPeriode }}</a>
+                    @endforeach
                 </div>
             </div>
 
             {{-- Tombol Unduh Laporan --}}
-            <a href="{{ Route::has('admin.laporan.export') ? route('admin.laporan.export', ['periode' => request('periode', 'Bulan Ini')]) : $laporanIndexUrl }}"
+            <a href="{{ $laporanIndexUrl }}"
                class="adm-btn-download" id="admDownloadReportBtn">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
@@ -241,12 +243,9 @@
             <div class="adm-chart-box">
                 {{-- Sumbu Y --}}
                 <div class="adm-chart-yaxis" aria-hidden="true">
-                    <span>50</span>
-                    <span>40</span>
-                    <span>30</span>
-                    <span>20</span>
-                    <span>10</span>
-                    <span>0</span>
+                    @for ($tick = 5; $tick >= 0; $tick--)
+                        <span>{{ rtrim(rtrim(number_format($yStep * $tick, 1, ',', ''), '0'), ',') }}</span>
+                    @endfor
                 </div>
 
                 {{-- Area Plot & Batang --}}
@@ -263,15 +262,19 @@
                     <div class="adm-chart-bars">
                         @foreach ($chartData as $bar)
                             @php
-                                $pct = min(100, max(4, ($bar['value'] / 50) * 100));
+                                $pct = ($bar['value'] > 0) ? min(100, max(6, ($bar['value'] / $chartMax) * 100)) : 4;
+                                $rawRp = $bar['raw_rp'] ?? ($bar['value'] * 1000000);
+                                $tooltipLabel = $rawRp >= 1000000
+                                    ? 'Rp ' . number_format($bar['value'], 1, ',', '.') . ' Jt'
+                                    : 'Rp ' . number_format((float) $rawRp, 0, ',', '.');
                             @endphp
                             <div class="adm-bar-col">
                                 <div class="adm-bar-track">
                                     <div class="adm-bar-fill {{ !empty($bar['active']) ? 'is-highlight' : '' }}"
                                          style="height: {{ $pct }}%;"
                                          tabindex="0"
-                                         aria-label="{{ $bar['month'] }}: Rp {{ number_format($bar['value'], 1, ',', '.') }} Jt">
-                                        <span class="adm-bar-tooltip">Rp {{ number_format($bar['value'], 1, ',', '.') }} Jt</span>
+                                         aria-label="{{ $bar['month'] }}: {{ $tooltipLabel }}">
+                                        <span class="adm-bar-tooltip">{{ $tooltipLabel }}</span>
                                     </div>
                                 </div>
                                 <span class="adm-bar-month">{{ $bar['month'] }}</span>
@@ -336,9 +339,9 @@
                     @forelse ($verifications as $umkm)
                         @php
                             $isVerified = strtolower($umkm['status']) === 'terverifikasi';
-                            $detailUrl  = Route::has('admin.umkm.show')
-                                ? route('admin.umkm.show', $umkm['id'])
-                                : $umkmIndexUrl . '?umkm=' . $umkm['id'];
+                            $detailUrl  = $isVerified && Route::has('admin.data_master')
+                                ? route('admin.data_master', ['tab' => 'umkm'])
+                                : $umkmIndexUrl;
                         @endphp
                         <tr>
                             <td>

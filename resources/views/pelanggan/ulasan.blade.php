@@ -1,10 +1,6 @@
-@extends('layouts.main')
+@extends('layouts.main', ['activeMenu' => 'ulasan'])
 
 @section('title', 'Ulasan — Plan2Eat')
-
-@section('nav')
-    @include('layouts.nav')
-@endsection
 
 @section('content')
 @php
