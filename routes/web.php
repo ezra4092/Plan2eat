@@ -22,13 +22,11 @@ use Illuminate\Support\Facades\Route;
 */
 
 // ==========================================
-// 1. AUTENTIKASI (PUBLIC & GUEST)
+// 1. LANDING PAGE & AUTENTIKASI (PUBLIC)
 // ==========================================
-Route::get('/', function () {
-    return view('login');
-})->name('login_page');
+Route::get('/', [AuthController::class, 'showLandingPage'])->name('landing_page');
 
-Route::get('/login', fn () => redirect()->route('login_page'));
+Route::get('/login', [AuthController::class, 'showLoginForm'])->name('login_page');
 Route::post('/login', [AuthController::class, 'login'])->name('login');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 

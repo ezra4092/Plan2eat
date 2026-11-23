@@ -10,6 +10,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" sizes="32x32" href="..\images\favicon.ico">
+
 
     <!-- Stylesheets -->
     <link href="{{ asset('template/css/globals.css') }}" rel="stylesheet">
@@ -19,6 +21,12 @@
 
     <main class="login-page-user">
         <div class="authentication">
+            <div style="width: 100%; display: flex; justify-content: flex-start; margin-bottom: 4px;">
+                <a href="{{ route('landing_page') }}" style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #16442B; text-decoration: none;">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+                    <span>Kembali ke Beranda</span>
+                </a>
+            </div>
             
             <!-- Brand Header / Logo -->
             <div class="brand-header">
@@ -96,13 +104,13 @@
             </form>
 
             <!-- Divider -->
-            <!-- <div class="divider-margin">
+            <div class="divider-margin">
                 <div class="divider">
                     <div class="horizontal-divider"></div>
-                    <span class="text">atau masuk dengan</span>
-                    <div class="horizontal-divider"></div>
+                    <!-- <span class="text">atau masuk dengan</span> -->
+                    <!-- <div class="horizontal-divider"></div> -->
                 </div>
-            </div> -->
+            </div>
 
             <!-- Social Sign-In (Google) -->
             <!-- <div class="social-sign-in-grid">

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Menu;
 use App\Models\ProfilKesehatan;
 use App\Models\Umkm;
 use App\Models\User;
@@ -16,6 +17,50 @@ use Illuminate\View\View;
 
 class AuthController extends Controller
 {
+    public function showLandingPage(): View
+    {
+        $featuredMenus = collect();
+        $umkmCount = 0;
+
+        try {
+            $allActiveMenus = Menu::with(['umkm', 'jenisMenu'])
+                ->where('status', true)
+                ->whereHas('umkm', fn ($q) => $q->terverifikasi())
+                ->get();
+
+            $preferredNames = [
+                'ayam bakar sambal riau + es teh',
+                'paket hemat anak kos 3 hari (6x makan)',
+                'soto ayam kuah bening',
+            ];
+
+            $picked = collect();
+            foreach ($preferredNames as $targetName) {
+                $match = $allActiveMenus->first(
+                    fn (Menu $m): bool => strtolower(trim((string) $m->nama_makanan)) === $targetName
+                );
+                if ($match) {
+                    $picked->push($match);
+                }
+            }
+
+            if ($picked->count() < 3) {
+                $remaining = $allActiveMenus
+                    ->reject(fn (Menu $m): bool => $picked->contains('id_menu', $m->id_menu))
+                    ->sortByDesc('id_menu')
+                    ->take(3 - $picked->count());
+                $picked = $picked->concat($remaining);
+            }
+
+            $featuredMenus = $picked->values();
+            $umkmCount = Umkm::terverifikasi()->count();
+        } catch (\Throwable $e) {
+            $featuredMenus = collect();
+        }
+
+        return view('landing_page', compact('featuredMenus', 'umkmCount'));
+    }
+
     public function showLoginForm(): View
     {
         return view('login');
@@ -222,7 +267,9 @@ class AuthController extends Controller
             return redirect()->route('login_page');
         }
 
-        return view('personalisasi');
+        $profil = ProfilKesehatan::where('id_user', Auth::id())->first();
+
+        return view('personalisasi', compact('profil'));
     }
 
     public function storePersonalisasi(Request $request): RedirectResponse
@@ -231,7 +278,16 @@ class AuthController extends Controller
             return redirect()->route('login_page');
         }
 
-        $preferences = (array) $request->input('preferences', []);
+        $validated = $request->validate([
+            'preferences' => ['nullable', 'array'],
+            'preferences.*' => ['string'],
+            'batas_budget' => ['nullable', 'integer', 'min:0'],
+        ], [
+            'batas_budget.integer' => 'Batas budget harus berupa angka bulat.',
+            'batas_budget.min' => 'Batas budget tidak boleh kurang dari 0.',
+        ]);
+
+        $preferences = (array) ($validated['preferences'] ?? []);
 
         $alergiMap = [
             'no_seafood' => 'Seafood',
@@ -261,6 +317,7 @@ class AuthController extends Controller
             [
                 'riwayat_alergi' => ! empty($alergi) ? $alergi : null,
                 'jenis_diet' => ! empty($diet) ? implode(', ', $diet) : null,
+                'batas_budget' => $request->filled('batas_budget') ? (int) $validated['batas_budget'] : null,
             ]
         );
 
