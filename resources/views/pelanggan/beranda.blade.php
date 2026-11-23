@@ -327,11 +327,11 @@
 
             <div class="vendor-badges-top">
               <div class="badge-glass-white">
-                <img src="{{ $badgeIcon }}" alt="Kategori">
+                <i class="fa-solid fa-bowl-food"></i>
                 <span>{{ $menu->jenisMenu->nama ?? 'Pilihan Dietitian' }}</span>
               </div>
               <div class="badge-glass-white">
-                <img src="{{ $ratingIcon }}" alt="Stok">
+                <i class="fa-solid fa-align-right"></i>
                 <span>Stok {{ $menu->stok_harian }}</span>
               </div>
             </div>
@@ -361,7 +361,7 @@
 
               <a href="{{ route('pelanggan.keranjang', ['menu' => $menu->id_menu]) }}" class="btn-select-package">
                 <span>Pilih Paket</span>
-                <img src="{{ $actionIcon }}" alt="Pilih">
+                <i class="fa-solid fa-plate-wheat"></i>
               </a>
             </div>
           </div>
