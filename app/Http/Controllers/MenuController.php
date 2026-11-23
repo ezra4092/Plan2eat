@@ -207,18 +207,26 @@ class MenuController extends Controller
     }
 
     /**
-     * Menyimpan file foto menu ke folder public/menu dan mengembalikan path relatifnya.
+     * Menyimpan file foto menu ke folder public/menu (dengan fallback storage jika folder terkunci OneDrive/permission).
      */
     private function saveMenuPhoto(UploadedFile $file): string
     {
-        $targetDir = public_path('menu');
-        File::ensureDirectoryExists($targetDir);
-
         $extension = strtolower($file->getClientOriginalExtension() ?: $file->extension() ?: 'jpg');
         $filename = 'menu_' . now()->format('Ymd_His') . '_' . Str::random(8) . '.' . $extension;
-        $file->move($targetDir, $filename);
+        $targetDir = public_path('menu');
 
-        return 'menu/' . $filename;
+        try {
+            File::ensureDirectoryExists($targetDir, 0775, true);
+            $contents = file_get_contents($file->getRealPath());
+
+            if ($contents !== false && File::put($targetDir . DIRECTORY_SEPARATOR . $filename, $contents) !== false) {
+                return 'menu/' . $filename;
+            }
+        } catch (\Throwable $e) {
+            // Lanjut ke fallback storage jika folder public/menu terkunci oleh OneDrive/OS
+        }
+
+        return Storage::disk('public')->putFileAs('menu_images', $file, $filename);
     }
 
     /**
