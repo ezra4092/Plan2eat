@@ -167,10 +167,10 @@ class OrderService
             default => ucfirst($statusLower),
         };
 
-        $fotoPath = $firstMenu?->foto_menu;
-        $fotoUrl = $fotoPath
-            ? (str_starts_with($fotoPath, 'http') ? $fotoPath : asset('storage/' . $fotoPath))
-            : 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80';
+        $fotoUrl = Menu::resolveFotoUrl(
+            $firstMenu?->foto_menu,
+            'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=400&q=80'
+        );
 
         $extraCount = max(0, $order->detailPesanan->count() - 1);
         $portionDetail = ($firstDetail?->kuantitas ?? 1) . 'x Porsi';

@@ -130,9 +130,7 @@
                 $words = preg_split('/\s+/', trim((string) $u->nama_vendor)) ?: ['UM'];
                 $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : substr($words[0], 1, 1)));
                 $menusPayload = $u->menus->map(function ($m): array {
-                    $foto = $m->foto_menu
-                        ? (str_starts_with((string) $m->foto_menu, 'http') ? $m->foto_menu : asset('storage/' . $m->foto_menu))
-                        : null;
+                    $foto = \App\Models\Menu::resolveFotoUrl($m->foto_menu ?? null);
                     return [
                         'nama' => $m->nama_makanan,
                         'kategori' => $m->jenisMenu?->nama ?? 'Menu Sehat',

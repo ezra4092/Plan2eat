@@ -58,14 +58,10 @@
           default => 'is-teal',
         };
 
-        $rawFoto = $item->foto_menu;
-        if ($rawFoto && str_starts_with($rawFoto, 'http')) {
-          $fotoUrl = $rawFoto;
-        } elseif ($rawFoto) {
-          $fotoUrl = asset('storage/' . $rawFoto);
-        } else {
-          $fotoUrl = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80';
-        }
+        $fotoUrl = \App\Models\Menu::resolveFotoUrl(
+            $item->foto_menu ?? null,
+            'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=500&q=80'
+        );
       @endphp
 
       <article class="cmn-card" data-menu-id="{{ $menuId }}" data-price="{{ $menuPrice }}" data-max-stok="{{ $maxStok }}">

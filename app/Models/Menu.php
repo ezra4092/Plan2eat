@@ -62,4 +62,24 @@ class Menu extends Model
     {
         return $this->hasMany(DetailMealPlan::class, 'id_menu', 'id_menu');
     }
+
+    /**
+     * Mengubah path foto_menu menjadi URL publik yang valid (mendukung public/menu, storage, maupun URL eksternal).
+     */
+    public static function resolveFotoUrl(?string $path, ?string $fallback = null): ?string
+    {
+        if (! $path) {
+            return $fallback;
+        }
+
+        if (str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return $path;
+        }
+
+        if (str_starts_with($path, 'menu/') || file_exists(public_path($path))) {
+            return asset($path);
+        }
+
+        return asset('storage/' . $path);
+    }
 }

@@ -226,10 +226,10 @@
             $terjual = max(0, $kuantitas - $stokSisa);
             $persenDiskon = $hargaNormal > 0 ? round((($hargaNormal - $hargaDiskon) / $hargaNormal) * 100) : 0;
             $persenTerjual = min(100, round(($terjual / $kuantitas) * 100));
-            $fotoMenu = $fs->menu->foto_menu ?? null;
-            $fotoUrl = $fotoMenu
-                ? (str_starts_with($fotoMenu, 'http') ? $fotoMenu : asset('storage/' . $fotoMenu))
-                : 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80';
+            $fotoUrl = \App\Models\Menu::resolveFotoUrl(
+                $fs->menu->foto_menu ?? null,
+                'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=500&q=80'
+            );
             $isHabis = ($stokSisa <= 0);
           @endphp
 
@@ -310,9 +310,10 @@
     <div class="vendor-cards-list">
       @forelse($rekomendasiMenu as $index => $menu)
         @php
-          $coverImage = $menu->foto_menu
-              ? (str_starts_with($menu->foto_menu, 'http') ? $menu->foto_menu : asset('storage/' . $menu->foto_menu))
-              : ($index % 2 === 0 ? asset('img/paket-keto.jpg') : asset('img/paket-earth-bowl.jpg'));
+          $coverImage = \App\Models\Menu::resolveFotoUrl(
+              $menu->foto_menu ?? null,
+              'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&q=80'
+          );
 
           $badgeIcon = $index % 2 === 0 ? asset('img/icon-3.svg') : asset('img/icon-16.svg');
           $ratingIcon = $index % 2 === 0 ? asset('img/icon-2.svg') : asset('img/icon-13.svg');

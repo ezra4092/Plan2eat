@@ -11,9 +11,12 @@ use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class MenuController extends Controller
@@ -124,11 +127,11 @@ class MenuController extends Controller
             'kandungan_kalori' => 'nullable|integer|min:0',
             'jenis_menu' => 'nullable|exists:jenis_menu,id',
             'status' => 'nullable|boolean',
-            'foto_menu' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'foto_menu' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
         ]);
 
         if ($request->hasFile('foto_menu')) {
-            $validated['foto_menu'] = $request->file('foto_menu')->store('menu_images', 'public');
+            $validated['foto_menu'] = $this->saveMenuPhoto($request->file('foto_menu'));
         }
 
         $validated['id_umkm'] = $umkm->id_umkm;
@@ -162,14 +165,14 @@ class MenuController extends Controller
             'kandungan_kalori' => 'nullable|integer|min:0',
             'jenis_menu' => 'nullable|exists:jenis_menu,id',
             'status' => 'nullable|boolean',
-            'foto_menu' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
+            'foto_menu' => 'nullable|image|mimes:jpeg,png,jpg,webp,gif|max:5120',
         ]);
 
         if ($request->hasFile('foto_menu')) {
-            if ($menu->foto_menu && Storage::disk('public')->exists($menu->foto_menu)) {
-                Storage::disk('public')->delete($menu->foto_menu);
-            }
-            $validated['foto_menu'] = $request->file('foto_menu')->store('menu_images', 'public');
+            $this->deleteMenuPhoto($menu->foto_menu);
+            $validated['foto_menu'] = $this->saveMenuPhoto($request->file('foto_menu'));
+        } else {
+            unset($validated['foto_menu']);
         }
 
         if ($request->has('status')) {
@@ -196,13 +199,43 @@ class MenuController extends Controller
 
         $menu = $query->firstOrFail();
 
-        if ($menu->foto_menu && Storage::disk('public')->exists($menu->foto_menu)) {
-            Storage::disk('public')->delete($menu->foto_menu);
-        }
+        $this->deleteMenuPhoto($menu->foto_menu);
 
         $menu->delete();
 
         return redirect()->route('umkm.menu')->with('deleted', 'Menu berhasil dihapus!');
+    }
+
+    /**
+     * Menyimpan file foto menu ke folder public/menu dan mengembalikan path relatifnya.
+     */
+    private function saveMenuPhoto(UploadedFile $file): string
+    {
+        $targetDir = public_path('menu');
+        File::ensureDirectoryExists($targetDir);
+
+        $extension = strtolower($file->getClientOriginalExtension() ?: $file->extension() ?: 'jpg');
+        $filename = 'menu_' . now()->format('Ymd_His') . '_' . Str::random(8) . '.' . $extension;
+        $file->move($targetDir, $filename);
+
+        return 'menu/' . $filename;
+    }
+
+    /**
+     * Menghapus file foto menu lama dari public/menu atau storage publik jika tersedia.
+     */
+    private function deleteMenuPhoto(?string $path): void
+    {
+        if (! $path || str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
+            return;
+        }
+
+        $publicFile = public_path($path);
+        if (File::exists($publicFile)) {
+            File::delete($publicFile);
+        } elseif (Storage::disk('public')->exists($path)) {
+            Storage::disk('public')->delete($path);
+        }
     }
 
     /**

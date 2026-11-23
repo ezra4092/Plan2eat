@@ -32,10 +32,7 @@
     }
     $kategoriCount = $kategoriCount ?? [];
 
-    $foto = function ($path) {
-        if (!$path) return null;
-        return str_starts_with($path, 'http') ? $path : asset('storage/' . $path);
-    };
+    $foto = fn ($path) => \App\Models\Menu::resolveFotoUrl($path);
 @endphp
 
 @section('content')

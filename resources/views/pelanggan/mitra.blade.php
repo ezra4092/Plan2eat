@@ -81,14 +81,10 @@
         <div class="mtr-menu-strip">
           @forelse (collect($mitra->menus)->take(4) as $menu)
             @php
-              $rawFotoMenu = $menu->foto_menu;
-              if ($rawFotoMenu && str_starts_with($rawFotoMenu, 'http')) {
-                $fotoMenuUrl = $rawFotoMenu;
-              } elseif ($rawFotoMenu) {
-                $fotoMenuUrl = asset('storage/' . $rawFotoMenu);
-              } else {
-                $fotoMenuUrl = 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=240&q=80';
-              }
+              $fotoMenuUrl = \App\Models\Menu::resolveFotoUrl(
+                  $menu->foto_menu ?? null,
+                  'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=240&q=80'
+              );
             @endphp
             <div class="mtr-menu-mini">
               <div class="mtr-menu-mini-thumb">
