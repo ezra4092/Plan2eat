@@ -4,9 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Pesanan;
 use App\Models\Ulasan;
+use App\Services\MediaStorageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 
 class UlasanController extends Controller
 {
@@ -55,7 +55,7 @@ class UlasanController extends Controller
         // 4. Proses Upload Gambar (jika ada)
         $path = null;
         if ($request->hasFile('foto_ulasan')) {
-            $path = $request->file('foto_ulasan')->store('ulasan_images', 'public');
+            $path = app(MediaStorageService::class)->upload($request->file('foto_ulasan'), 'ulasan_images');
         }
 
         Ulasan::create([

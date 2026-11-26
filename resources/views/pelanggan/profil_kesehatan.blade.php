@@ -26,7 +26,7 @@
             <div class="hero-avatar-wrapper">
                 <img
                     id="avatarPreviewImg"
-                    src="{{ $user->foto ? asset('storage/' . $user->foto) : 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=240&q=80' }}"
+                    src="{{ \App\Services\MediaStorageService::resolveUrl($user->foto, 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=240&q=80') }}"
                     alt="Foto Profil {{ $user->nama_lengkap }}"
                     class="hero-avatar-photo"
                     onerror="this.src='https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=240&q=80';"

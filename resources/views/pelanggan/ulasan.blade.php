@@ -196,8 +196,11 @@
                         @endif
 
                         @if($pesanan->ulasan->foto_ulasan)
-                            <div class="uls-review-photo-wrap" onclick="openLightbox('{{ asset('storage/' . $pesanan->ulasan->foto_ulasan) }}')" title="Klik untuk memperbesar foto">
-                                <img src="{{ asset('storage/' . $pesanan->ulasan->foto_ulasan) }}" alt="Foto Ulasan Pesanan #{{ $pesanan->id_pesanan }}" class="uls-review-photo">
+                            @php
+                                $fotoUlasanUrl = \App\Services\MediaStorageService::resolveUrl($pesanan->ulasan->foto_ulasan);
+                            @endphp
+                            <div class="uls-review-photo-wrap" onclick="openLightbox('{{ $fotoUlasanUrl }}')" title="Klik untuk memperbesar foto">
+                                <img src="{{ $fotoUlasanUrl }}" alt="Foto Ulasan Pesanan #{{ $pesanan->id_pesanan }}" class="uls-review-photo">
                             </div>
                         @endif
                     </div>

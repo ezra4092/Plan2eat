@@ -237,10 +237,9 @@ class UmkmController extends Controller
 
         // Handle upload foto_toko jika ada
         if ($request->hasFile('foto_toko')) {
-            if ($umkm->foto_toko && Storage::disk('public')->exists($umkm->foto_toko)) {
-                Storage::disk('public')->delete($umkm->foto_toko);
-            }
-            $validatedUmkm['foto_toko'] = $request->file('foto_toko')->store('umkm_photos', 'public');
+            $mediaService = app(\App\Services\MediaStorageService::class);
+            $mediaService->delete($umkm->foto_toko);
+            $validatedUmkm['foto_toko'] = $mediaService->upload($request->file('foto_toko'), 'umkm_photos');
         } else {
             unset($validatedUmkm['foto_toko']);
         }

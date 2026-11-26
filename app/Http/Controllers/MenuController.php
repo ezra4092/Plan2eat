@@ -7,6 +7,7 @@ use App\Models\Menu;
 use App\Models\Umkm;
 use App\Models\ProfilKesehatan;
 use App\Models\Flashsale;
+use App\Services\MediaStorageService;
 use App\Services\OrderService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -237,43 +238,19 @@ class MenuController extends Controller
     }
 
     /**
-     * Menyimpan file foto menu ke folder public/menu (dengan fallback storage jika folder terkunci OneDrive/permission).
+     * Menyimpan file foto menu ke Supabase Storage (jika terkonfigurasi) atau folder public/menu.
      */
     private function saveMenuPhoto(UploadedFile $file): string
     {
-        $extension = strtolower($file->getClientOriginalExtension() ?: $file->extension() ?: 'jpg');
-        $filename = 'menu_' . now()->format('Ymd_His') . '_' . Str::random(8) . '.' . $extension;
-        $targetDir = public_path('menu');
-
-        try {
-            File::ensureDirectoryExists($targetDir, 0775, true);
-            $contents = file_get_contents($file->getRealPath());
-
-            if ($contents !== false && File::put($targetDir . DIRECTORY_SEPARATOR . $filename, $contents) !== false) {
-                return 'menu/' . $filename;
-            }
-        } catch (\Throwable $e) {
-            // Lanjut ke fallback storage jika folder public/menu terkunci oleh OneDrive/OS
-        }
-
-        return Storage::disk('public')->putFileAs('menu_images', $file, $filename);
+        return app(MediaStorageService::class)->upload($file, 'menu_images', 'menu');
     }
 
     /**
-     * Menghapus file foto menu lama dari public/menu atau storage publik jika tersedia.
+     * Menghapus file foto menu lama dari Supabase Storage, public/menu, atau storage publik.
      */
     private function deleteMenuPhoto(?string $path): void
     {
-        if (! $path || str_starts_with($path, 'http://') || str_starts_with($path, 'https://')) {
-            return;
-        }
-
-        $publicFile = public_path($path);
-        if (File::exists($publicFile)) {
-            File::delete($publicFile);
-        } elseif (Storage::disk('public')->exists($path)) {
-            Storage::disk('public')->delete($path);
-        }
+        app(MediaStorageService::class)->delete($path);
     }
 
     /**

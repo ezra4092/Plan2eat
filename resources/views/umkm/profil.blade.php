@@ -27,7 +27,7 @@
                 <div class="mp-avatar-box">
                     <img
                         id="mainStoreAvatarImg"
-                        src="{{ $umkm->foto_toko ? asset('storage/' . $umkm->foto_toko) : 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=240&q=80' }}"
+                        src="{{ \App\Services\MediaStorageService::resolveUrl($umkm->foto_toko, 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=240&q=80') }}"
                         alt="Foto {{ $umkm->nama_vendor }}"
                         class="mp-avatar-img"
                     >
@@ -366,7 +366,7 @@
             <div class="mp-modal-photo-row">
                 <img
                     id="modalAvatarPreview"
-                    src="{{ $umkm->foto_toko ? asset('storage/' . $umkm->foto_toko) : 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=240&q=80' }}"
+                    src="{{ \App\Services\MediaStorageService::resolveUrl($umkm->foto_toko, 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?auto=format&fit=crop&w=240&q=80') }}"
                     alt="Preview Foto Warung"
                     class="mp-modal-avatar-thumb"
                 >
