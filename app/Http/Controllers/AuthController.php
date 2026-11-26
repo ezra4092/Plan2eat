@@ -25,7 +25,7 @@ class AuthController extends Controller
         try {
             $allActiveMenus = Menu::with(['umkm', 'jenisMenu'])
                 ->where('status', true)
-                ->whereHas('umkm', fn ($q) => $q->terverifikasi())
+                ->whereHas('umkm', fn ($q) => $q->terverifikasi()->buka())
                 ->get();
 
             $preferredNames = [
@@ -390,14 +390,18 @@ class AuthController extends Controller
             'password' => ['required'],
         ]);
 
-        if (Auth::attempt($credentials)) {
+        $normalizedEmail = strtolower(trim((string) $credentials['email']));
+        $user = User::whereRaw('LOWER(TRIM(email)) = ?', [$normalizedEmail])->first();
+
+        if ($user && Hash::check((string) $credentials['password'], (string) $user->password)) {
+            Auth::login($user);
             $request->session()->regenerate();
 
-            $user = Auth::user();
+            $role = strtolower(trim((string) $user->role));
 
-            if ($user->role === 'admin') {
+            if ($role === 'admin') {
                 return redirect()->route('admin.dashboard');
-            } elseif ($user->role === 'umkm') {
+            } elseif ($role === 'umkm') {
                 $umkm = Umkm::where('id_user', $user->id_user)->first();
 
                 if (! $umkm) {
@@ -406,17 +410,29 @@ class AuthController extends Controller
                 }
 
                 if (! $umkm->isTerverifikasi()) {
+                    $statusVerif = strtolower((string) $umkm->status_verifikasi);
                     Auth::logout();
                     $request->session()->invalidate();
                     $request->session()->regenerateToken();
 
+                    $msg = $statusVerif === 'ditolak'
+                        ? 'Pendaftaran toko UMKM Anda ditolak oleh Admin.' . ($umkm->catatan ? " Alasan: {$umkm->catatan}" : '')
+                        : 'Akun toko UMKM Anda masih menunggu verifikasi Admin.';
+
                     return back()->withErrors([
-                        'email' => 'Akun toko UMKM Anda masih menunggu verifikasi Admin.',
+                        'email' => $msg,
                     ])->onlyInput('email');
                 }
 
+                if ($user->isCurrentlySuspended()) {
+                    $untilLabel = $user->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB';
+
+                    return redirect()->route('umkm.dashboard')
+                        ->with('error', "Akun UMKM Anda sedang ditangguhkan hingga {$untilLabel}. Toko otomatis ditutup dan Anda tidak dapat berjualan selama masa penangguhan.");
+                }
+
                 return redirect()->route('umkm.dashboard');
-            } elseif ($user->role === 'pelanggan') {
+            } elseif ($role === 'pelanggan') {
                 return redirect()->route('pelanggan.beranda');
             }
 

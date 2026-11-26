@@ -171,13 +171,6 @@
 
     <hr class="sidebar-divider">
 
-    <div class="sidebar-promo-card">
-      <div class="sidebar-promo-badge">Zero-Waste Partner</div>
-      <p class="sidebar-promo-text">
-        Kelola kuota katering harian dan kurangi sisa makanan lewat fitur Night Flash Sale.
-      </p>
-    </div>
-
   @elseif ($userRole === 'admin')
     <div class="sidebar-section-label">MENU ADMIN</div>
 

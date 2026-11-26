@@ -17,8 +17,14 @@ class MealPlanController extends Controller
             ->where('id_user', Auth::id())
             ->get();
             
-        // Ambil semua daftar menu aktif untuk dropdown pilihan makanan
-        $daftarMenu = Menu::where('status', true)->get();
+        // Ambil semua daftar menu aktif dari UMKM yang buka dan tidak ditangguhkan
+        $daftarMenu = Menu::with('umkm')
+            ->where('status', true)
+            ->where('stok_harian', '>', 0)
+            ->whereHas('umkm', function ($q): void {
+                $q->terverifikasi()->buka();
+            })
+            ->get();
 
         return view('pelanggan.meal_plan', compact('mealPlans', 'daftarMenu'));
     }
@@ -87,7 +93,13 @@ class MealPlanController extends Controller
             'jadwal_makan.before_or_equal' => 'Jadwal makan tidak boleh melewati tanggal selesai plan.'
         ]);
 
-        // 3. Simpan data jika validasi lolos
+        // 3. Pastikan menu milik UMKM yang sedang buka & tidak ditangguhkan
+        $menu = Menu::with('umkm.user')->findOrFail($request->id_menu);
+        if (! $menu->status || ! $menu->umkm || ! $menu->umkm->isBukaDanAktif()) {
+            return back()->with('error', 'Maaf, toko pemilik menu ini sedang tutup atau ditangguhkan sehingga belum dapat ditambahkan.');
+        }
+
+        // 4. Simpan data jika validasi lolos
         DetailMealPlan::create([
             'id_plan'      => $mealPlan->id_plan,
             'id_menu'      => $request->id_menu,
@@ -119,6 +131,11 @@ class MealPlanController extends Controller
         $detail = DetailMealPlan::whereHas('mealPlan', function($query) {
             $query->where('id_user', Auth::id());
         })->findOrFail($id_detail_plan);
+
+        $menu = Menu::with('umkm.user')->findOrFail($request->id_menu);
+        if (! $menu->status || ! $menu->umkm || ! $menu->umkm->isBukaDanAktif()) {
+            return back()->with('error', 'Maaf, toko pemilik menu ini sedang tutup atau ditangguhkan.');
+        }
 
         // Update waktu dan menu (jadwal_makan sengaja tidak di-update agar tanggal terkunci)
         $detail->update([

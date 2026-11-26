@@ -6,6 +6,7 @@ use App\Models\DetailPesanan;
 use App\Models\Flashsale;
 use App\Models\Menu;
 use App\Models\Pesanan;
+use App\Models\Umkm;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -18,6 +19,14 @@ class OrderService
     public function buatPesanan(int $userId, array $data): Pesanan
     {
         return DB::transaction(function () use ($userId, $data) {
+            $umkm = Umkm::with('user')->findOrFail($data['id_umkm']);
+            if (! $umkm->isBukaDanAktif()) {
+                $alasan = $umkm->isDitangguhkan()
+                    ? 'sedang ditangguhkan sementara oleh Admin'
+                    : 'sedang tutup';
+                throw new Exception("Maaf, toko {$umkm->nama_vendor} {$alasan} dan tidak dapat menerima pesanan saat ini.");
+            }
+
             $totalPembayaran = 0;
 
             // Pastikan status_pesanan menggunakan lowercase sesuai check constraint PostgreSQL

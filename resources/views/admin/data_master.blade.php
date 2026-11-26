@@ -11,9 +11,9 @@
   $jenisList = $jenisMenuList ?? collect();
 
   $umkmTotal = $umkmList->count();
-  $umkmSuspended = $umkmList->filter(fn ($u) => (bool) ($u->user?->is_suspended ?? false))->count();
+  $umkmSuspended = $umkmList->filter(fn ($u) => (bool) ($u->user?->isCurrentlySuspended() ?? false))->count();
   $umkmAktif = $umkmTotal - $umkmSuspended;
-  $umkmBuka = $umkmList->filter(fn ($u) => ! ($u->user?->is_suspended ?? false) && strtolower((string) $u->status_operasional) === 'buka')->count();
+  $umkmBuka = $umkmList->filter(fn ($u) => ! ($u->user?->isCurrentlySuspended() ?? false) && strtolower((string) $u->status_operasional) === 'buka')->count();
 @endphp
 
 <div class="aum-page">
@@ -125,7 +125,10 @@
           <tbody>
             @forelse ($umkmList as $u)
               @php
-                $isSuspended = (bool) ($u->user?->is_suspended ?? false);
+                $isSuspended = (bool) ($u->user?->isCurrentlySuspended() ?? false);
+                $suspendedUntilLabel = $isSuspended
+                    ? ($u->user?->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB')
+                    : null;
                 $statusKey = $isSuspended ? 'ditangguhkan' : 'aktif';
                 $words = preg_split('/\s+/', trim((string) $u->nama_vendor)) ?: ['UM'];
                 $initials = strtoupper(substr($words[0], 0, 1) . (isset($words[1]) ? substr($words[1], 0, 1) : substr($words[0], 1, 1)));
@@ -157,6 +160,7 @@
                     'total_ulasan' => (int) ($u->total_ulasan ?? 0),
                     'total_pesanan' => (int) ($u->total_pesanan ?? 0),
                     'is_suspended' => $isSuspended,
+                    'suspended_until' => $suspendedUntilLabel,
                     'catatan' => $u->catatan ?? '',
                     'foto_toko' => $u->foto_toko ? (str_starts_with((string) $u->foto_toko, 'http') ? $u->foto_toko : asset('storage/' . $u->foto_toko)) : null,
                     'status_url' => route('admin.data_master.umkm_status', $u->id_umkm),
@@ -256,7 +260,7 @@
           <tbody>
             @forelse ($customers as $cust)
               @php
-                $isCustSuspended = (bool) ($cust->is_suspended ?? false);
+                $isCustSuspended = (bool) ($cust->isCurrentlySuspended() ?? false);
                 $cWords = preg_split('/\s+/', trim((string) $cust->nama_lengkap)) ?: ['PL'];
                 $cInitials = strtoupper(substr($cWords[0], 0, 1) . (isset($cWords[1]) ? substr($cWords[1], 0, 1) : substr($cWords[0], 1, 1)));
               @endphp
@@ -509,7 +513,7 @@
           <strong>Status &amp; Kontrol Akun</strong>
         </div>
         <p class="aum-control-desc" id="dmDetControlDesc">
-          Lakukan penangguhan bila ditemukan pelanggaran standar higienis atau operasional mitra.
+          Penangguhan berlaku selama 3 hari: toko otomatis ditutup dan mitra tidak dapat berjualan selama masa penangguhan.
         </p>
 
         <form id="dmUmkmStatusForm" method="POST" action="#">
@@ -751,7 +755,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       if (d.is_suspended) {
         pill.className = 'aum-status-dot-pill is-suspended';
-        statusLabel.textContent = 'Ditangguhkan';
+        statusLabel.textContent = d.suspended_until ? ('Ditangguhkan s.d. ' + d.suspended_until) : 'Ditangguhkan (3 Hari)';
         reasonWrap.style.display = 'none';
         submitBtn.className = 'aum-btn-approve-solid';
         submitBtn.textContent = 'Aktifkan Kembali Mitra';
@@ -760,7 +764,7 @@ document.addEventListener('DOMContentLoaded', function () {
         statusLabel.textContent = 'Aktif';
         reasonWrap.style.display = '';
         submitBtn.className = 'aum-modal-btn-danger-soft';
-        submitBtn.textContent = 'Tangguhkan Mitra';
+        submitBtn.textContent = 'Tangguhkan Mitra (3 Hari)';
       }
 
       openModal('dmTinjauModal');

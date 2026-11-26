@@ -33,6 +33,7 @@
     $kategoriCount = $kategoriCount ?? [];
 
     $foto = fn ($path) => \App\Models\Menu::resolveFotoUrl($path);
+    $umkmSuspended = (bool) ($isUmkmSuspended ?? false);
 @endphp
 
 @section('content')
@@ -132,7 +133,7 @@
                                 <span class="mm-card-label">{{ strtoupper($kategoriNama) }}</span>
                                 <h3 class="mm-card-name">{{ $m->nama_makanan }}</h3>
                             </div>
-                            <button type="button" class="mm-edit-btn" data-action="edit" aria-label="Edit {{ $m->nama_makanan }}">
+                            <button type="button" class="mm-edit-btn" data-action="edit" aria-label="Edit {{ $m->nama_makanan }}" @if ($umkmSuspended) disabled style="opacity: 0.45; cursor: not-allowed;" @endif>
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
                             </button>
                         </div>
@@ -172,7 +173,8 @@
                         <input type="hidden" name="status" value="{{ $isActive ? 0 : 1 }}">
                         <button type="submit" class="mm-switch {{ $isActive ? '' : 'is-off' }}"
                                 role="switch" aria-checked="{{ $isActive ? 'true' : 'false' }}"
-                                aria-label="{{ $isActive ? 'Nonaktifkan' : 'Aktifkan' }} {{ $m->nama_makanan }}">
+                                aria-label="{{ $isActive ? 'Nonaktifkan' : 'Aktifkan' }} {{ $m->nama_makanan }}"
+                                @if ($umkmSuspended) disabled style="opacity: 0.45; cursor: not-allowed;" @endif>
                             <span class="mm-switch-thumb"></span>
                         </button>
                     </form>
@@ -186,10 +188,12 @@
     </div>
 
     {{-- Tombol Tambah Menu --}}
-    <button type="button" class="mm-fab" data-action="create" aria-label="Tambah menu">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-        <span class="mm-fab-text">Tambah Menu</span>
-    </button>
+    @unless ($umkmSuspended)
+        <button type="button" class="mm-fab" data-action="create" aria-label="Tambah menu">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            <span class="mm-fab-text">Tambah Menu</span>
+        </button>
+    @endunless
 </div>
 
 {{-- ===================== MODAL: Tambah / Edit Menu ===================== --}}

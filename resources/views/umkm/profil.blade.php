@@ -5,6 +5,9 @@
 @section('body_class', 'page-mitra-profil')
 
 @section('content')
+@php
+    $umkmSuspended = (bool) ($isSuspended ?? false);
+@endphp
 <div class="mp-page-container">
     <form id="mitraProfileMainForm" action="{{ route('umkm.profil-update', $umkm->id_umkm) }}" method="POST" enctype="multipart/form-data" class="mp-main-form">
         @csrf
@@ -129,7 +132,7 @@
                     <div class="mp-subcard-list">
                         @php
                             $currentStatus = old('status_operasional', $umkm->status_operasional ?? 'Buka');
-                            $isStoreOpen = strtolower($currentStatus) === 'buka';
+                            $isStoreOpen = ! $umkmSuspended && strtolower($currentStatus) === 'buka';
                             $jamBukaVal = old('jam_buka', \Carbon\Carbon::parse($umkm->jam_buka ?? '07:00')->format('H:i'));
                             $jamTutupVal = old('jam_tutup', \Carbon\Carbon::parse($umkm->jam_tutup ?? '21:00')->format('H:i'));
                         @endphp
@@ -146,7 +149,7 @@
                                 <div class="mp-row-text">
                                     <span class="mp-row-title">Status Buka Toko</span>
                                     <span id="storeStatusSubtext" class="mp-row-sub">
-                                        {{ $isStoreOpen ? 'Menerima Pesanan Katering' : 'Toko Sedang Tutup' }}
+                                        {{ $umkmSuspended ? 'Toko Ditutup (Ditangguhkan 3 Hari)' : ($isStoreOpen ? 'Menerima Pesanan Katering' : 'Toko Sedang Tutup') }}
                                     </span>
                                 </div>
                             </div>
@@ -159,6 +162,7 @@
                                 role="switch"
                                 aria-checked="{{ $isStoreOpen ? 'true' : 'false' }}"
                                 class="mp-status-switch {{ $isStoreOpen ? 'is-on' : 'is-off' }}"
+                                @if ($umkmSuspended) disabled style="opacity: 0.6; cursor: not-allowed;" title="Tidak dapat membuka toko selama masa penangguhan" @endif
                             >
                                 <span id="storeSwitchLabel" class="mp-switch-text">{{ $isStoreOpen ? 'BUKA' : 'TUTUP' }}</span>
                                 <span class="mp-switch-knob"></span>
@@ -494,15 +498,16 @@ document.addEventListener('DOMContentLoaded', function () {
                     }),
                 });
 
-                if (!res.ok) {
-                    throw new Error('Gagal memperbarui status');
+                const data = await res.json().catch(() => ({}));
+                if (!res.ok || data.success === false) {
+                    throw new Error(data.message || 'Gagal memperbarui status');
                 }
             } catch (err) {
                 applyStoreStatusUI(isCurrentlyOpen);
                 window.showAppPopup({
                     type: 'error',
                     title: 'Gagal Menyimpan',
-                    message: 'Gagal menyimpan status buka toko ke database.'
+                    message: err.message || 'Gagal menyimpan status buka toko ke database.'
                 });
             } finally {
                 btnToggleStoreOpen.disabled = false;

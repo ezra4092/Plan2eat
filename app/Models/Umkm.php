@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -49,6 +50,26 @@ class Umkm extends Model
         return strtolower((string) $this->status_verifikasi) === 'disetujui';
     }
 
+    /**
+     * Mengecek apakah akun pemilik UMKM sedang dalam masa penangguhan aktif.
+     */
+    public function isDitangguhkan(): bool
+    {
+        $owner = $this->relationLoaded('user') ? $this->user : $this->user()->first();
+
+        return (bool) ($owner?->isCurrentlySuspended() ?? false);
+    }
+
+    /**
+     * Mengecek apakah UMKM terverifikasi, toko sedang buka, dan tidak sedang ditangguhkan.
+     */
+    public function isBukaDanAktif(): bool
+    {
+        return $this->isTerverifikasi()
+            && strtolower((string) $this->status_operasional) === 'buka'
+            && ! $this->isDitangguhkan();
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'id_user', 'id_user');
@@ -73,10 +94,41 @@ class Umkm extends Model
     }
 
     /**
-     * Scope UMKM yang berstatus operasional Buka.
+     * Scope UMKM yang tidak sedang dalam masa penangguhan aktif.
+     */
+    public function scopeTidakDitangguhkan(Builder $query): Builder
+    {
+        $hasColumn = User::hasSuspendedUntilColumn();
+        $nowStr = Carbon::now('Asia/Jakarta')->toDateTimeString();
+        $fallbackCutoffStr = Carbon::now('Asia/Jakarta')->subDays(3)->toDateTimeString();
+
+        return $query->whereHas('user', function (Builder $userQuery) use ($hasColumn, $nowStr, $fallbackCutoffStr): void {
+            $userQuery->where(function (Builder $q) use ($hasColumn, $nowStr, $fallbackCutoffStr): void {
+                $q->where('is_suspended', false)
+                    ->orWhereNull('is_suspended');
+
+                if ($hasColumn) {
+                    $q->orWhere(function (Builder $exp) use ($nowStr): void {
+                        $exp->whereNotNull('suspended_until')
+                            ->where('suspended_until', '<=', $nowStr);
+                    });
+                } else {
+                    $q->orWhere(function (Builder $exp) use ($fallbackCutoffStr): void {
+                        $exp->whereNotNull('updated_at')
+                            ->where('updated_at', '<=', $fallbackCutoffStr);
+                    });
+                }
+            });
+        });
+    }
+
+    /**
+     * Scope UMKM yang berstatus operasional Buka dan tidak sedang ditangguhkan.
      */
     public function scopeBuka(Builder $query): Builder
     {
-        return $query->whereRaw("LOWER(CAST(status_operasional AS TEXT)) IN ('buka', 'true', '1')");
+        return $query
+            ->whereRaw("LOWER(CAST(status_operasional AS TEXT)) IN ('buka', 'true', '1')")
+            ->tidakDitangguhkan();
     }
 }

@@ -32,11 +32,34 @@
       <h1 class="cmn-page-title">Daftar Menu Katering</h1>
     </div>
 
-    <div class="cmn-header-right">
+    <div class="cmn-header-right" style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
       <span class="cmn-mitra-name">{{ $storeName }}</span>
+      @if ($isMitraTutup ?? false)
+        <span style="padding: 4px 10px; border-radius: 999px; background: #FEE2E2; color: #B91C1C; font-size: 11.5px; font-weight: 700;">
+          Toko Tutup
+        </span>
+      @endif
     </div>
   </header>
 
+  @if ($isMitraTutup ?? false)
+    <section style="background: #FEF2F2; border: 1px solid #FECACA; border-radius: 18px; padding: 28px 22px; text-align: center; margin-top: 12px;">
+      <div style="display: inline-flex; width: 52px; height: 52px; border-radius: 50%; background: #FEE2E2; color: #B91C1C; align-items: center; justify-content: center; margin-bottom: 12px;">
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 9l2-5h14l2 5"/>
+          <path d="M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0"/>
+          <line x1="2" y1="2" x2="22" y2="22"/>
+        </svg>
+      </div>
+      <h2 style="margin: 0 0 8px; font-size: 18px; font-weight: 800; color: #991B1B;">Toko Sedang Tutup</h2>
+      <p style="margin: 0 auto 18px; max-width: 480px; font-size: 13.5px; line-height: 1.55; color: #7F1D1D;">
+        {{ $tutupAlasan ?? 'Toko sedang tutup sementara dan belum menerima pesanan saat ini.' }}
+      </p>
+      <a href="{{ route('pelanggan.mitra') }}" style="display: inline-flex; align-items: center; gap: 6px; padding: 10px 18px; border-radius: 12px; background: #16442B; color: #FFFFFF; font-weight: 700; font-size: 13.5px; text-decoration: none;">
+        <span>Cari Mitra Catering Lain</span>
+      </a>
+    </section>
+  @else
   {{-- Grid Kartu Menu Katering --}}
   <section class="cmn-menu-grid" aria-label="Daftar Menu Katering">
     @forelse ($daftarMenu as $item)
@@ -166,6 +189,7 @@
     </div>
   </div>
 </div>
+@endif
 @endsection
 
 @push('scripts')

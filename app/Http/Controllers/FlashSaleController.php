@@ -61,7 +61,11 @@ class FlashSaleController extends Controller
                 ->whereDate('tgl_flash_sale', $todayStr)
                 ->where('stok_sisa', '>', 0)
                 ->whereHas('menu', function ($q): void {
-                    $q->whereNull('jenis_menu')->where('status', true);
+                    $q->whereNull('jenis_menu')
+                        ->where('status', true)
+                        ->whereHas('umkm', function ($u): void {
+                            $u->terverifikasi()->buka();
+                        });
                 })
                 ->take(5)
                 ->get();
@@ -151,6 +155,13 @@ class FlashSaleController extends Controller
             'waktu_selesai' => 'nullable|string',
         ]);
 
+        $menu = Menu::with('umkm.user')->findOrFail($validated['id_menu']);
+        if ($menu->umkm && $menu->umkm->isDitangguhkan()) {
+            $untilLabel = $menu->umkm->user?->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB';
+
+            return back()->with('error', "Akun UMKM Anda sedang ditangguhkan hingga {$untilLabel} sehingga tidak dapat membuat promo Flash Sale.");
+        }
+
         // Default: mulai jam 20:00 dan selesai jam 22:00
         $validated['waktu_mulai'] = $request->filled('waktu_mulai') ? $request->input('waktu_mulai') : '20:00:00';
         $validated['waktu_selesai'] = $request->filled('waktu_selesai') ? $request->input('waktu_selesai') : '22:00:00';
@@ -167,7 +178,13 @@ class FlashSaleController extends Controller
      */
     public function update(Request $request, int|string $id_flash_sale): RedirectResponse
     {
-        $flashSale = Flashsale::findOrFail($id_flash_sale);
+        $flashSale = Flashsale::with('menu.umkm.user')->findOrFail($id_flash_sale);
+
+        if ($flashSale->menu?->umkm && $flashSale->menu->umkm->isDitangguhkan()) {
+            $untilLabel = $flashSale->menu->umkm->user?->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB';
+
+            return back()->with('error', "Akun UMKM Anda sedang ditangguhkan hingga {$untilLabel} sehingga tidak dapat mengubah promo Flash Sale.");
+        }
 
         $validated = $request->validate([
             'harga_diskon' => 'required|numeric|min:0',

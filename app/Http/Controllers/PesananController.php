@@ -32,7 +32,16 @@ class PesananController extends Controller
         ]);
 
         if ($request->filled('menu')) {
-            $menu = Menu::with(['umkm', 'jenisMenu'])->findOrFail($request->query('menu'));
+            $menu = Menu::with(['umkm.user', 'jenisMenu'])->findOrFail($request->query('menu'));
+
+            if (! $menu->status || ! $menu->umkm || ! $menu->umkm->isBukaDanAktif()) {
+                $namaToko = $menu->umkm?->nama_vendor ?? 'Mitra';
+
+                return redirect()
+                    ->route('pelanggan.mitra')
+                    ->with('error', "Maaf, toko {$namaToko} sedang tutup sehingga menu tidak dapat dipesan saat ini.");
+            }
+
             $idFlashSale = $request->query('fs');
             $flashSale = $idFlashSale ? Flashsale::find($idFlashSale) : null;
 
@@ -109,9 +118,17 @@ class PesananController extends Controller
             return redirect()->route('pelanggan.keranjang');
         }
 
-        $umkm = !empty($cart['id_umkm']) ? Umkm::find($cart['id_umkm']) : null;
+        $umkm = !empty($cart['id_umkm']) ? Umkm::with('user')->find($cart['id_umkm']) : null;
+        if ($umkm && ! $umkm->isBukaDanAktif()) {
+            session()->forget('cart');
+
+            return redirect()
+                ->route('pelanggan.mitra')
+                ->with('error', "Maaf, toko {$umkm->nama_vendor} sedang tutup sehingga pesanan dari keranjang tidak dapat diproses saat ini.");
+        }
+
         $menuLainUmkm = $umkm
-            ? Menu::with('jenisMenu')->where('id_umkm', $umkm->id_umkm)->where('stok_harian', '>', 0)->get()
+            ? Menu::with('jenisMenu')->where('id_umkm', $umkm->id_umkm)->where('status', true)->where('stok_harian', '>', 0)->get()
             : collect();
 
         return view('pelanggan.keranjang', compact('cart', 'umkm', 'menuLainUmkm'));
@@ -125,13 +142,20 @@ class PesananController extends Controller
         if ($request->expectsJson() || $request->has('id_menu')) {
             $idMenu = (int) $request->input('id_menu', 0);
             $requestedQty = max(0, (int) $request->input('qty', 0));
-            $menu = Menu::with('jenisMenu')->find($idMenu);
+            $menu = Menu::with(['umkm.user', 'jenisMenu'])->find($idMenu);
 
             if (! $menu) {
                 return response()->json([
                     'success' => false,
                     'message' => 'Menu tidak ditemukan.',
                 ], 404);
+            }
+
+            if (! $menu->status || ! $menu->umkm || ! $menu->umkm->isBukaDanAktif()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Maaf, toko sedang tutup dan tidak menerima pesanan saat ini.',
+                ], 422);
             }
 
             $cart = session('cart', [
@@ -206,6 +230,15 @@ class PesananController extends Controller
             return redirect()->route('pelanggan.beranda')->with('error', 'Keranjang Anda masih kosong.');
         }
 
+        $cartUmkm = ! empty($cart['id_umkm']) ? Umkm::with('user')->find($cart['id_umkm']) : null;
+        if ($cartUmkm && ! $cartUmkm->isBukaDanAktif()) {
+            session()->forget('cart');
+
+            return redirect()
+                ->route('pelanggan.mitra')
+                ->with('error', "Maaf, toko {$cartUmkm->nama_vendor} sedang tutup sehingga pesanan tidak dapat diproses saat ini.");
+        }
+
         $itemsInput = $request->input('items', []);
 
         foreach ($cart['items'] as $index => &$item) {
@@ -271,7 +304,15 @@ class PesananController extends Controller
             return redirect()->route('pelanggan.beranda')->with('error', 'Silakan pilih menu terlebih dahulu.');
         }
 
-        $umkm = Umkm::findOrFail($cart['id_umkm']);
+        $umkm = Umkm::with('user')->findOrFail($cart['id_umkm']);
+
+        if (! $umkm->isBukaDanAktif()) {
+            session()->forget('cart');
+
+            return redirect()
+                ->route('pelanggan.mitra')
+                ->with('error', "Maaf, toko {$umkm->nama_vendor} sedang tutup dan tidak dapat menerima pesanan saat ini.");
+        }
 
         $subtotalMenu = collect($cart['items'])->sum(function ($item): float {
             return (float) $item['harga_satuan'] * (int) $item['kuantitas'];
@@ -530,7 +571,7 @@ class PesananController extends Controller
 
         if ($todayOrder) {
             $isMitraTutup = $todayOrder->umkm
-                && strtolower((string) $todayOrder->umkm->status_operasional) === 'tutup';
+                && ! $todayOrder->umkm->isBukaDanAktif();
 
             if ($isMitraTutup) {
                 $subscriptionStatus = 'holiday';
@@ -689,7 +730,7 @@ class PesananController extends Controller
                 $selesai = $ord->tgl_selesai ? Carbon::parse($ord->tgl_selesai)->toDateString() : $mulai;
 
                 if ($mulai !== null && $mulai <= $dStr && $selesai >= $dStr) {
-                    if ($ord->umkm && strtolower((string) $ord->umkm->status_operasional) === 'tutup') {
+                    if ($ord->umkm && ! $ord->umkm->isBukaDanAktif()) {
                         $dayHasClosedMitra = true;
                     }
                     foreach ($ord->detailPesanan as $det) {
@@ -794,6 +835,15 @@ class PesananController extends Controller
                 ->with('error', 'Saat ini 1 pemesanan hanya mendukung menu dari 1 Mitra UMKM yang sama.');
         }
 
+        $mitraPlan = Umkm::with('user')->find($umkmIds->first());
+        if (! $mitraPlan || ! $mitraPlan->isBukaDanAktif()) {
+            $namaToko = $mitraPlan?->nama_vendor ?? 'Mitra';
+
+            return redirect()
+                ->route('pelanggan.meal_plan')
+                ->with('error', "Maaf, toko {$namaToko} sedang tutup sehingga menu belum dapat dipesan saat ini.");
+        }
+
         $earliestDate = $validDetails
             ->map(fn ($d) => Carbon::parse($d->jadwal_makan)->toDateString())
             ->min();
@@ -846,10 +896,18 @@ class PesananController extends Controller
      */
     public function pesanLagi(int|string $id_pesanan): RedirectResponse
     {
-        $pesanan = Pesanan::with(['umkm', 'detailPesanan.menu.jenisMenu'])
+        $pesanan = Pesanan::with(['umkm.user', 'detailPesanan.menu.jenisMenu'])
             ->where('id_user', Auth::id())
             ->where('id_pesanan', $id_pesanan)
             ->firstOrFail();
+
+        if (! $pesanan->umkm || ! $pesanan->umkm->isBukaDanAktif()) {
+            $namaToko = $pesanan->umkm?->nama_vendor ?? 'Mitra';
+
+            return redirect()
+                ->route('pelanggan.langganan')
+                ->with('error', "Maaf, toko {$namaToko} sedang tutup sehingga menu belum dapat dipesan ulang saat ini.");
+        }
 
         $cart = [
             'id_umkm' => $pesanan->id_umkm,

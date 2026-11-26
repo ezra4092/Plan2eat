@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use App\Models\Umkm;
 use App\Models\User;
@@ -481,18 +482,21 @@ class AdminController extends Controller
     }
 
     /**
-     * Fungsi Suspend / Aktivasi Akun
-     * (Membutuhkan kolom 'is_suspended' di tabel users)
+     * Fungsi Suspend / Aktivasi Akun selama 3 hari.
      */
-    public function toggleSuspend($id_user)
+    public function toggleSuspend(int|string $id_user): RedirectResponse
     {
-        $user = User::findOrFail($id_user);
-        
-        // Asumsi kamu menambahkan kolom is_suspended (boolean) di DB
-        $user->is_suspended = !$user->is_suspended; 
-        $user->save();
+        $user = User::with('umkm')->findOrFail($id_user);
 
-        $pesan = $user->is_suspended ? 'Akun berhasil ditangguhkan.' : 'Akun berhasil diaktivasi kembali.';
+        if (! $user->isCurrentlySuspended()) {
+            $user->suspendForDays(3);
+            $untilLabel = $user->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB';
+            $pesan = "Akun berhasil ditangguhkan selama 3 hari (hingga {$untilLabel}).";
+        } else {
+            $user->unsuspend();
+            $pesan = 'Akun berhasil diaktivasi kembali.';
+        }
+
         return back()->with('success', $pesan);
     }
 

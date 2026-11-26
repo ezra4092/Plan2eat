@@ -40,9 +40,11 @@
           $fotoTokoUrl = 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80';
         }
         $hargaMulai = (int) ($mitra->harga_mulai ?? collect($mitra->menus)->min('harga_normal') ?? 0);
+        $isTokoTutup = (bool) ($mitra->is_tutup ?? false);
+        $isDitangguhkan = (bool) ($mitra->is_ditangguhkan ?? false);
       @endphp
 
-      <article class="mtr-card">
+      <article class="mtr-card" @if ($isTokoTutup) style="opacity: 0.86;" @endif>
         {{-- Bagian Atas: Foto Dapur + Nama, Rating, Alamat, Harga Mulai --}}
         <div class="mtr-card-top">
           <img
@@ -50,11 +52,19 @@
             alt="{{ $mitra->nama_vendor }}"
             class="mtr-store-thumb"
             loading="lazy"
+            @if ($isTokoTutup) style="filter: grayscale(65%);" @endif
             onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=300&q=80';"
           >
 
           <div class="mtr-store-info">
-            <h2 class="mtr-store-name">{{ $mitra->nama_vendor }}</h2>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px; flex-wrap: wrap;">
+              <h2 class="mtr-store-name" style="margin: 0;">{{ $mitra->nama_vendor }}</h2>
+              @if ($isTokoTutup)
+                <span style="display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 999px; background: #FEE2E2; color: #B91C1C; font-size: 11px; font-weight: 700;">
+                  Toko Tutup
+                </span>
+              @endif
+            </div>
 
             <div class="mtr-store-meta">
               <span class="mtr-rating-group">
@@ -68,7 +78,9 @@
             </div>
 
             <p class="mtr-price-start">
-              @if ($hargaMulai > 0)
+              @if ($isTokoTutup)
+                <span style="color: #B91C1C; font-weight: 600;">Toko sedang tidak menerima pesanan</span>
+              @elseif ($hargaMulai > 0)
                 Mulai dari <strong>Rp{{ number_format($hargaMulai, 0, ',', '.') }}</strong><span>/porsi</span>
               @else
                 <span>Belum ada harga menu</span>
@@ -77,39 +89,52 @@
           </div>
         </div>
 
-        {{-- Bagian Tengah: Strip 4 Preview Menu --}}
+        {{-- Bagian Tengah: Strip 4 Preview Menu atau Info Toko Tutup --}}
         <div class="mtr-menu-strip">
-          @forelse (collect($mitra->menus)->take(4) as $menu)
-            @php
-              $fotoMenuUrl = \App\Models\Menu::resolveFotoUrl(
-                  $menu->foto_menu ?? null,
-                  'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=240&q=80'
-              );
-            @endphp
-            <div class="mtr-menu-mini">
-              <div class="mtr-menu-mini-thumb">
-                <img src="{{ $fotoMenuUrl }}" alt="{{ $menu->nama_makanan }}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=240&q=80';">
-              </div>
-              <span class="mtr-menu-mini-price">{{ number_format((int) $menu->harga_normal, 0, ',', '.') }}</span>
-              <span class="mtr-menu-mini-name" title="{{ $menu->nama_makanan }}">{{ $menu->nama_makanan }}</span>
+          @if ($isTokoTutup)
+            <div style="grid-column: 1 / -1; margin: 8px 0; padding: 14px 12px; border-radius: 12px; background: #FEF2F2; border: 1px dashed #FECACA; text-align: center; font-size: 12.5px; color: #991B1B; line-height: 1.45;">
+              <strong>Toko Sedang Tutup</strong><br>
+              {{ $isDitangguhkan ? 'Mitra ini sedang ditangguhkan sementara oleh Admin. Menu tidak tersedia untuk dipesan.' : 'Mitra ini sedang tutup sementara. Silakan pilih mitra catering lain yang tersedia.' }}
             </div>
-          @empty
-            <p style="grid-column: 1 / -1; margin: 12px 0; text-align: center; font-size: 12px; color: #555D56;">
-              Belum ada menu aktif tersedia di mitra ini.
-            </p>
-          @endforelse
+          @else
+            @forelse (collect($mitra->menus)->take(4) as $menu)
+              @php
+                $fotoMenuUrl = \App\Models\Menu::resolveFotoUrl(
+                    $menu->foto_menu ?? null,
+                    'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=240&q=80'
+                );
+              @endphp
+              <div class="mtr-menu-mini">
+                <div class="mtr-menu-mini-thumb">
+                  <img src="{{ $fotoMenuUrl }}" alt="{{ $menu->nama_makanan }}" loading="lazy" onerror="this.onerror=null;this.src='https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=240&q=80';">
+                </div>
+                <span class="mtr-menu-mini-price">{{ number_format((int) $menu->harga_normal, 0, ',', '.') }}</span>
+                <span class="mtr-menu-mini-name" title="{{ $menu->nama_makanan }}">{{ $menu->nama_makanan }}</span>
+              </div>
+            @empty
+              <p style="grid-column: 1 / -1; margin: 12px 0; text-align: center; font-size: 12px; color: #555D56;">
+                Belum ada menu aktif tersedia di mitra ini.
+              </p>
+            @endforelse
+          @endif
         </div>
 
         {{-- Bagian Bawah: Tombol Aksi Utama menuju Daftar Menu Katering --}}
-        <form action="{{ route('pelanggan.menu') }}" method="GET">
-          <input type="hidden" name="id_umkm" value="{{ $mitraId }}">
-          <button type="submit" class="mtr-btn-detail" style="border:none; cursor:pointer;">
-            <span>Lihat Menu &amp; Rincian Gizi</span>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <polyline points="9 18 15 12 9 6"/>
-            </svg>
+        @if ($isTokoTutup)
+          <button type="button" class="mtr-btn-detail" disabled style="border:none; background:#E5E7EB; color:#6B7280; cursor:not-allowed;">
+            <span>Toko Sedang Tutup</span>
           </button>
-        </form>
+        @else
+          <form action="{{ route('pelanggan.menu') }}" method="GET">
+            <input type="hidden" name="id_umkm" value="{{ $mitraId }}">
+            <button type="submit" class="mtr-btn-detail" style="border:none; cursor:pointer;">
+              <span>Lihat Menu &amp; Rincian Gizi</span>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6"/>
+              </svg>
+            </button>
+          </form>
+        @endif
       </article>
     @empty
       <div class="mtr-empty-state">

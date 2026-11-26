@@ -49,6 +49,11 @@
                 : asset('images/Logo 2.png');
             $headerUserName = $headerUser?->nama_lengkap ?? 'Pengguna';
             $headerUserEmail = $headerUser?->email ?? '';
+            $headerUmkm = ($headerRole === 'umkm' && $headerUser) ? $headerUser->umkm()->first() : null;
+            $headerUmkmSuspended = ($headerRole === 'umkm' && $headerUser) ? $headerUser->isCurrentlySuspended() : false;
+            $headerSuspendedUntil = $headerUmkmSuspended
+                ? ($headerUser->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB')
+                : null;
           @endphp
 
           <!-- Baris 1 Mobile / Kanan Desktop: Logo (Mobile) & Aksi User -->
@@ -121,12 +126,21 @@
               <img class="icon-chevron" src="{{ asset('img/icon-6.svg') }}" alt="Pilih Lokasi">
             </button> -->
 
-            <div class="page-status-pill">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
-                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
-              </svg>
-              <span>@yield('page_badge', 'Beranda')</span>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              <div class="page-status-pill">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                  <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+                </svg>
+                <span>@yield('page_badge', 'Beranda')</span>
+              </div>
+
+              @if ($headerUmkmSuspended)
+                <span style="display: inline-flex; align-items: center; gap: 5px; padding: 5px 11px; border-radius: 999px; background: #FEE2E2; color: #B91C1C; border: 1px solid #FCA5A5; font-size: 12px; font-weight: 700;">
+                  <span style="width: 7px; height: 7px; border-radius: 50%; background: #DC2626;"></span>
+                  <span>Akun Nonaktif / Ditangguhkan</span>
+                </span>
+              @endif
             </div>
           </div>
         </div>
@@ -134,6 +148,22 @@
 
       <!-- Konten Utama Halaman -->
       <main class="app-main-content">
+        @if ($headerUmkmSuspended)
+          <div role="alert" style="background: #FEF2F2; border: 1px solid #FECACA; border-left: 4px solid #DC2626; border-radius: 16px; padding: 14px 18px; margin-bottom: 18px; color: #7F1D1D;">
+            <div style="font-weight: 800; font-size: 14.5px; margin-bottom: 4px; display: flex; align-items: center; gap: 8px;">
+              <span>Peringatan: Akun UMKM Anda Sedang Ditangguhkan (Nonaktif 3 Hari)</span>
+            </div>
+            <div style="font-size: 13px; line-height: 1.55;">
+              Selama masa penangguhan hingga <strong>{{ $headerSuspendedUntil ?? 'masa penangguhan berakhir' }}</strong>, status toko Anda otomatis ditutup, menu Anda tidak ditampilkan ke pelanggan, dan Anda tidak dapat membuka toko, menambah/mengubah menu, membuat flash sale, maupun menerima pesanan baru.
+              @if (! empty($headerUmkm?->catatan))
+                <div style="margin-top: 6px; padding: 8px 10px; border-radius: 10px; background: #FEE2E2; color: #7F1D1D;">
+                  <strong>Alasan Penangguhan:</strong> {{ $headerUmkm->catatan }}
+                </div>
+              @endif
+            </div>
+          </div>
+        @endif
+
         @yield('content')
       </main>
 

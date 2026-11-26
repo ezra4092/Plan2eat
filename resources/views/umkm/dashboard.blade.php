@@ -5,7 +5,8 @@
 
 @section('content')
 @php
-  $isStoreOpen = strtolower((string) ($umkm->status_operasional ?? 'Tutup')) === 'buka';
+  $umkmSuspended = (bool) ($isSuspended ?? false);
+  $isStoreOpen = ! $umkmSuspended && strtolower((string) ($umkm->status_operasional ?? 'Tutup')) === 'buka';
   $toggleStatusUrl = route('umkm.profil-status', $umkm->id_umkm);
   $nextRange = ($range ?? '7_days') === '7_days' ? '30_days' : '7_days';
   $rangeLabel = ($range ?? '7_days') === '30_days' ? '30 Hari Terakhir' : '7 Hari Terakhir';
@@ -24,9 +25,10 @@
         id="btnStoreStatus"
         data-url="{{ $toggleStatusUrl }}"
         aria-pressed="{{ $isStoreOpen ? 'true' : 'false' }}"
+        @if ($umkmSuspended) disabled style="opacity: 0.65; cursor: not-allowed;" title="Toko tidak dapat dibuka selama masa penangguhan 3 hari" @endif
       >
         <span class="status-dot"></span>
-        <span class="status-text" id="storeStatusText">{{ $isStoreOpen ? 'Buka' : 'Tutup' }}</span>
+        <span class="status-text" id="storeStatusText">{{ $umkmSuspended ? 'Tutup (Ditangguhkan)' : ($isStoreOpen ? 'Buka' : 'Tutup') }}</span>
       </button>
     </div>
 
@@ -299,7 +301,7 @@
           window.showAppPopup({
             type: 'error',
             title: 'Gagal Memperbarui',
-            message: 'Tidak dapat menyimpan status operasional toko.'
+            message: err.message || 'Tidak dapat menyimpan status operasional toko.'
           });
         }
       } finally {

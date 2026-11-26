@@ -48,6 +48,9 @@ class VerifikasiUmkmController extends Controller
 
             if ($validated['status_verifikasi'] === 'disetujui' && $umkm->user) {
                 $umkm->user->is_suspended = false;
+                if (\App\Models\User::hasSuspendedUntilColumn()) {
+                    $umkm->user->suspended_until = null;
+                }
                 $umkm->user->save();
             }
         });

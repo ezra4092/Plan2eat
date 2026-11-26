@@ -86,7 +86,17 @@ class MenuController extends Controller
         $urlStok = route('umkm.menu-stok', '__ID__');
         $urlFlash = Route::has('umkm.flashsale-create') ? route('umkm.flashsale-create') : '#';
 
+        $isUmkmSuspended = $umkm ? $umkm->isDitangguhkan() : false;
+        $suspendedUntilText = $isUmkmSuspended
+            ? $umkm->user?->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB'
+            : null;
+        $suspendReason = $umkm?->catatan;
+
         return view('umkm.manajemen_menu', compact(
+            'umkm',
+            'isUmkmSuspended',
+            'suspendedUntilText',
+            'suspendReason',
             'menus',
             'total',
             'tersedia',
@@ -117,6 +127,12 @@ class MenuController extends Controller
 
         if (! $umkm) {
             return back()->with('error', 'Profil UMKM tidak ditemukan. Silakan lengkapi profil UMKM terlebih dahulu.');
+        }
+
+        if ($umkm->isDitangguhkan()) {
+            $untilLabel = $umkm->user?->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB';
+
+            return back()->with('error', "Akun UMKM Anda sedang ditangguhkan hingga {$untilLabel} sehingga tidak dapat menambah menu atau berjualan.");
         }
 
         $validated = $request->validate([
@@ -156,6 +172,13 @@ class MenuController extends Controller
         }
 
         $menu = $query->firstOrFail();
+
+        $ownerUmkm = $umkm ?: $menu->umkm;
+        if ($ownerUmkm && $ownerUmkm->isDitangguhkan()) {
+            $untilLabel = $ownerUmkm->user?->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB';
+
+            return back()->with('error', "Akun UMKM Anda sedang ditangguhkan hingga {$untilLabel} sehingga tidak dapat mengubah menu.");
+        }
 
         $validated = $request->validate([
             'nama_makanan' => 'required|string|max:255',
@@ -198,6 +221,13 @@ class MenuController extends Controller
         }
 
         $menu = $query->firstOrFail();
+
+        $ownerUmkm = $umkm ?: $menu->umkm;
+        if ($ownerUmkm && $ownerUmkm->isDitangguhkan()) {
+            $untilLabel = $ownerUmkm->user?->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB';
+
+            return back()->with('error', "Akun UMKM Anda sedang ditangguhkan hingga {$untilLabel} sehingga tidak dapat mengubah menu.");
+        }
 
         $this->deleteMenuPhoto($menu->foto_menu);
 
@@ -260,6 +290,21 @@ class MenuController extends Controller
         }
 
         $menu = $query->firstOrFail();
+
+        $ownerUmkm = $umkm ?: $menu->umkm;
+        if ($ownerUmkm && $ownerUmkm->isDitangguhkan()) {
+            $untilLabel = $ownerUmkm->user?->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB';
+            $msg = "Akun UMKM Anda sedang ditangguhkan hingga {$untilLabel} sehingga menu tidak dapat diaktifkan atau diubah stoknya.";
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => $msg,
+                ], 403);
+            }
+
+            return back()->with('error', $msg);
+        }
 
         // 1. Dukungan toggle aktif/nonaktif status menu (status = 1/0)
         if ($request->has('status')) {
@@ -415,7 +460,8 @@ class MenuController extends Controller
         $idUmkm = $request->query('id_umkm') ?? session('selected_umkm');
 
         if ($idUmkm) {
-            $mitra = Umkm::where('id_umkm', $idUmkm)
+            $mitra = Umkm::with('user')
+                ->where('id_umkm', $idUmkm)
                 ->terverifikasi()
                 ->first();
         } else {
@@ -430,14 +476,28 @@ class MenuController extends Controller
 
         session(['selected_umkm' => $mitra->id_umkm]);
 
-        $menus = Menu::with('jenisMenu')
-            ->where('id_umkm', $mitra->id_umkm)
-            ->where('status', true)
-            ->where('stok_harian', '>', 0)
-            ->orderBy('id_menu', 'desc')
-            ->get();
+        $isDitangguhkan = $mitra->isDitangguhkan();
+        $isMitraTutup = ! $mitra->isBukaDanAktif();
+        $tutupAlasan = $isDitangguhkan
+            ? 'Toko ini sedang ditangguhkan sementara dan tidak menerima pesanan untuk saat ini.'
+            : 'Toko sedang tutup sementara dan belum menerima pesanan saat ini.';
 
         $cart = session('cart', []);
+
+        if ($isMitraTutup) {
+            $menus = collect();
+            if ((int) ($cart['id_umkm'] ?? 0) === (int) $mitra->id_umkm) {
+                session()->forget('cart');
+                $cart = [];
+            }
+        } else {
+            $menus = Menu::with('jenisMenu')
+                ->where('id_umkm', $mitra->id_umkm)
+                ->where('status', true)
+                ->where('stok_harian', '>', 0)
+                ->orderBy('id_menu', 'desc')
+                ->get();
+        }
         $cartQuantities = [];
         $totalPorsi = 0;
         $subtotal = 0;
@@ -461,15 +521,23 @@ class MenuController extends Controller
             'subtotal' => (int) $subtotal,
         ];
 
-        return view('pelanggan.menu', compact('mitra', 'menus', 'cartQuantities', 'cartSummary'));
+        return view('pelanggan.menu', compact('mitra', 'menus', 'cartQuantities', 'cartSummary', 'isMitraTutup', 'tutupAlasan'));
     }
 
-    public function show(int|string $id_menu): View
+    public function show(int|string $id_menu): View|RedirectResponse
     {
         // 1. Ambil detail menu beserta relasi UMKM dan jenisMenu
-        $menu = Menu::with(['umkm', 'jenisMenu'])
+        $menu = Menu::with(['umkm.user', 'jenisMenu'])
             ->where('id_menu', $id_menu)
             ->firstOrFail();
+
+        if (! $menu->status || ! $menu->umkm || ! $menu->umkm->isBukaDanAktif()) {
+            $namaToko = $menu->umkm?->nama_vendor ?? 'Mitra';
+
+            return redirect()
+                ->route('pelanggan.mitra')
+                ->with('error', "Maaf, toko {$namaToko} sedang tutup sehingga menu tidak dapat dipesan saat ini.");
+        }
 
         // 2. Cek apakah menu ini sedang memiliki promo Flash Sale aktif hari ini
         $flashSaleAktif = Flashsale::where('id_menu', $menu->id_menu)

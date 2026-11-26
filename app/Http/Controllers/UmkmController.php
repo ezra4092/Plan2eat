@@ -132,9 +132,17 @@ class UmkmController extends Controller
         $chartMid = (int) round($chartMax / 2);
 
         $chartDays = array_values($dayMeta);
+        $isSuspended = $umkm->isDitangguhkan();
+        $suspendedUntilText = $isSuspended
+            ? $umkm->user?->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB'
+            : null;
+        $suspendReason = $umkm->catatan;
 
         return view('umkm.dashboard', compact(
             'umkm',
+            'isSuspended',
+            'suspendedUntilText',
+            'suspendReason',
             'range',
             'porsiPerluDiproses',
             'pelangganAktif',
@@ -163,8 +171,13 @@ class UmkmController extends Controller
         $user = User::where('id_user', Auth::id())->firstOrFail();
 
         $umkm = Umkm::where('id_user', $user->id_user)->firstOrFail();
+        $isSuspended = $umkm->isDitangguhkan();
+        $suspendedUntilText = $isSuspended
+            ? $user->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB'
+            : null;
+        $suspendReason = $umkm->catatan;
 
-        return view('umkm.profil', compact('user', 'umkm'));
+        return view('umkm.profil', compact('user', 'umkm', 'isSuspended', 'suspendedUntilText', 'suspendReason'));
     }
 
     /**
@@ -211,6 +224,17 @@ class UmkmController extends Controller
             'foto_toko' => 'nullable|image|mimes:jpeg,png,jpg,webp|max:2048',
         ]);
 
+        if ($umkm->isDitangguhkan()) {
+            if (strtolower((string) $validatedUmkm['status_operasional']) === 'buka') {
+                $untilLabel = $user->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB';
+
+                return back()
+                    ->withInput()
+                    ->with('error', "Akun UMKM Anda sedang ditangguhkan hingga {$untilLabel} sehingga toko tidak dapat dibuka.");
+            }
+            $validatedUmkm['status_operasional'] = 'Tutup';
+        }
+
         // Handle upload foto_toko jika ada
         if ($request->hasFile('foto_toko')) {
             if ($umkm->foto_toko && Storage::disk('public')->exists($umkm->foto_toko)) {
@@ -248,6 +272,21 @@ class UmkmController extends Controller
             ->where('id_user', $user->id_user)
             ->firstOrFail();
 
+        if ($umkm->isDitangguhkan()) {
+            $untilLabel = $user->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB';
+            $msg = "Akun UMKM Anda sedang ditangguhkan hingga {$untilLabel} dan tidak dapat membuka toko atau berjualan.";
+
+            if ($request->expectsJson() || $request->ajax()) {
+                return response()->json([
+                    'success' => false,
+                    'status_operasional' => 'Tutup',
+                    'message' => $msg,
+                ], 403);
+            }
+
+            return redirect()->route('umkm.profil')->with('error', $msg);
+        }
+
         $validated = $request->validate([
             'status_operasional' => 'nullable|string|in:Buka,Tutup,buka,tutup',
         ]);
@@ -276,11 +315,12 @@ class UmkmController extends Controller
     }
 
     /**
-     * Menampilkan daftar mitra UMKM yang aktif (Buka) dan terverifikasi untuk pelanggan.
+     * Menampilkan daftar mitra UMKM terverifikasi untuk pelanggan (mitra buka tampil di atas, mitra tutup/ditangguhkan diberi info Toko Tutup).
      */
     public function pelangganMitra(): View
     {
         $mitras = Umkm::with([
+            'user',
             'menus' => function ($query): void {
                 $query->where('status', true)
                     ->where('stok_harian', '>', 0)
@@ -288,7 +328,6 @@ class UmkmController extends Controller
             },
         ])
             ->terverifikasi()
-            ->buka()
             ->orderByDesc('rating')
             ->orderBy('id_umkm', 'asc')
             ->get();
@@ -302,7 +341,13 @@ class UmkmController extends Controller
         foreach ($mitras as $mitra) {
             $mitra->total_ulasan = (int) ($ulasanCounts[$mitra->id_umkm] ?? 0);
             $mitra->harga_mulai = (int) ($mitra->menus->min('harga_normal') ?? 0);
+            $mitra->is_ditangguhkan = $mitra->isDitangguhkan();
+            $mitra->is_tutup = ! $mitra->isBukaDanAktif();
         }
+
+        $mitras = $mitras
+            ->sortBy(fn (Umkm $m): int => $m->is_tutup ? 1 : 0)
+            ->values();
 
         return view('pelanggan.mitra', compact('mitras'));
     }

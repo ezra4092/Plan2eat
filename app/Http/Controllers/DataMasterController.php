@@ -71,7 +71,7 @@ class DataMasterController extends Controller
     }
 
     /**
-     * Menangguhkan atau mengaktifkan kembali akun UMKM terverifikasi.
+     * Menangguhkan (3 hari) atau mengaktifkan kembali akun UMKM terverifikasi.
      */
     public function toggleUmkmStatus(Request $request, int|string $id_umkm): RedirectResponse
     {
@@ -88,24 +88,16 @@ class DataMasterController extends Controller
                 ->with('error', 'Akun pemilik UMKM tidak ditemukan.');
         }
 
-        $nextSuspended = ! (bool) ($user->is_suspended ?? false);
+        $currentlySuspended = $user->isCurrentlySuspended();
 
-        DB::transaction(function () use ($user, $umkm, $nextSuspended, $validated): void {
-            $user->is_suspended = $nextSuspended;
-            $user->save();
-
-            if ($nextSuspended && ! empty($validated['catatan'])) {
-                $umkm->catatan = trim((string) $validated['catatan']);
-                $umkm->status_operasional = 'Tutup';
-            } elseif (! $nextSuspended) {
-                $umkm->catatan = null;
-            }
-            $umkm->save();
-        });
-
-        $message = $nextSuspended
-            ? "Mitra {$umkm->nama_vendor} berhasil ditangguhkan."
-            : "Mitra {$umkm->nama_vendor} berhasil diaktifkan kembali.";
+        if (! $currentlySuspended) {
+            $user->suspendForDays(3, $validated['catatan'] ?? null);
+            $untilLabel = $user->getSuspendedUntilAt()?->locale('id')->translatedFormat('d M Y, H:i') . ' WIB';
+            $message = "Mitra {$umkm->nama_vendor} berhasil ditangguhkan selama 3 hari (hingga {$untilLabel}) dan toko otomatis ditutup.";
+        } else {
+            $user->unsuspend();
+            $message = "Mitra {$umkm->nama_vendor} berhasil diaktifkan kembali.";
+        }
 
         return redirect()
             ->route('admin.data_master', ['tab' => 'umkm'])
@@ -120,12 +112,13 @@ class DataMasterController extends Controller
         $pelanggan = User::whereRaw("LOWER(CAST(role AS TEXT)) = 'pelanggan'")
             ->findOrFail($id_user);
 
-        $pelanggan->is_suspended = ! (bool) ($pelanggan->is_suspended ?? false);
-        $pelanggan->save();
-
-        $message = $pelanggan->is_suspended
-            ? "Akun pelanggan {$pelanggan->nama_lengkap} berhasil ditangguhkan."
-            : "Akun pelanggan {$pelanggan->nama_lengkap} berhasil diaktifkan kembali.";
+        if (! $pelanggan->isCurrentlySuspended()) {
+            $pelanggan->suspendForDays(3);
+            $message = "Akun pelanggan {$pelanggan->nama_lengkap} berhasil ditangguhkan selama 3 hari.";
+        } else {
+            $pelanggan->unsuspend();
+            $message = "Akun pelanggan {$pelanggan->nama_lengkap} berhasil diaktifkan kembali.";
+        }
 
         return redirect()
             ->route('admin.data_master', ['tab' => 'pelanggan'])
