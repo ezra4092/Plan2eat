@@ -292,11 +292,21 @@
     @endif
   </section>
 
-  <!-- 3. Section Rekomendasi Paket Sehat -->
-  <section class="recommended-section">
+  <!-- 3. Section Rekomendasi Paket Sehat + Filter Kalori & Budget -->
+  @php
+    $filterState = $filters ?? [];
+    $kaloriMode = $filterState['kalori'] ?? 'all';
+    $maxKaloriVal = $filterState['max_kalori'] ?? null;
+    $profilBudget = (int) ($filterState['profil_budget'] ?? ($profilKesehatan?->batas_budget ?? 0));
+    $budgetMode = $filterState['budget'] ?? ($profilBudget > 0 ? 'profil' : 'all');
+    $maxBudgetVal = $filterState['max_budget'] ?? null;
+    $hasExplicitFilter = (bool) ($filterState['has_explicit'] ?? false);
+  @endphp
+
+  <section class="recommended-section" id="rekomendasiSection">
     <div class="recommended-header-row">
       <div class="section-heading">
-        <h2 class="section-title">Rekomendasi Paket Sehat</h2>
+        <h2 class="section-title">{{ $hasExplicitFilter ? 'Menu Sesuai Filter Kalori & Budget' : 'Rekomendasi Paket Sehat' }}</h2>
       </div>
 
       <a href="{{ route('pelanggan.mitra') }}" class="beranda-see-mitra-link">
@@ -306,6 +316,109 @@
         </svg>
       </a>
     </div>
+
+    {{-- Card Filter Kalori & Budget --}}
+    <form action="{{ route('pelanggan.beranda-filter') }}" method="GET" class="beranda-filter-card" id="berandaFilterForm">
+      <input type="hidden" name="kalori" id="filterKaloriMode" value="{{ $kaloriMode }}">
+      <input type="hidden" name="budget" id="filterBudgetMode" value="{{ $budgetMode }}">
+
+      <div class="beranda-filter-head">
+        <div class="beranda-filter-title-wrap">
+          <span class="beranda-filter-icon" aria-hidden="true">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+            </svg>
+          </span>
+          <div>
+            <h3 class="beranda-filter-title">Filter Kalori &amp; Budget</h3>
+            <p class="beranda-filter-sub">Sesuaikan pilihan menu harian berdasarkan kebutuhan kalori dan anggaranmu</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="beranda-filter-grid">
+        {{-- Filter Kalori --}}
+        <div class="beranda-filter-group">
+          <div class="beranda-filter-label">
+            <span>Batas Kalori (kkal)</span>
+          </div>
+
+          <div class="beranda-filter-chips">
+            <button type="button" class="beranda-filter-chip {{ $kaloriMode === 'all' ? 'is-active' : '' }}" data-kalori-preset="all">Semua</button>
+            <button type="button" class="beranda-filter-chip {{ $kaloriMode === 'low' ? 'is-active' : '' }}" data-kalori-preset="low">&le; 400 kkal</button>
+            <button type="button" class="beranda-filter-chip {{ $kaloriMode === 'medium' ? 'is-active' : '' }}" data-kalori-preset="medium">401&ndash;650 kkal</button>
+            <button type="button" class="beranda-filter-chip {{ $kaloriMode === 'high' ? 'is-active' : '' }}" data-kalori-preset="high">&gt; 650 kkal</button>
+          </div>
+
+          <div class="beranda-filter-input-row">
+            <span class="beranda-filter-prefix">Maks.</span>
+            <input
+              type="number"
+              name="max_kalori"
+              id="filterMaxKalori"
+              class="beranda-filter-input"
+              min="50"
+              step="10"
+              placeholder="Contoh: 500 kkal"
+              value="{{ $kaloriMode === 'custom' ? $maxKaloriVal : '' }}"
+            >
+            <span class="beranda-filter-prefix">kkal</span>
+          </div>
+        </div>
+
+        {{-- Filter Budget --}}
+        <div class="beranda-filter-group">
+          <div class="beranda-filter-label">
+            <span>Batas Budget (Rp)</span>
+          </div>
+
+          <div class="beranda-filter-chips">
+            @if ($profilBudget > 0)
+              <button type="button" class="beranda-filter-chip {{ $budgetMode === 'profil' ? 'is-active' : '' }}" data-budget-preset="profil">
+                Profil (&le; Rp {{ number_format($profilBudget, 0, ',', '.') }})
+              </button>
+            @endif
+            <button type="button" class="beranda-filter-chip {{ $budgetMode === 'all' ? 'is-active' : '' }}" data-budget-preset="all">Semua</button>
+            <button type="button" class="beranda-filter-chip {{ $budgetMode === '20000' ? 'is-active' : '' }}" data-budget-preset="20000">&le; Rp 20rb</button>
+            <button type="button" class="beranda-filter-chip {{ $budgetMode === '35000' ? 'is-active' : '' }}" data-budget-preset="35000">&le; Rp 35rb</button>
+            <button type="button" class="beranda-filter-chip {{ $budgetMode === '50000' ? 'is-active' : '' }}" data-budget-preset="50000">&le; Rp 50rb</button>
+          </div>
+
+          <div class="beranda-filter-input-row">
+            <span class="beranda-filter-prefix">Rp</span>
+            <input
+              type="number"
+              name="max_budget"
+              id="filterMaxBudget"
+              class="beranda-filter-input"
+              min="1000"
+              step="1000"
+              placeholder="Contoh: 40000"
+              value="{{ $budgetMode === 'custom' ? $maxBudgetVal : '' }}"
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="beranda-filter-actions">
+        <span class="beranda-filter-status">
+          Menampilkan <strong>{{ $rekomendasiMenu->count() }}</strong> menu tersedia
+        </span>
+
+        <div class="beranda-filter-btn-group">
+          @if ($hasExplicitFilter)
+            <a href="{{ route('pelanggan.beranda') }}" class="beranda-btn-reset">Reset Filter</a>
+          @endif
+          <button type="submit" class="beranda-btn-apply">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+            </svg>
+            <span>Terapkan Filter</span>
+          </button>
+        </div>
+      </div>
+    </form>
 
     <div class="vendor-cards-list">
       @forelse($rekomendasiMenu as $index => $menu)
@@ -328,8 +441,14 @@
             <div class="vendor-badges-top">
               <div class="badge-glass-white">
                 <i class="fa-solid fa-bowl-food"></i>
-                <span>{{ $menu->jenisMenu->nama ?? 'Pilihan Dietitian' }}</span>
+                <span>{{ $menu->jenisMenu->nama ?? 'Menu Satuan' }}</span>
               </div>
+              @if (! empty($menu->kandungan_kalori))
+                <div class="badge-glass-white">
+                  <i class="fa-solid fa-fire-flame-curved"></i>
+                  <span>{{ (int) $menu->kandungan_kalori }} kkal</span>
+                </div>
+              @endif
               <div class="badge-glass-white">
                 <i class="fa-solid fa-align-right"></i>
                 <span>Stok {{ $menu->stok_harian }}</span>
@@ -367,9 +486,14 @@
           </div>
         </article>
       @empty
-        <article class="vendor-card">
-          <div class="vendor-card-body">
-            <p class="vendor-description">Belum ada rekomendasi paket menu yang tersedia saat ini.</p>
+        <article class="vendor-card" style="grid-column: 1 / -1;">
+          <div class="vendor-card-body" style="text-align: center; padding: 28px 20px;">
+            <p class="vendor-description" style="margin-bottom: 12px;">
+              {{ $hasExplicitFilter ? 'Tidak ada menu yang sesuai dengan batas kalori & budget yang dipilih.' : 'Belum ada rekomendasi paket menu yang tersedia saat ini.' }}
+            </p>
+            @if ($hasExplicitFilter)
+              <a href="{{ route('pelanggan.beranda') }}" class="beranda-btn-reset">Tampilkan Semua Menu</a>
+            @endif
           </div>
         </article>
       @endforelse
@@ -506,6 +630,63 @@
         }
       });
     });
+
+    // ==========================================
+    // FILTER KALORI & BUDGET BERANDA PELANGGAN
+    // ==========================================
+    const filterForm = document.getElementById('berandaFilterForm');
+    const kaloriModeInput = document.getElementById('filterKaloriMode');
+    const budgetModeInput = document.getElementById('filterBudgetMode');
+    const maxKaloriInput = document.getElementById('filterMaxKalori');
+    const maxBudgetInput = document.getElementById('filterMaxBudget');
+
+    document.querySelectorAll('[data-kalori-preset]').forEach(btn => {
+      btn.addEventListener('click', function () {
+        if (kaloriModeInput) {
+          kaloriModeInput.value = this.dataset.kaloriPreset;
+        }
+        if (maxKaloriInput) {
+          maxKaloriInput.value = '';
+        }
+        if (filterForm) {
+          filterForm.submit();
+        }
+      });
+    });
+
+    document.querySelectorAll('[data-budget-preset]').forEach(btn => {
+      btn.addEventListener('click', function () {
+        if (budgetModeInput) {
+          budgetModeInput.value = this.dataset.budgetPreset;
+        }
+        if (maxBudgetInput) {
+          maxBudgetInput.value = '';
+        }
+        if (filterForm) {
+          filterForm.submit();
+        }
+      });
+    });
+
+    if (maxKaloriInput && kaloriModeInput) {
+      maxKaloriInput.addEventListener('input', function () {
+        if (this.value.trim() !== '') {
+          kaloriModeInput.value = 'custom';
+        } else if (kaloriModeInput.value === 'custom') {
+          kaloriModeInput.value = 'all';
+        }
+      });
+    }
+
+    if (maxBudgetInput && budgetModeInput) {
+      maxBudgetInput.addEventListener('input', function () {
+        if (this.value.trim() !== '') {
+          budgetModeInput.value = 'custom';
+        } else if (budgetModeInput.value === 'custom') {
+          budgetModeInput.value = '{{ $profilBudget > 0 ? "profil" : "all" }}';
+        }
+      });
+    }
   });
 </script>
 @endpush

@@ -317,7 +317,7 @@ class MenuController extends Controller
         return redirect()->route('umkm.menu')->with('success', 'Status menu berhasil diperbarui!');
     }
 
-    public function berandaPelanggan(): View
+    public function berandaPelanggan(Request $request): View
     {
         $idUser = Auth::id();
 
@@ -326,7 +326,57 @@ class MenuController extends Controller
             ? ProfilKesehatan::where('id_user', $idUser)->first()
             : null;
 
-        // 2. Query menu yang aktif, stoknya tersedia & UMKM-nya berstatus Buka + Terverifikasi
+        $profilBudget = (int) ($profilKesehatan?->batas_budget ?? 0);
+
+        // 2. Baca parameter filter kalori & budget dari query string
+        $kaloriMode = (string) $request->query('kalori', 'all');
+        $allowedKaloriModes = ['all', 'low', 'medium', 'high', 'custom'];
+        if (! in_array($kaloriMode, $allowedKaloriModes, true)) {
+            $kaloriMode = 'all';
+        }
+        $maxKaloriInput = $request->filled('max_kalori') ? max(0, (int) $request->query('max_kalori')) : null;
+        if ($maxKaloriInput !== null && $maxKaloriInput > 0 && ! $request->filled('kalori')) {
+            $kaloriMode = 'custom';
+        }
+
+        $defaultBudgetMode = $profilBudget > 0 ? 'profil' : 'all';
+        $budgetMode = (string) $request->query('budget', $defaultBudgetMode);
+        $allowedBudgetModes = ['profil', 'all', '20000', '35000', '50000', 'custom'];
+        if (! in_array($budgetMode, $allowedBudgetModes, true)) {
+            $budgetMode = $defaultBudgetMode;
+        }
+        $maxBudgetInput = $request->filled('max_budget') ? max(0, (int) $request->query('max_budget')) : null;
+        if ($maxBudgetInput !== null && $maxBudgetInput > 0 && ! $request->filled('budget')) {
+            $budgetMode = 'custom';
+        }
+
+        $effectiveMaxKalori = match ($kaloriMode) {
+            'low' => 400,
+            'medium' => 650,
+            'custom' => $maxKaloriInput,
+            default => null,
+        };
+        $effectiveMinKalori = match ($kaloriMode) {
+            'medium' => 401,
+            'high' => 651,
+            default => null,
+        };
+
+        $effectiveMaxBudget = match ($budgetMode) {
+            'profil' => $profilBudget > 0 ? $profilBudget : null,
+            '20000' => 20000,
+            '35000' => 35000,
+            '50000' => 50000,
+            'custom' => $maxBudgetInput,
+            default => null,
+        };
+
+        $hasExplicitFilter = ($kaloriMode !== 'all')
+            || ($budgetMode !== $defaultBudgetMode)
+            || ($maxKaloriInput !== null && $maxKaloriInput > 0)
+            || ($maxBudgetInput !== null && $maxBudgetInput > 0);
+
+        // 3. Query menu yang aktif, stoknya tersedia & UMKM-nya berstatus Buka + Terverifikasi
         $query = Menu::with(['umkm', 'jenisMenu'])
             ->where('status', true)
             ->where('stok_harian', '>', 0)
@@ -334,7 +384,7 @@ class MenuController extends Controller
                 $q->terverifikasi()->buka();
             });
 
-        // 3. Filter berdasarkan Profil Kesehatan (Alergi & Batas Budget)
+        // 4. Filter berdasarkan Profil Kesehatan (Alergi)
         if ($profilKesehatan) {
             $alergiList = is_array($profilKesehatan->riwayat_alergi)
                 ? $profilKesehatan->riwayat_alergi
@@ -348,22 +398,36 @@ class MenuController extends Controller
                     }
                 }
             }
+        }
 
-            if (! empty($profilKesehatan->batas_budget) && $profilKesehatan->batas_budget > 0) {
-                $query->where('harga_normal', '<=', $profilKesehatan->batas_budget);
-            }
+        // 5. Terapkan filter Kalori & Budget
+        if ($effectiveMinKalori !== null) {
+            $query->whereNotNull('kandungan_kalori')
+                ->where('kandungan_kalori', '>=', $effectiveMinKalori);
+        }
+
+        if ($effectiveMaxKalori !== null && $effectiveMaxKalori > 0) {
+            $query->whereNotNull('kandungan_kalori')
+                ->where('kandungan_kalori', '<=', $effectiveMaxKalori);
+        }
+
+        if ($effectiveMaxBudget !== null && $effectiveMaxBudget > 0) {
+            $query->where('harga_normal', '<=', $effectiveMaxBudget);
         }
 
         $nowWib = now('Asia/Jakarta');
         $todayStr = $nowWib->toDateString();
 
-        // 4. Rekomendasi khusus makanan paketan (maksimal 5 menu, diacak setiap hari)
-        $rekomendasiMenu = (clone $query)
-            ->whereNotNull('jenis_menu')
-            ->get();
+        // 6. Jika tidak memakai filter manual, utamakan menu paketan; saat filter aktif, tampilkan semua menu yang cocok
+        $menuQuery = clone $query;
+        if (! $hasExplicitFilter) {
+            $menuQuery->whereNotNull('jenis_menu');
+        }
 
-        // Fallback: Jika hasil filter profil kurang dari 5, lengkapi dengan menu paketan aktif lainnya
-        if ($rekomendasiMenu->count() < 5) {
+        $rekomendasiMenu = $menuQuery->get();
+
+        // Fallback hanya ketika user tidak menyalakan filter kalori/budget secara eksplisit
+        if (! $hasExplicitFilter && $rekomendasiMenu->count() < 5) {
             $existingIds = $rekomendasiMenu->pluck('id_menu')->toArray();
 
             $tambahanPaket = Menu::with(['umkm', 'jenisMenu'])
@@ -379,12 +443,19 @@ class MenuController extends Controller
             $rekomendasiMenu = $rekomendasiMenu->merge($tambahanPaket);
         }
 
-        $rekomendasiMenu = $rekomendasiMenu
-            ->sortBy(fn (Menu $menu): int => crc32($todayStr . '-paket-' . $menu->id_menu))
-            ->values()
-            ->take(5);
+        if ($hasExplicitFilter) {
+            $rekomendasiMenu = $rekomendasiMenu
+                ->sortBy('harga_normal')
+                ->values()
+                ->take(12);
+        } else {
+            $rekomendasiMenu = $rekomendasiMenu
+                ->sortBy(fn (Menu $menu): int => crc32($todayStr . '-paket-' . $menu->id_menu))
+                ->values()
+                ->take(5);
+        }
 
-        // 5. Data flash sale hanya tampil saat jam promo (20:00 - 22:00 WIB)
+        // 7. Data flash sale hanya tampil saat jam promo (20:00 - 22:00 WIB)
         //    Memilih maksimal 5 menu non-paketan dengan diskon 20% - 30%
         $currentTime = $nowWib->format('H:i:s');
         $isPromoActive = ($currentTime >= '20:00:00' && $currentTime <= '22:00:00');
@@ -418,6 +489,15 @@ class MenuController extends Controller
         $activeOrder = app(OrderService::class)->getActiveOrderCardForUser($idUser);
         $userSaldo = (float) (Auth::user()?->saldo ?? 0);
 
+        $filters = [
+            'kalori' => $kaloriMode,
+            'max_kalori' => $maxKaloriInput,
+            'budget' => $budgetMode,
+            'max_budget' => $maxBudgetInput,
+            'profil_budget' => $profilBudget,
+            'has_explicit' => $hasExplicitFilter,
+        ];
+
         return view('pelanggan.beranda', compact(
             'rekomendasiMenu',
             'profilKesehatan',
@@ -425,7 +505,8 @@ class MenuController extends Controller
             'mitraList',
             'isPromoActive',
             'activeOrder',
-            'userSaldo'
+            'userSaldo',
+            'filters'
         ));
     }
 

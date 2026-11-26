@@ -130,20 +130,21 @@ class AuthController extends Controller
             ],
         ]);
 
-        Mail::raw(
-            "Halo {$validated['name']},\n\n"
-            . "Kode verifikasi akun Plan2Eat kamu adalah:\n\n"
-            . "{$otp}\n\n"
-            . "Kode ini berlaku selama 5 menit. Jangan berikan kode ini kepada siapa pun.\n\n"
-            . "Terima kasih,\nTim Plan2Eat",
-            function ($message) use ($validated): void {
-                $message->to($validated['email'])
-                    ->subject('Kode Verifikasi Akun Plan2Eat');
-            }
-        );
+        try {
+            $this->sendOtpEmail($validated['email'], $validated['name'], $otp);
+        } catch (\Throwable $e) {
+            report($e);
+            session()->forget('pending_registration');
+
+            return back()
+                ->withInput($request->except('password', 'password_confirmation'))
+                ->withErrors([
+                    'email' => 'Gagal mengirim kode OTP ke email Anda. Periksa alamat email atau konfigurasi SMTP server.',
+                ]);
+        }
 
         return redirect()->route('otp.form')
-            ->with('success', 'Kode OTP telah dikirim ke email kamu.');
+            ->with('success', 'Kode OTP telah dikirim ke email kamu. Silakan cek kotak masuk atau folder spam.');
     }
 
     public function showOtpForm(): View|RedirectResponse
@@ -245,20 +246,36 @@ class AuthController extends Controller
 
         session(['pending_registration' => $pending]);
 
+        try {
+            $this->sendOtpEmail($pending['email'], $pending['nama_lengkap'], $otp);
+        } catch (\Throwable $e) {
+            report($e);
+
+            return back()->withErrors([
+                'otp_code' => 'Gagal mengirim ulang kode OTP. Pastikan konfigurasi SMTP email sudah benar.',
+            ]);
+        }
+
+        return redirect()->route('otp.form')
+            ->with('success', 'Kode OTP baru berhasil dikirim ke email Anda.');
+    }
+
+    /**
+     * Mengirimkan email kode OTP verifikasi ke alamat email pendaftar.
+     */
+    private function sendOtpEmail(string $email, string $name, string $otp): void
+    {
         Mail::raw(
-            "Halo {$pending['nama_lengkap']},\n\n"
+            "Halo {$name},\n\n"
             . "Kode verifikasi akun Plan2Eat kamu adalah:\n\n"
             . "{$otp}\n\n"
             . "Kode ini berlaku selama 5 menit. Jangan berikan kode ini kepada siapa pun.\n\n"
             . "Terima kasih,\nTim Plan2Eat",
-            function ($message) use ($pending): void {
-                $message->to($pending['email'])
+            function ($message) use ($email): void {
+                $message->to($email)
                     ->subject('Kode Verifikasi Akun Plan2Eat');
             }
         );
-
-        return redirect()->route('otp.form')
-            ->with('success', 'Kode OTP baru berhasil dikirim.');
     }
 
     public function showPersonalisasiForm(): View|RedirectResponse

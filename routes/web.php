@@ -71,6 +71,8 @@ Route::middleware(['auth'])->group(function (): void {
     Route::middleware(['role:pelanggan'])->group(function (): void {
         Route::get('/pelanggan/beranda', [MenuController::class, 'berandaPelanggan'])
             ->name('pelanggan.beranda');
+        Route::get('/pelanggan/beranda/filter', [MenuController::class, 'berandaPelanggan'])
+            ->name('pelanggan.beranda-filter');
 
         // --- Profil Kesehatan ---
         Route::get('/pelanggan/profil-kesehatan', [ProfilKesehatanController::class, 'index'])
